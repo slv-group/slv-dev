@@ -569,6 +569,8 @@ function CSRPage() {
       ? initiatives
       : initiatives.filter((item) => item.category === activeFilter);
 
+  const featured = initiatives.find((item) => item.featured) ?? initiatives[0];
+
   return (
     <main className="overflow-hidden bg-background">
       {/* Detail Modal */}
@@ -794,79 +796,81 @@ function CSRPage() {
           FEATURED INITIATIVE
       ====================================================================== */}
 
-      <section className="relative overflow-hidden py-24 sm:py-28 lg:py-32">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <Reveal>
-            <div className="grid overflow-hidden rounded-[2rem] border border-border bg-card shadow-sm lg:grid-cols-[1.05fr_0.95fr] lg:rounded-[2.5rem]">
-              {/* Image */}
-              <div className="relative min-h-[280px] overflow-hidden sm:min-h-[360px] lg:min-h-[520px]">
-                <img
-                  src={featured.image}
-                  alt={featured.title}
-                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 hover:scale-105"
-                  loading="lazy"
-                  decoding="async"
-                  fetchPriority="low"
-                />
+      {featured && (
+        <section className="relative overflow-hidden py-24 sm:py-28 lg:py-32">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <Reveal>
+              <div className="grid overflow-hidden rounded-[2rem] border border-border bg-card shadow-sm lg:grid-cols-[1.05fr_0.95fr] lg:rounded-[2.5rem]">
+                {/* Image */}
+                <div className="relative min-h-[280px] overflow-hidden sm:min-h-[360px] lg:min-h-[520px]">
+                  <img
+                    src={featured.image}
+                    alt={featured.title}
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 hover:scale-105"
+                    loading="lazy"
+                    decoding="async"
+                    fetchPriority="low"
+                  />
 
-                <div
-                  aria-hidden
-                  className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent lg:bg-gradient-to-r lg:from-black/60 lg:to-transparent"
-                />
+                  <div
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent lg:bg-gradient-to-r lg:from-black/60 lg:to-transparent"
+                  />
 
-                <CornerMarks />
+                  <CornerMarks />
 
-                <div className="absolute bottom-5 left-5 sm:bottom-7 sm:left-7">
-                  <span className="rounded-full border border-white/15 bg-black/40 px-3 py-1.5 text-[8px] font-bold uppercase tracking-[0.2em] text-white backdrop-blur-md">
-                    Featured Initiative
-                  </span>
+                  <div className="absolute bottom-5 left-5 sm:bottom-7 sm:left-7">
+                    <span className="rounded-full border border-white/15 bg-black/40 px-3 py-1.5 text-[8px] font-bold uppercase tracking-[0.2em] text-white backdrop-blur-md">
+                      Featured Initiative
+                    </span>
+                  </div>
                 </div>
-              </div>
 
-              {/* Content */}
-              <div className="flex flex-col justify-center p-7 sm:p-10 lg:p-14">
-                <div className="flex items-center gap-3">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-full border border-gold/30 bg-gold/10 text-gold">
-                    <HandHeart className="h-5 w-5" />
-                  </span>
+                {/* Content */}
+                <div className="flex flex-col justify-center p-7 sm:p-10 lg:p-14">
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-full border border-gold/30 bg-gold/10 text-gold">
+                      <HandHeart className="h-5 w-5" />
+                    </span>
 
-                  <p className="text-[9px] font-bold uppercase tracking-[0.22em] text-gold">
-                    {featured.category}
+                    <p className="text-[9px] font-bold uppercase tracking-[0.22em] text-gold">
+                      {featured.category}
+                    </p>
+                  </div>
+
+                  <h2 className="mt-6 font-display text-3xl font-bold leading-tight text-foreground sm:text-4xl lg:text-5xl">
+                    {featured.title}
+                  </h2>
+
+                  <p className="mt-5 text-base leading-relaxed text-muted-foreground sm:text-lg">
+                    {featured.description}
                   </p>
-                </div>
 
-                <h2 className="mt-6 font-display text-3xl font-bold leading-tight text-foreground sm:text-4xl lg:text-5xl">
-                  {featured.title}
-                </h2>
+                  <div className="mt-7 grid gap-3 sm:grid-cols-2">
+                    <div className="rounded-2xl border border-border bg-secondary/50 p-4">
+                      <p className="text-[8px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+                        Year
+                      </p>
+                      <p className="mt-1 font-display text-xl font-semibold text-foreground">
+                        {featured.year}
+                      </p>
+                    </div>
 
-                <p className="mt-5 text-base leading-relaxed text-muted-foreground sm:text-lg">
-                  {featured.description}
-                </p>
-
-                <div className="mt-7 grid gap-3 sm:grid-cols-2">
-                  <div className="rounded-2xl border border-border bg-secondary/50 p-4">
-                    <p className="text-[8px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
-                      Year
-                    </p>
-                    <p className="mt-1 font-display text-xl font-semibold text-foreground">
-                      {featured.year}
-                    </p>
-                  </div>
-
-                  <div className="rounded-2xl border border-border bg-secondary/50 p-4">
-                    <p className="text-[8px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
-                      Reach
-                    </p>
-                    <p className="mt-1 font-display text-xl font-semibold text-foreground">
-                      {featured.beneficiaries}
-                    </p>
+                    <div className="rounded-2xl border border-border bg-secondary/50 p-4">
+                      <p className="text-[8px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+                        Reach
+                      </p>
+                      <p className="mt-1 font-display text-xl font-semibold text-foreground">
+                        {featured.beneficiaries}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </Reveal>
-        </div>
-      </section>
+            </Reveal>
+          </div>
+        </section>
+      )}
 
       {/* =====================================================================
           INITIATIVES
