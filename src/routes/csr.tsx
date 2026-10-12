@@ -11,6 +11,7 @@ import {
   ShieldCheck,
   Users,
   Utensils,
+  X,
 } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
 import { cn } from "@/lib/utils";
@@ -28,7 +29,7 @@ import csrPhoto1 from "@/assets/csr/photo_2026-08-23_23-01-15.jpg";
 import csrPhoto2 from "@/assets/csr/photo_2026-08-23_23-01-19.jpg";
 import csrPhoto3 from "@/assets/csr/photo_2026-08-23_23-01-22.jpg";
 import csrPhoto4 from "@/assets/csr/photo_2026-08-23_23-01-26.jpg";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -103,12 +104,14 @@ type CSRCategory =
 type CSRInitiative = {
   id: string;
   title: string;
+  subtitle?: string;
   category: CSRCategory;
   year: number | null;
   date?: string;
   location?: string;
   shortDescription: string;
   description: string;
+  detailParagraphs: string[];
   image: string;
   impact?: string;
   beneficiaries?: string;
@@ -122,104 +125,157 @@ type CSRInitiative = {
 const defaultInitiatives: CSRInitiative[] = [
   {
     id: "anna-canteen-donation-2024",
-    title: "₹1 Crore Donation to Anna Canteens",
+    title: "Supporting Anna Canteens",
+    subtitle: "A Commitment to Affordable Food",
     category: "Food & Relief",
     year: 2024,
     date: "August 2024",
     location: "Andhra Pradesh",
     shortDescription:
-      "Supporting the Anna Canteen initiative to help provide affordable meals to people in need.",
+      "SLV Group supports the Anna Canteen initiative of the Government of Andhra Pradesh, pledging ₹1 crore annually to make meals affordable and accessible.",
     description:
-      "Contribution of ₹1 Crore every year towards Anna Canteen initiatives to support affordable food and community welfare.",
+      "SLV Group has pledged an annual contribution of ₹1 crore towards the Anna Canteen initiative, supporting food security and community welfare across Andhra Pradesh.",
+    detailParagraphs: [
+      "As part of its Corporate Social Responsibility (CSR) initiatives, SLV Group supports the Anna Canteen initiative of the Government of Andhra Pradesh, which aims to make meals affordable and accessible to people in need.",
+      "SLV Group has pledged an annual contribution of ₹1 crore towards the initiative. The contribution was presented in support of the programme to the Hon'ble Chief Minister of Andhra Pradesh, Shri N. Chandrababu Naidu Garu.",
+      "Through this initiative, SLV Group seeks to support food security and community welfare by helping people from economically weaker sections access meals at an affordable cost.",
+      "This commitment reflects SLV Group's focus on giving back to society and contributing to inclusive development across Andhra Pradesh.",
+    ],
     image: annaCanteenImage,
-    impact: "₹1 Crore Contribution",
-    beneficiaries: "People & Families in Need",
+    impact: "₹1 Crore Annual Pledge",
+    beneficiaries: "Economically Weaker Sections",
     featured: true,
   },
   {
-    id: "abdul-kalam-nagar",
-    title: "P4 Programme – Abdul Kalam Nagar Development",
-    category: "Community",
+    id: "site-workers-meals",
+    title: "Nutrition Support for Construction Workers",
+    subtitle: "Nourishing the People Who Build Our Projects",
+    category: "Food & Relief",
     year: 2024,
-    location: "Andhra Pradesh",
+    location: "All SLV Group Project Sites",
     shortDescription:
-      "Adopted Abdul Kalam Nagar Colony for comprehensive infrastructure development.",
+      "Nutritious meals provided four days a week in association with Akshaya Patra, serving ~1,000 workers and staff per day.",
     description:
-      "Under the P4 Programme, SLV Group has adopted Abdul Kalam Nagar Colony for comprehensive infrastructure development, including CC roads, drainage systems, and household water connections, with an approximate investment of ₹1 Crore.",
-    image: csrPhoto1,
-    impact: "₹1 Crore Investment",
-    beneficiaries: "Local Communities",
+      "A nutrition programme for construction workers and staff across SLV Group project sites, in association with Akshaya Patra, Mangalagiri.",
+    detailParagraphs: [
+      "SLV Group has introduced a nutrition programme for construction workers and staff across its project sites, with a focus on workforce welfare and well-being.",
+      "Through this programme, nutritious meals are provided four days a week in association with Akshaya Patra, Mangalagiri. The initiative currently serves approximately 1,000 construction workers and staff per day across SLV Group's project sites.",
+      "By supporting access to regular, wholesome meals, SLV Group aims to foster a healthier and more supportive working environment while recognising the people who contribute every day to its projects.",
+      "Supporting the well-being of its workforce remains an important part of SLV Group's commitment to responsible and inclusive development.",
+    ],
+    image: csrPhoto3,
+    impact: "~1,000 Workers Served Daily",
+    beneficiaries: "Construction Workers & Staff",
     featured: false,
   },
   {
     id: "hare-krishna-movement",
-    title: "Hare Krishna Movement of India",
+    title: "Supporting Spiritual & Cultural Development",
+    subtitle: "Preserving Heritage, Supporting Community",
     category: "Community",
     year: 2024,
     location: "Kolanukonda",
     shortDescription:
-      "Contribution to the Hare Krishna Movement towards temple development and community welfare.",
+      "₹1 crore contribution to the Hare Krishna Movement of India towards temple development and community welfare activities.",
     description:
       "Contribution of ₹1 Crore to the Hare Krishna Movement of India, Kolanukonda, towards temple development & social and community welfare activities.",
+    detailParagraphs: [
+      "SLV Group has contributed ₹1 crore to the Hare Krishna Movement of India, Kolanukonda, towards temple development and social and community welfare activities.",
+      "The contribution supports the development of spiritual and community facilities, as well as initiatives that promote spiritual learning, cultural values, community service and social welfare.",
+      "Through this support, SLV Group seeks to contribute to the preservation of spiritual and cultural heritage while supporting activities intended to benefit the wider community.",
+      "This initiative reflects the Group's commitment to social responsibility, cultural development and community welfare.",
+    ],
     image: csrPhoto2,
     impact: "₹1 Crore Contribution",
     beneficiaries: "Society & Communities",
     featured: false,
   },
   {
-    id: "site-workers-meals",
-    title: "Nutritious Meals for Site Workers",
-    category: "Food & Relief",
+    id: "abdul-kalam-nagar",
+    title: "P4 Programme – Abdul Kalam Nagar Development",
+    subtitle: "Improving Essential Community Infrastructure",
+    category: "Community",
     year: 2024,
-    location: "All SLV Group working sites",
-    shortDescription: "Providing nutritious meals to site workers four days a week.",
+    location: "Andhra Pradesh",
+    shortDescription:
+      "Under the Public–Private–People Partnership (P4) Programme, SLV Group has invested ₹1 crore in CC roads, drainage and water connections.",
     description:
-      "Nutritious meals are provided four days a week during afternoon hours at all SLV Group working sites through the Akshaya Patra Foundation, supporting the well-being of workers.",
-    image: csrPhoto3,
-    impact: "Worker Welfare",
-    beneficiaries: "Site Workers",
+      "Development of Abdul Kalam Nagar Colony with essential infrastructure — CC roads, drainage systems, and household water connections.",
+    detailParagraphs: [
+      "As part of the Public–Private–People Partnership (P4) Programme, SLV Group has undertaken the development of Abdul Kalam Nagar Colony, with a focus on essential infrastructure and the quality of life of local residents.",
+      "With an approximate investment of ₹1 crore, the initiative includes the development of Cement Concrete (CC) roads, drainage systems and household water connections.",
+      "These improvements are intended to strengthen basic infrastructure, support better sanitation and improve access to essential water facilities for residents.",
+      "Through the P4 Programme, SLV Group continues to support community development, inclusive growth and improved living conditions in the communities around its projects.",
+    ],
+    image: csrPhoto1,
+    impact: "₹1 Crore Investment",
+    beneficiaries: "Local Residents",
     featured: false,
   },
   {
     id: "cctv-infrastructure",
-    title: "Vijayawada Police Commissionerate – CCTV Infrastructure",
+    title: "Vijayawada Police Commissionerate",
+    subtitle: "Supporting CCTV Infrastructure & Public Safety",
     category: "Community",
     year: 2024,
     location: "Vijayawada",
-    shortDescription: "Contribution towards CCTV camera infrastructure for public safety.",
+    shortDescription:
+      "₹25 lakh contribution towards CCTV camera infrastructure, strengthening security monitoring and law-enforcement across the city.",
     description:
-      "Contribution of approximately ₹25 Lakhs towards CCTV camera infrastructure for the Vijayawada Police Commissionerate, supporting public safety and security.",
+      "Contribution of approximately ₹25 lakh towards CCTV camera infrastructure for the Vijayawada Police Commissionerate.",
+    detailParagraphs: [
+      "SLV Group has contributed approximately ₹25 lakh towards the development of CCTV camera infrastructure for the Vijayawada Police Commissionerate as part of its commitment to public safety and community welfare.",
+      "The contribution supports surveillance and security infrastructure, helping strengthen security monitoring and support law-enforcement efforts across the city.",
+      "Through this initiative, SLV Group aims to contribute to safer public spaces and a more secure environment for citizens.",
+      "This support reflects the Group's commitment to responsible corporate citizenship, public welfare and community safety.",
+    ],
     image: csrPhoto4,
     impact: "₹25 Lakhs Contribution",
-    beneficiaries: "Public Safety",
+    beneficiaries: "Citizens & Public Safety",
     featured: false,
   },
   {
     id: "heal-foundation",
     title: "HEAL Foundation",
+    subtitle: "Supporting Children & Persons with Disabilities",
     category: "Healthcare & Accessibility",
     year: 2024,
     location: "Andhra Pradesh",
-    shortDescription: "Supporting empowerment and welfare of disadvantaged children.",
+    shortDescription:
+      "Supporting welfare, empowerment and inclusion of disadvantaged children and persons with disabilities, including electric wheelchair distribution.",
     description:
-      "Association with the HEAL Foundation, supporting the empowerment and welfare of disadvantaged children, including orphans and visually and physically challenged individuals. SLV Group also supports beneficiaries through the donation of electric wheelchairs.",
+      "Association with the HEAL Foundation supporting the empowerment and welfare of disadvantaged children and persons with disabilities.",
+    detailParagraphs: [
+      "SLV Group is associated with the HEAL Foundation in support of initiatives focused on the welfare, empowerment and inclusion of disadvantaged children and persons with disabilities, including orphans and individuals with visual or physical challenges.",
+      "Through this association, SLV Group supports beneficiaries with essential assistance and resources intended to contribute to greater independence, mobility and dignity.",
+      "One of the initiatives includes the distribution of electric wheelchairs to eligible beneficiaries, helping people with mobility challenges move more independently and participate more actively in daily life.",
+      "SLV Group's association with the HEAL Foundation reflects its commitment to inclusive communities, equal opportunities and dignity for all, with particular attention to people who need support.",
+    ],
     image: communityImage,
-    impact: "Empowerment",
-    beneficiaries: "Disadvantaged Children",
+    impact: "Empowerment & Inclusion",
+    beneficiaries: "Children & Persons with Disabilities",
     featured: false,
   },
   {
     id: "temple-spiritual",
     title: "Temple & Spiritual Activities",
+    subtitle: "Supporting Cultural Spaces & Community Traditions",
     category: "Community",
     year: 2024,
     location: "Bhimavaram",
-    shortDescription: "Contributions towards temple development and religious activities.",
+    shortDescription:
+      "Contributions towards temple development and spiritual activities, including support for the Bhimavaram Temple.",
     description:
-      "Contributions and donations towards temple development and religious activities, including support for the Bhimavaram Temple.",
+      "Support for temple development and spiritual activities through contributions to religious and community initiatives.",
+    detailParagraphs: [
+      "SLV Group supports temple development and spiritual activities through contributions to religious and community initiatives.",
+      "As part of these efforts, the Group has supported the development and maintenance of the Bhimavaram Temple, contributing towards the upkeep of a spiritual and cultural space.",
+      "Temples can serve as centres for spiritual practice, cultural traditions, community gatherings and social activities. Support for these spaces forms part of SLV Group's wider engagement with community values and cultural heritage.",
+      "Through its contributions to temple and spiritual activities, SLV Group continues to support cultural heritage, community values and spiritual well-being.",
+    ],
     image: communityImage,
-    impact: "Temple Development",
-    beneficiaries: "Spiritual Welfare",
+    impact: "Cultural Preservation",
+    beneficiaries: "Spiritual & Community Welfare",
     featured: false,
   },
 ];
@@ -275,10 +331,210 @@ function CornerMarks() {
 }
 
 // -----------------------------------------------------------------------------
+// DETAIL MODAL
+// -----------------------------------------------------------------------------
+
+function InitiativeDetailModal({
+  initiative,
+  onClose,
+}: {
+  initiative: CSRInitiative | null;
+  onClose: () => void;
+}) {
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (initiative) {
+      document.body.style.overflow = "hidden";
+      return () => { document.body.style.overflow = ""; };
+    }
+  }, [initiative]);
+
+  // Close on Escape
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    },
+    [onClose],
+  );
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [handleKeyDown]);
+
+  if (!initiative) return null;
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center"
+      onClick={onClose}
+    >
+      {/* Backdrop */}
+      <div
+        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+        style={{ animation: "fadeIn 0.25s ease-out" }}
+      />
+
+      {/* Modal */}
+      <div
+        className="relative z-10 mx-4 max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-[2rem] border border-border bg-card shadow-[0_40px_120px_rgba(0,0,0,0.4)]"
+        style={{ animation: "modalSlideUp 0.35s cubic-bezier(0.16,1,0.3,1)" }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Close button */}
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute right-4 top-4 z-30 flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-black/50 text-white backdrop-blur-md transition-all hover:bg-black/70 hover:border-gold/40"
+          aria-label="Close"
+        >
+          <X className="h-4 w-4" />
+        </button>
+
+        <div className="overflow-y-auto max-h-[90vh] custom-scrollbar">
+          {/* Hero image */}
+          <div className="relative aspect-[21/9] w-full overflow-hidden">
+            <img
+              src={initiative.image}
+              alt={initiative.title}
+              className="h-full w-full object-cover"
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 bg-gradient-to-t from-card via-card/30 to-transparent"
+            />
+            <CornerMarks />
+
+            {/* Category badge */}
+            <div className="absolute left-6 top-6 z-20">
+              <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/40 px-4 py-2 text-[9px] font-bold uppercase tracking-[0.18em] text-white backdrop-blur-md">
+                <span className="text-gold">
+                  <CategoryIcon category={initiative.category} />
+                </span>
+                {initiative.category}
+              </span>
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="px-8 pb-10 pt-2 sm:px-12 sm:pb-14">
+            {/* Meta row */}
+            <div className="flex flex-wrap items-center gap-4 text-[9px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+              <span className="flex items-center gap-1.5">
+                <CalendarDays className="h-3.5 w-3.5 text-gold" />
+                {initiative.date || initiative.year}
+              </span>
+              {initiative.location && (
+                <span className="flex items-center gap-1.5">
+                  <MapPin className="h-3.5 w-3.5 text-gold" />
+                  {initiative.location}
+                </span>
+              )}
+            </div>
+
+            {/* Title */}
+            <h2 className="mt-5 font-display text-3xl font-bold leading-tight text-foreground sm:text-4xl lg:text-5xl">
+              {initiative.title}
+            </h2>
+
+            {initiative.subtitle && (
+              <p className="mt-3 text-lg italic text-gradient-gold font-display">
+                {initiative.subtitle}
+              </p>
+            )}
+
+            {/* Decorative divider */}
+            <div className="mt-7 flex items-center gap-3">
+              <span className="h-px w-16 bg-gradient-gold" />
+              <span className="h-1.5 w-1.5 rotate-45 bg-gold" />
+              <span className="h-px flex-1 bg-gold/15" />
+            </div>
+
+            {/* Detail paragraphs */}
+            <div className="mt-7 space-y-5">
+              {initiative.detailParagraphs.map((para, i) => (
+                <p
+                  key={i}
+                  className="text-base leading-[1.85] text-muted-foreground sm:text-lg"
+                >
+                  {para}
+                </p>
+              ))}
+            </div>
+
+            {/* Impact cards */}
+            <div className="mt-10 grid gap-4 sm:grid-cols-3">
+              <div className="rounded-2xl border border-border bg-secondary/50 p-5">
+                <p className="text-[8px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+                  Impact
+                </p>
+                <p className="mt-2 font-display text-lg font-semibold text-foreground">
+                  {initiative.impact ?? "Community Support"}
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-border bg-secondary/50 p-5">
+                <p className="text-[8px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+                  Beneficiaries
+                </p>
+                <p className="mt-2 font-display text-lg font-semibold text-foreground">
+                  {initiative.beneficiaries ?? "Community"}
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-border bg-secondary/50 p-5">
+                <p className="text-[8px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+                  Location
+                </p>
+                <p className="mt-2 font-display text-lg font-semibold text-foreground">
+                  {initiative.location ?? "Andhra Pradesh"}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Animation keyframes */}
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes modalSlideUp {
+          from { opacity: 0; transform: translateY(32px) scale(0.97); }
+          to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(212,175,55,0.25);
+          border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(212,175,55,0.45);
+        }
+      `}</style>
+    </div>
+  );
+}
+
+// -----------------------------------------------------------------------------
 // INITIATIVE CARD
 // -----------------------------------------------------------------------------
 
-function InitiativeCard({ initiative, index }: { initiative: CSRInitiative; index: number }) {
+function InitiativeCard({
+  initiative,
+  index,
+  onLearnMore,
+}: {
+  initiative: CSRInitiative;
+  index: number;
+  onLearnMore: (initiative: CSRInitiative) => void;
+}) {
   return (
     <Reveal delay={index * 70}>
       <article
@@ -291,7 +547,9 @@ function InitiativeCard({ initiative, index }: { initiative: CSRInitiative; inde
           hover:-translate-y-1
           hover:border-gold/40
           hover:shadow-[0_25px_80px_rgba(0,0,0,0.12)]
+          cursor-pointer
         "
+        onClick={() => onLearnMore(initiative)}
       >
         {/* Image */}
         <div className="relative aspect-[16/10] overflow-hidden bg-black">
@@ -361,6 +619,12 @@ function InitiativeCard({ initiative, index }: { initiative: CSRInitiative; inde
             {initiative.title}
           </h3>
 
+          {initiative.subtitle && (
+            <p className="mt-2 text-xs italic text-gold/80 font-medium">
+              {initiative.subtitle}
+            </p>
+          )}
+
           <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
             {initiative.shortDescription}
           </p>
@@ -410,6 +674,7 @@ function InitiativeCard({ initiative, index }: { initiative: CSRInitiative; inde
 
 function CSRPage() {
   const [activeFilter, setActiveFilter] = useState<"All" | CSRCategory>("All");
+  const [selectedInitiative, setSelectedInitiative] = useState<CSRInitiative | null>(null);
 
   const { data: dbInitiatives, isLoading } = useQuery({
     queryKey: ["csr-activities"],
@@ -430,20 +695,28 @@ function CSRPage() {
         return defaultInitiatives;
       }
 
-      return data.map((item) => ({
-        id: item.id,
-        title: item.title,
-        category: item.category as CSRCategory,
-        year: item.year,
-        date: item.date || undefined,
-        location: item.location || undefined,
-        shortDescription: item.short_description,
-        description: item.description,
-        image: resolveImageUrl(item.image_url),
-        impact: item.impact || undefined,
-        beneficiaries: item.beneficiaries || undefined,
-        featured: item.featured,
-      }));
+      return data.map((item) => {
+        // Try to match with default initiative for rich detail content
+        const matchedDefault = defaultInitiatives.find(
+          (d) => d.id === item.id || d.title === item.title,
+        );
+        return {
+          id: item.id,
+          title: item.title,
+          subtitle: matchedDefault?.subtitle,
+          category: item.category as CSRCategory,
+          year: item.year,
+          date: item.date || undefined,
+          location: item.location || undefined,
+          shortDescription: item.short_description,
+          description: item.description,
+          detailParagraphs: matchedDefault?.detailParagraphs ?? [item.description],
+          image: resolveImageUrl(item.image_url),
+          impact: item.impact || undefined,
+          beneficiaries: item.beneficiaries || undefined,
+          featured: item.featured,
+        };
+      });
     },
   });
 
@@ -458,6 +731,11 @@ function CSRPage() {
 
   return (
     <main className="overflow-hidden bg-background">
+      {/* Detail Modal */}
+      <InitiativeDetailModal
+        initiative={selectedInitiative}
+        onClose={() => setSelectedInitiative(null)}
+      />
       {/* =====================================================================
           HERO
       ====================================================================== */}
@@ -635,11 +913,11 @@ function CSRPage() {
               label: "Years of Community Commitment",
             },
             {
-              value: "05",
-              label: "Sample CSR Initiatives",
+              value: "07",
+              label: "CSR Initiatives",
             },
             {
-              value: "04",
+              value: "05",
               label: "Impact Areas",
             },
             {
@@ -799,7 +1077,12 @@ function CSRPage() {
 
           <div className="mt-12 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
             {filteredInitiatives.map((initiative, index) => (
-              <InitiativeCard key={initiative.id} initiative={initiative} index={index} />
+              <InitiativeCard
+                key={initiative.id}
+                initiative={initiative}
+                index={index}
+                onLearnMore={setSelectedInitiative}
+              />
             ))}
           </div>
 
