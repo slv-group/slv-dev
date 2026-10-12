@@ -118,167 +118,7 @@ type CSRInitiative = {
   featured?: boolean;
 };
 
-// -----------------------------------------------------------------------------
-// SAMPLE DATA
-// -----------------------------------------------------------------------------
 
-const defaultInitiatives: CSRInitiative[] = [
-  {
-    id: "anna-canteen-donation-2024",
-    title: "Supporting Anna Canteens",
-    subtitle: "A Commitment to Affordable Food",
-    category: "Food & Relief",
-    year: 2024,
-    date: "August 2024",
-    location: "Andhra Pradesh",
-    shortDescription:
-      "SLV Group supports the Anna Canteen initiative of the Government of Andhra Pradesh, pledging ₹1 crore annually to make meals affordable and accessible.",
-    description:
-      "SLV Group has pledged an annual contribution of ₹1 crore towards the Anna Canteen initiative, supporting food security and community welfare across Andhra Pradesh.",
-    detailParagraphs: [
-      "As part of its Corporate Social Responsibility (CSR) initiatives, SLV Group supports the Anna Canteen initiative of the Government of Andhra Pradesh, which aims to make meals affordable and accessible to people in need.",
-      "SLV Group has pledged an annual contribution of ₹1 crore towards the initiative. The contribution was presented in support of the programme to the Hon'ble Chief Minister of Andhra Pradesh, Shri N. Chandrababu Naidu Garu.",
-      "Through this initiative, SLV Group seeks to support food security and community welfare by helping people from economically weaker sections access meals at an affordable cost.",
-      "This commitment reflects SLV Group's focus on giving back to society and contributing to inclusive development across Andhra Pradesh.",
-    ],
-    image: annaCanteenImage,
-    impact: "₹1 Crore Annual Pledge",
-    beneficiaries: "Economically Weaker Sections",
-    featured: true,
-  },
-  {
-    id: "site-workers-meals",
-    title: "Nutrition Support for Construction Workers",
-    subtitle: "Nourishing the People Who Build Our Projects",
-    category: "Food & Relief",
-    year: 2024,
-    location: "All SLV Group Project Sites",
-    shortDescription:
-      "Nutritious meals provided four days a week in association with Akshaya Patra, serving ~1,000 workers and staff per day.",
-    description:
-      "A nutrition programme for construction workers and staff across SLV Group project sites, in association with Akshaya Patra, Mangalagiri.",
-    detailParagraphs: [
-      "SLV Group has introduced a nutrition programme for construction workers and staff across its project sites, with a focus on workforce welfare and well-being.",
-      "Through this programme, nutritious meals are provided four days a week in association with Akshaya Patra, Mangalagiri. The initiative currently serves approximately 1,000 construction workers and staff per day across SLV Group's project sites.",
-      "By supporting access to regular, wholesome meals, SLV Group aims to foster a healthier and more supportive working environment while recognising the people who contribute every day to its projects.",
-      "Supporting the well-being of its workforce remains an important part of SLV Group's commitment to responsible and inclusive development.",
-    ],
-    image: csrPhoto3,
-    impact: "~1,000 Workers Served Daily",
-    beneficiaries: "Construction Workers & Staff",
-    featured: false,
-  },
-  {
-    id: "hare-krishna-movement",
-    title: "Supporting Spiritual & Cultural Development",
-    subtitle: "Preserving Heritage, Supporting Community",
-    category: "Community",
-    year: 2024,
-    location: "Kolanukonda",
-    shortDescription:
-      "₹1 crore contribution to the Hare Krishna Movement of India towards temple development and community welfare activities.",
-    description:
-      "Contribution of ₹1 Crore to the Hare Krishna Movement of India, Kolanukonda, towards temple development & social and community welfare activities.",
-    detailParagraphs: [
-      "SLV Group has contributed ₹1 crore to the Hare Krishna Movement of India, Kolanukonda, towards temple development and social and community welfare activities.",
-      "The contribution supports the development of spiritual and community facilities, as well as initiatives that promote spiritual learning, cultural values, community service and social welfare.",
-      "Through this support, SLV Group seeks to contribute to the preservation of spiritual and cultural heritage while supporting activities intended to benefit the wider community.",
-      "This initiative reflects the Group's commitment to social responsibility, cultural development and community welfare.",
-    ],
-    image: csrPhoto2,
-    impact: "₹1 Crore Contribution",
-    beneficiaries: "Society & Communities",
-    featured: false,
-  },
-  {
-    id: "abdul-kalam-nagar",
-    title: "P4 Programme – Abdul Kalam Nagar Development",
-    subtitle: "Improving Essential Community Infrastructure",
-    category: "Community",
-    year: 2024,
-    location: "Andhra Pradesh",
-    shortDescription:
-      "Under the Public–Private–People Partnership (P4) Programme, SLV Group has invested ₹1 crore in CC roads, drainage and water connections.",
-    description:
-      "Development of Abdul Kalam Nagar Colony with essential infrastructure — CC roads, drainage systems, and household water connections.",
-    detailParagraphs: [
-      "As part of the Public–Private–People Partnership (P4) Programme, SLV Group has undertaken the development of Abdul Kalam Nagar Colony, with a focus on essential infrastructure and the quality of life of local residents.",
-      "With an approximate investment of ₹1 crore, the initiative includes the development of Cement Concrete (CC) roads, drainage systems and household water connections.",
-      "These improvements are intended to strengthen basic infrastructure, support better sanitation and improve access to essential water facilities for residents.",
-      "Through the P4 Programme, SLV Group continues to support community development, inclusive growth and improved living conditions in the communities around its projects.",
-    ],
-    image: csrPhoto1,
-    impact: "₹1 Crore Investment",
-    beneficiaries: "Local Residents",
-    featured: false,
-  },
-  {
-    id: "cctv-infrastructure",
-    title: "Vijayawada Police Commissionerate",
-    subtitle: "Supporting CCTV Infrastructure & Public Safety",
-    category: "Community",
-    year: 2024,
-    location: "Vijayawada",
-    shortDescription:
-      "₹25 lakh contribution towards CCTV camera infrastructure, strengthening security monitoring and law-enforcement across the city.",
-    description:
-      "Contribution of approximately ₹25 lakh towards CCTV camera infrastructure for the Vijayawada Police Commissionerate.",
-    detailParagraphs: [
-      "SLV Group has contributed approximately ₹25 lakh towards the development of CCTV camera infrastructure for the Vijayawada Police Commissionerate as part of its commitment to public safety and community welfare.",
-      "The contribution supports surveillance and security infrastructure, helping strengthen security monitoring and support law-enforcement efforts across the city.",
-      "Through this initiative, SLV Group aims to contribute to safer public spaces and a more secure environment for citizens.",
-      "This support reflects the Group's commitment to responsible corporate citizenship, public welfare and community safety.",
-    ],
-    image: csrPhoto4,
-    impact: "₹25 Lakhs Contribution",
-    beneficiaries: "Citizens & Public Safety",
-    featured: false,
-  },
-  {
-    id: "heal-foundation",
-    title: "HEAL Foundation",
-    subtitle: "Supporting Children & Persons with Disabilities",
-    category: "Healthcare & Accessibility",
-    year: 2024,
-    location: "Andhra Pradesh",
-    shortDescription:
-      "Supporting welfare, empowerment and inclusion of disadvantaged children and persons with disabilities, including electric wheelchair distribution.",
-    description:
-      "Association with the HEAL Foundation supporting the empowerment and welfare of disadvantaged children and persons with disabilities.",
-    detailParagraphs: [
-      "SLV Group is associated with the HEAL Foundation in support of initiatives focused on the welfare, empowerment and inclusion of disadvantaged children and persons with disabilities, including orphans and individuals with visual or physical challenges.",
-      "Through this association, SLV Group supports beneficiaries with essential assistance and resources intended to contribute to greater independence, mobility and dignity.",
-      "One of the initiatives includes the distribution of electric wheelchairs to eligible beneficiaries, helping people with mobility challenges move more independently and participate more actively in daily life.",
-      "SLV Group's association with the HEAL Foundation reflects its commitment to inclusive communities, equal opportunities and dignity for all, with particular attention to people who need support.",
-    ],
-    image: communityImage,
-    impact: "Empowerment & Inclusion",
-    beneficiaries: "Children & Persons with Disabilities",
-    featured: false,
-  },
-  {
-    id: "temple-spiritual",
-    title: "Temple & Spiritual Activities",
-    subtitle: "Supporting Cultural Spaces & Community Traditions",
-    category: "Community",
-    year: 2024,
-    location: "Bhimavaram",
-    shortDescription:
-      "Contributions towards temple development and spiritual activities, including support for the Bhimavaram Temple.",
-    description:
-      "Support for temple development and spiritual activities through contributions to religious and community initiatives.",
-    detailParagraphs: [
-      "SLV Group supports temple development and spiritual activities through contributions to religious and community initiatives.",
-      "As part of these efforts, the Group has supported the development and maintenance of the Bhimavaram Temple, contributing towards the upkeep of a spiritual and cultural space.",
-      "Temples can serve as centres for spiritual practice, cultural traditions, community gatherings and social activities. Support for these spaces forms part of SLV Group's wider engagement with community values and cultural heritage.",
-      "Through its contributions to temple and spiritual activities, SLV Group continues to support cultural heritage, community values and spiritual well-being.",
-    ],
-    image: communityImage,
-    impact: "Cultural Preservation",
-    beneficiaries: "Spiritual & Community Welfare",
-    featured: false,
-  },
-];
 
 // -----------------------------------------------------------------------------
 // FILTERS
@@ -688,29 +528,31 @@ function CSRPage() {
 
       if (error) {
         console.error("Error fetching CSR activities:", error);
-        return defaultInitiatives;
+        return [];
       }
 
       if (!data || data.length === 0) {
-        return defaultInitiatives;
+        return [];
       }
 
       return data.map((item) => {
-        // Try to match with default initiative for rich detail content
-        const matchedDefault = defaultInitiatives.find(
-          (d) => d.id === item.id || d.title === item.title,
-        );
+        const detailParagraphs = item.description
+          ? item.description
+              .split(/\n\n+/)
+              .map((p) => p.trim())
+              .filter(Boolean)
+          : [];
+
         return {
           id: item.id,
           title: item.title,
-          subtitle: matchedDefault?.subtitle,
           category: item.category as CSRCategory,
           year: item.year,
           date: item.date || undefined,
           location: item.location || undefined,
           shortDescription: item.short_description,
           description: item.description,
-          detailParagraphs: matchedDefault?.detailParagraphs ?? [item.description],
+          detailParagraphs: detailParagraphs.length > 0 ? detailParagraphs : [item.description],
           image: resolveImageUrl(item.image_url),
           impact: item.impact || undefined,
           beneficiaries: item.beneficiaries || undefined,
@@ -720,14 +562,12 @@ function CSRPage() {
     },
   });
 
-  const initiatives = dbInitiatives || defaultInitiatives;
+  const initiatives = dbInitiatives || [];
 
   const filteredInitiatives =
     activeFilter === "All"
       ? initiatives
       : initiatives.filter((item) => item.category === activeFilter);
-
-  const featured = initiatives.find((item) => item.featured) ?? initiatives[0];
 
   return (
     <main className="overflow-hidden bg-background">
@@ -913,7 +753,12 @@ function CSRPage() {
               label: "Years of Community Commitment",
             },
             {
-              value: "07",
+              value:
+                initiatives.length > 0
+                  ? initiatives.length < 10
+                    ? `0${initiatives.length}`
+                    : `${initiatives.length}`
+                  : "00",
               label: "CSR Initiatives",
             },
             {
@@ -1075,18 +920,29 @@ function CSRPage() {
             </div>
           </Reveal>
 
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-            {filteredInitiatives.map((initiative, index) => (
-              <InitiativeCard
-                key={initiative.id}
-                initiative={initiative}
-                index={index}
-                onLearnMore={setSelectedInitiative}
-              />
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="mt-12 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+              {[1, 2, 3].map((n) => (
+                <div
+                  key={n}
+                  className="h-80 animate-pulse rounded-[2rem] border border-border bg-card/60"
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="mt-12 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+              {filteredInitiatives.map((initiative, index) => (
+                <InitiativeCard
+                  key={initiative.id}
+                  initiative={initiative}
+                  index={index}
+                  onLearnMore={setSelectedInitiative}
+                />
+              ))}
+            </div>
+          )}
 
-          {filteredInitiatives.length === 0 && (
+          {!isLoading && filteredInitiatives.length === 0 && (
             <div className="mt-10 rounded-3xl border border-border bg-card px-6 py-16 text-center">
               <HeartHandshake className="mx-auto h-10 w-10 text-gold/70" />
 
