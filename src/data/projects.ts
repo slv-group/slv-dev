@@ -1768,52 +1768,6 @@ export const projects: Project[] = [
       { type: "3 BHK", sqft: 1800, image: img(3) },
     ],
   },
-  // ── 34 ──────────────────────────────────────────────
-
-  {
-    id: "34",
-    slug: "slv-aerocity-2",
-    name: "SLV Aerocity-2",
-    tagline: "Expansive plotted layouts near Gannavaram's aviation hub",
-    category: "Plots",
-    status: "Ongoing",
-    location: "Vedurupavuluru, Gannavaram",
-    city: "Gannavaram",
-    priceFrom: 3800000,
-    bedrooms: "Villa Plots",
-    sqftFrom: 1800,
-    sqftTo: 5400,
-    launchDate: "Ongoing",
-    image: img(1),
-    gallery: gallery(1),
-    description:
-      "SLV Aerocity-2 — an expansive plotted layout at Vedurupavuluru, Gannavaram. Currently under development, Aerocity-2 offers a unique opportunity to own land in the emerging Aerocity zone adjacent to Gannavaram Airport.",
-    amenities: [
-      "Gated Entrance",
-      "Wide Roads",
-      "Underground Drainage",
-      "Street Lighting",
-      "Avenue Plantation",
-      "Children's Park",
-      "Clear Titles",
-    ],
-    specifications: [
-      { label: "Type", value: "Plotted Layout" },
-      { label: "Location", value: "Vedurupavuluru, Gannavaram" },
-      { label: "Commencement", value: "Mar 2025" },
-      { label: "Completion", value: "Ongoing" },
-    ],
-    proximity: [
-      { label: "Gannavaram Airport", distance: "4 km" },
-      { label: "NH-16 Highway", distance: "4 km" },
-      { label: "Vijayawada City Centre", distance: "13 km" },
-      { label: "Schools", distance: "3 km" },
-    ],
-    floorPlans: [
-      { type: "Villa Plot", sqft: 1800, image: img(1) },
-      { type: "Premium Plot", sqft: 5400, image: img(2) },
-    ],
-  },
 ];
 
 export const getProject = (slug: string) => projects.find((p) => p.slug === slug);

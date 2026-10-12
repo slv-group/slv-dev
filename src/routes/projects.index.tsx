@@ -35,22 +35,8 @@ export const Route = createFileRoute("/projects/")({
       .eq("is_published", true)
       .order("sort_order", { ascending: true });
 
-    let allProjects = [...staticProjects];
-
-    if (data && data.length > 0) {
-      const dbProjects = data.map(mapSupabaseToProject);
-      // Build Sets of DB slugs and normalized names for fast lookup
-      const dbSlugs = new Set(dbProjects.map((p) => p.slug));
-      const dbNames = new Set(dbProjects.map((p) => p.name.toLowerCase().trim()));
-
-      // Keep only static projects that DON'T have a DB counterpart (by slug OR name)
-      allProjects = staticProjects.filter(
-        (s) => !dbSlugs.has(s.slug) && !dbNames.has(s.name.toLowerCase().trim()),
-      );
-
-      // Append all DB projects (they take priority)
-      allProjects.push(...dbProjects);
-    }
+    const allProjects =
+      data && data.length > 0 ? data.map(mapSupabaseToProject) : [...staticProjects];
 
     // Sort projects: Ongoing → Upcoming → Completed
     const statusOrder: Record<ProjectStatus, number> = {

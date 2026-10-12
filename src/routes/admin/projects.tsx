@@ -418,11 +418,17 @@ function ProjectsManagement() {
   // Delete project
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("projects").delete().eq("id", id);
+      const { data, error } = await supabase.from("projects").delete().eq("id", id).select();
       if (error) throw error;
+      if (!data || data.length === 0) {
+        throw new Error("Failed to delete project. Record not found or insufficient permissions.");
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-projects"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-stats-projects"] });
+      queryClient.invalidateQueries({ queryKey: ["published-projects-list"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-projects-lookup"] });
       toast.success("Project deleted");
       setDeletingId(null);
     },

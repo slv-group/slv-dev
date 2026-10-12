@@ -1,6 +1,20 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowRight, ArrowLeft, Quote, Crown, Award, Shield, TrendingUp, Star, MapPin } from "lucide-react";
+import {
+  ArrowRight,
+  ArrowLeft,
+  Quote,
+  Crown,
+  Award,
+  Shield,
+  TrendingUp,
+  Star,
+  MapPin,
+  ShieldCheck,
+  Building2,
+  Leaf,
+  Landmark,
+} from "lucide-react";
 import { HeroSection } from "@/components/home/HeroSection";
 import { PropertyCard } from "@/components/PropertyCard";
 import { Reveal } from "@/components/Reveal";
@@ -92,6 +106,11 @@ const accolades = [
   { text: "ISO 9001:2015 Certified", icon: Award },
   { text: "5000+ Happy Families", icon: Shield },
   { text: "CREDAI Member", icon: TrendingUp },
+  { text: "RERA", icon: ShieldCheck },
+  { text: "CREDAI", icon: Building2 },
+  { text: "IGBC", icon: Leaf },
+  { text: "AP CHAMBERS", icon: Building2 },
+  { text: "BAI", icon: Landmark },
 ];
 
 function Index() {
@@ -192,7 +211,7 @@ function Index() {
 
           {/* Locations */}
           <div className="flex flex-wrap items-center justify-center gap-2.5">
-            {["Vijayawada", "Gannavaram", "Gunthupalli", "Amaravathi", "Bhimavaram"].map(
+            {["Vijayawada", "Gannavaram", "Gunthapalli", "Amaravathi", "Bhimavaram"].map(
               (location) => (
                 <span
                   key={location}

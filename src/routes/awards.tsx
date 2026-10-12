@@ -664,7 +664,7 @@ function AwardsPage() {
               <div className="relative mx-auto w-full max-w-md">
                 <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04]">
                   <img
-                    src={leadershipImage}
+                    src="/assets/csr/awardsrinivasaraju3.png"
                     alt="Penmetsa Srinivasa Raju"
                     className="aspect-[4/5] w-full object-cover"
                     loading="lazy"
