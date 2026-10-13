@@ -211,7 +211,7 @@ function Index() {
 
           {/* Locations */}
           <div className="flex flex-wrap items-center justify-center gap-2.5">
-            {["Vijayawada", "Gannavaram", "Gunthapalli", "Amaravathi", "Bhimavaram"].map(
+            {["Vijayawada", "Gannavaram", "GuntUpalli", "Amaravathi", "Bhimavaram"].map(
               (location) => (
                 <span
                   key={location}
