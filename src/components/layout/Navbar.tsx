@@ -1,4 +1,4 @@
-import { useEffect, useState, Fragment } from "react";
+import { useEffect, useState, useRef, useCallback, Fragment } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Menu, X, Phone, Crown, ChevronDown, ArrowUpRight, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -50,6 +50,8 @@ const workLinks = [
   },
 ];
 
+type DropdownKey = "ourStory" | "projects" | "work" | "buyersGuide";
+
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
@@ -57,6 +59,10 @@ export function Navbar() {
   const [mobileProjectsOpen, setMobileProjectsOpen] = useState(false);
   const [mobileWorkOpen, setMobileWorkOpen] = useState(false);
   const [mobileBuyersGuideOpen, setMobileBuyersGuideOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<DropdownKey | null>(null);
+
+  const dropdownTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const navRef = useRef<HTMLElement>(null);
 
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
@@ -69,6 +75,19 @@ export function Navbar() {
     }
   };
 
+  const openDropdown = useCallback((key: DropdownKey) => {
+    if (dropdownTimerRef.current) clearTimeout(dropdownTimerRef.current);
+    setActiveDropdown(key);
+  }, []);
+
+  const closeDropdown = useCallback(() => {
+    dropdownTimerRef.current = setTimeout(() => setActiveDropdown(null), 150);
+  }, []);
+
+  const toggleDropdown = useCallback((key: DropdownKey) => {
+    setActiveDropdown((prev) => (prev === key ? null : key));
+  }, []);
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 30);
     onScroll();
@@ -76,7 +95,84 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => setOpen(false), [pathname]);
+  useEffect(() => {
+    setOpen(false);
+    setActiveDropdown(null);
+  }, [pathname]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent | TouchEvent) => {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) {
+        setActiveDropdown(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
+  }, []);
+
+  const renderDropdown = (
+    key: DropdownKey,
+    label: string,
+    links: Array<{ label: string; to: string; search?: Record<string, string> }>,
+    minWidth = "230px",
+  ) => (
+    <div
+      className="relative"
+      onMouseEnter={() => openDropdown(key)}
+      onMouseLeave={closeDropdown}
+    >
+      <button
+        onClick={() => toggleDropdown(key)}
+        className={cn(
+          "flex items-center gap-1 rounded-lg px-3 py-2 text-[0.82rem] font-medium transition-all duration-300 cursor-pointer",
+          scrolled ? "text-black/50 hover:text-foreground" : "text-white/70 hover:text-white",
+        )}
+      >
+        {label}
+        <ChevronDown
+          className={cn(
+            "h-3 w-3 transition-transform",
+            activeDropdown === key ? "rotate-180" : "",
+          )}
+        />
+      </button>
+
+      {activeDropdown === key && (
+        <div
+          className="absolute left-0 top-full pt-1 z-50"
+          style={{ minWidth }}
+          onMouseEnter={() => openDropdown(key)}
+          onMouseLeave={closeDropdown}
+        >
+          <div className="rounded-2xl border border-white/10 bg-black/80 p-4 backdrop-blur-xl">
+            <ul className="space-y-3">
+              {links.map((item) => (
+                <li key={item.label}>
+                  <Link
+                    to={item.to}
+                    search={item.search}
+                    onClick={() => {
+                      scrollToTopIfSamePage(item.to);
+                      setActiveDropdown(null);
+                    }}
+                    className="flex items-center justify-between text-sm text-white/70 hover:text-gold"
+                  >
+                    {item.label}
+                    <ArrowUpRight className="h-3 w-3" />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-6 sm:pt-6">
@@ -93,6 +189,7 @@ export function Navbar() {
       />
 
       <nav
+        ref={navRef}
         className={cn(
           "relative mx-auto flex max-w-7xl items-center justify-between rounded-full px-5 py-3.5 transition-all duration-700 sm:px-7",
           scrolled
@@ -135,8 +232,8 @@ export function Navbar() {
           </span>
         </Link>
 
-        {/* Desktop links */}
-        <div className="hidden items-center gap-1 lg:flex">
+        {/* Desktop links — xl breakpoint (1280px+) to prevent wrapping on tablets */}
+        <div className="hidden items-center gap-1 xl:flex">
           {/* Home */}
           <Link
             to="/"
@@ -156,129 +253,16 @@ export function Navbar() {
           </Link>
 
           {/* Our Story */}
-          <div className="relative group">
-            <button
-              className={cn(
-                "flex items-center gap-1 rounded-lg px-3 py-2 text-[0.82rem] font-medium transition-all duration-300 cursor-pointer",
-                scrolled ? "text-black/50 hover:text-foreground" : "text-white/70 hover:text-white",
-              )}
-            >
-              Our Story
-              <ChevronDown className="h-3 w-3 transition-transform group-hover:rotate-180" />
-            </button>
-
-            <div className="absolute left-0 top-full hidden min-w-[230px] rounded-2xl border border-white/10 bg-black/80 p-4 backdrop-blur-xl group-hover:block">
-              <ul className="space-y-3">
-                {ourStoryLinks.map((item) => (
-                  <li key={item.label}>
-                    <Link
-                      to={item.to}
-                      onClick={() => {
-                        scrollToTopIfSamePage(item.to);
-                      }}
-                      className="flex items-center justify-between text-sm text-white/70 hover:text-gold"
-                    >
-                      {item.label}
-                      <ArrowUpRight className="h-3 w-3" />
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
+          {renderDropdown("ourStory", "Our Story", ourStoryLinks, "230px")}
 
           {/* Projects */}
-          <div className="relative group">
-            <button
-              className={cn(
-                "flex items-center gap-1 rounded-lg px-3 py-2 text-[0.82rem] font-medium transition-all duration-300 cursor-pointer",
-                scrolled ? "text-black/50 hover:text-foreground" : "text-white/70 hover:text-white",
-              )}
-            >
-              Projects
-              <ChevronDown className="h-3 w-3 transition-transform group-hover:rotate-180" />
-            </button>
-
-            <div className="absolute left-0 top-full hidden min-w-[230px] rounded-2xl border border-white/10 bg-black/80 p-4 backdrop-blur-xl group-hover:block">
-              <ul className="space-y-3">
-                {projectLinks.map((item) => (
-                  <li key={item.label}>
-                    <Link
-                      to={item.to}
-                      search={item.search}
-                      onClick={() => scrollToTopIfSamePage(item.to)}
-                      className="flex items-center justify-between text-sm text-white/70 hover:text-gold"
-                    >
-                      {item.label}
-                      <ArrowUpRight className="h-3 w-3" />
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
+          {renderDropdown("projects", "Projects", projectLinks, "230px")}
 
           {/* Work With Us */}
-          <div className="relative group">
-            <button
-              className={cn(
-                "flex items-center gap-1 rounded-lg px-3 py-2 text-[0.82rem] font-medium transition-all duration-300 cursor-pointer",
-                scrolled ? "text-black/50 hover:text-foreground" : "text-white/70 hover:text-white",
-              )}
-            >
-              Work With Us
-              <ChevronDown className="h-3 w-3 transition-transform group-hover:rotate-180" />
-            </button>
-
-            <div className="absolute left-0 top-full hidden min-w-[260px] rounded-2xl border border-white/10 bg-black/80 p-4 backdrop-blur-xl group-hover:block">
-              <ul className="space-y-3">
-                {workLinks.map((item) => (
-                  <li key={item.label}>
-                    <Link
-                      to={item.to}
-                      onClick={() => {
-                        scrollToTopIfSamePage(item.to);
-                      }}
-                      className="flex items-center justify-between text-sm text-white/70 hover:text-gold"
-                    >
-                      {item.label}
-                      <ArrowUpRight className="h-3 w-3" />
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
+          {renderDropdown("work", "Work With Us", workLinks, "260px")}
 
           {/* Buyer's Guide */}
-          <div className="relative group">
-            <button
-              className={cn(
-                "flex items-center gap-1 rounded-lg px-3 py-2 text-[0.82rem] font-medium transition-all duration-300 cursor-pointer",
-                scrolled ? "text-black/50 hover:text-foreground" : "text-white/70 hover:text-white",
-              )}
-            >
-              Buyer's Guide
-              <ChevronDown className="h-3 w-3 transition-transform group-hover:rotate-180" />
-            </button>
-
-            <div className="absolute left-0 top-full hidden min-w-[200px] rounded-2xl border border-white/10 bg-black/80 p-4 backdrop-blur-xl group-hover:block">
-              <ul className="space-y-3">
-                {buyersGuideLinks.map((item) => (
-                  <li key={item.label}>
-                    <Link
-                      to={item.to}
-                      onClick={() => scrollToTopIfSamePage(item.to)}
-                      className="flex items-center justify-between text-sm text-white/70 hover:text-gold"
-                    >
-                      {item.label}
-                      <ArrowUpRight className="h-3 w-3" />
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
+          {renderDropdown("buyersGuide", "Buyer's Guide", buyersGuideLinks, "200px")}
 
           {/* NRI Corner */}
           <Link
@@ -321,7 +305,7 @@ export function Navbar() {
           <Link
             to="/site-visit"
             onClick={() => scrollToTopIfSamePage("/site-visit")}
-            className="group hidden items-center gap-2 overflow-hidden rounded-xl px-4 py-2.5 text-sm font-semibold text-gold-foreground shadow-lg transition-all duration-300 hover:scale-[1.04] hover:shadow-xl lg:flex"
+            className="group hidden items-center gap-2 overflow-hidden rounded-xl px-4 py-2.5 text-sm font-semibold text-gold-foreground shadow-lg transition-all duration-300 hover:scale-[1.04] hover:shadow-xl xl:flex"
             style={{ background: "var(--gradient-gold)" }}
           >
             <MapPin className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5" />
@@ -331,7 +315,7 @@ export function Navbar() {
             onClick={() => setOpen((o) => !o)}
             aria-label="Toggle menu"
             className={cn(
-              "flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-300 lg:hidden cursor-pointer",
+              "flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-300 xl:hidden cursor-pointer",
               scrolled ? "text-foreground hover:bg-secondary" : "text-gold hover:bg-white/15",
             )}
           >
@@ -342,7 +326,7 @@ export function Navbar() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="mx-auto mt-2 max-w-7xl max-h-[calc(100dvh-100px)] overflow-y-auto overscroll-contain [scrollbar-width:thin] animate-slide-down rounded-2xl border border-white/10 bg-black/60 p-3 backdrop-blur-[30px] lg:hidden shadow-2xl">
+        <div className="mx-auto mt-2 max-w-7xl max-h-[calc(100dvh-100px)] overflow-y-auto overscroll-contain [scrollbar-width:thin] animate-slide-down rounded-2xl border border-white/10 bg-black/60 p-3 backdrop-blur-[30px] xl:hidden shadow-2xl">
           {/* Crown accent */}
           <div className="mb-2 flex items-center gap-2 px-3 py-1.5 border-b border-border/50">
             <Crown className="h-3.5 w-3.5 text-gold" />
@@ -471,6 +455,14 @@ export function Navbar() {
               className="rounded-xl px-4 py-3 text-gold"
             >
               Contact Us
+            </Link>
+            <Link
+              to="/site-visit"
+              onClick={() => scrollToTopIfSamePage("/site-visit")}
+              className="mt-1 flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold text-gold-foreground"
+              style={{ background: "var(--gradient-gold)" }}
+            >
+              <MapPin className="h-4 w-4" /> Book Your Site Visit
             </Link>
             <a
               href="tel:+919859595939"

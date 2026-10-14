@@ -32,9 +32,13 @@ export function ContactPopup() {
   const [messageText, setMessageText] = useState("");
 
   useEffect(() => {
+    if (typeof window !== "undefined" && sessionStorage.getItem("slv_contact_popup_dismissed")) {
+      return;
+    }
+
     const timer = window.setTimeout(() => {
       setOpen(true);
-    }, 500);
+    }, 100);
 
     return () => window.clearTimeout(timer);
   }, []);
@@ -57,6 +61,9 @@ export function ContactPopup() {
   }, []);
 
   const closePopup = () => {
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("slv_contact_popup_dismissed", "true");
+    }
     setOpen(false);
   };
 
