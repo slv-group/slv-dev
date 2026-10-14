@@ -242,7 +242,7 @@ function ProjectDetails() {
                 {project.name}
               </h2>
 
-              <div className="pointer-events-auto flex flex-wrap items-center gap-1.5 sm:gap-2.5">
+              <div className="pointer-events-none flex flex-wrap items-center gap-1.5 sm:gap-2.5 z-0">
                 <span
                   className="flex max-w-full items-center gap-1 rounded-full border border-white/10 px-2.5 py-1 text-[10px] font-medium text-white/90 sm:gap-1.5 sm:px-3.5 sm:py-1.5 sm:text-xs"
                   style={{
