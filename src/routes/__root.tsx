@@ -56,9 +56,15 @@ function DeferredContactPopup() {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
+    // Check if user already dismissed or submitted the popup in this session
+    if (typeof window !== "undefined" && sessionStorage.getItem("slv_contact_popup_dismissed")) {
+      return;
+    }
+
+    // Show popup after 15 seconds of browsing
     const timer = window.setTimeout(() => {
       setShow(true);
-    }, 700);
+    }, 15000);
 
     return () => window.clearTimeout(timer);
   }, []);
