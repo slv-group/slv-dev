@@ -71,7 +71,7 @@ export function HeroSection() {
         />
       </div>
 
-      <div className="relative z-10 mx-auto w-full max-w-6xl px-6 pt-28 pb-4 text-center text-white">
+      <div className="relative z-10 mx-auto w-full max-w-6xl px-6 pt-28 pb-4 text-center text-white md:translate-y-24 lg:translate-y-28">
         <Link
           to="/projects"
           search={{ status: undefined }}
