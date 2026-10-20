@@ -1,6 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { MapPin, Phone, Mail, MessageCircle, ArrowUpRight, Crown } from "lucide-react";
-import slvLogo from "@/assets/slv-logo.png";
+import slvLogo from "@/assets/SLV_Group_Logo.png";
 
 const ourStory = [
   { label: "About Us", to: "/about" },
@@ -90,7 +90,7 @@ export function Footer() {
         {/* Brand column */}
         <div>
           <span className="inline-flex rounded-2xl px-4 py-3 shadow-lg">
-            <img src={slvLogo} alt="SLV Group" className="h-10 w-auto" />
+            <img src={slvLogo} alt="SLV Group" className="h-12 w-auto object-contain" />
           </span>
           <p className="mt-6 max-w-sm text-sm leading-relaxed text-white/55">
             SLV strives to develop high-quality properties in prime locations at an affordable

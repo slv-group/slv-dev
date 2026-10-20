@@ -113,7 +113,9 @@ export function PropertyCard({ project }: { project: Project }) {
             </div>
             <div className="flex items-center gap-2 rounded-xl bg-secondary/50 px-3 py-2.5 text-xs text-muted-foreground">
               <Maximize className="h-3.5 w-3.5 shrink-0" style={{ color: "var(--color-gold)" }} />
-              <span className="font-medium">{project.sqftFrom.toLocaleString()}+ sqft</span>
+              <span className="font-medium">
+                {project.sqftFrom.toLocaleString()}+ {project.areaUnit || (project.category === "Plots" ? "sq yd" : "sqft")}
+              </span>
             </div>
           </div>
         )}

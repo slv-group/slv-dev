@@ -102,7 +102,19 @@ function ProjectDetails() {
   // Stat cards shown on the hero panel
   const statCards = [
     { Icon: Building2, val: project.status, sub: "Status" },
-    { Icon: Ruler, val: `${project.sqftFrom.toLocaleString()}+`, sub: "Sqft" },
+    {
+      Icon: Ruler,
+      val: `${project.sqftFrom.toLocaleString()}+`,
+      sub: project.areaUnit
+        ? project.areaUnit === "sq yd"
+          ? "Sq. Yds"
+          : project.areaUnit === "sqft"
+            ? "Sqft"
+            : project.areaUnit
+        : project.category === "Plots"
+          ? "Sq. Yds"
+          : "Sqft",
+    },
     { Icon: Home, val: project.bedrooms, sub: "Config" },
     { Icon: Star, val: project.category, sub: "Type" },
   ];
@@ -404,7 +416,7 @@ function ProjectDetails() {
             ["Configurations", project.bedrooms],
             [
               "Saleable Area",
-              `${project.sqftFrom.toLocaleString()} - ${project.sqftTo.toLocaleString()} sqft`,
+              `${project.sqftFrom.toLocaleString()} - ${project.sqftTo.toLocaleString()} ${project.areaUnit || (project.category === "Plots" ? "sq yd" : "sqft")}`,
             ],
             ["Launch", project.launchDate],
             ["Category", project.category],
@@ -524,7 +536,9 @@ function ProjectDetails() {
                   Specifications
                 </h2>
                 <div className="mt-5 space-y-3">
-                  {project.specifications.map((s: { label: string; value: string }) => (
+                  {project.specifications
+                    .filter((s: { label: string; value: string }) => !s.label.startsWith("__"))
+                    .map((s: { label: string; value: string }) => (
                     <div key={s.label} className="rounded-2xl bg-card p-5 neu-sm">
                       <p className="text-xs uppercase tracking-wider text-gold-foreground">
                         {s.label}
@@ -583,7 +597,7 @@ function ProjectDetails() {
                     Saleable Area
                   </p>
                   <p className="font-display text-2xl font-semibold text-gold-foreground">
-                    {project.floorPlans[plan].sqft.toLocaleString()} sqft
+                    {project.floorPlans[plan].sqft.toLocaleString()} {project.areaUnit || (project.category === "Plots" ? "sq yd" : "sqft")}
                   </p>
                 </div>
               </div>
