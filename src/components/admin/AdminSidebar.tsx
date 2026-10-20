@@ -16,7 +16,7 @@ import {
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import slvIcon from "@/assets/slv-icon.png";
-import slvLogo from "@/assets/slv-logo.png";
+import slvLogo from "@/assets/SLV_Group_Logo.png";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 

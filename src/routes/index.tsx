@@ -270,7 +270,9 @@ function Index() {
           <p className="section-label text-gold">Our Heritage</p>
           <h2 className="mt-5 font-display text-4xl font-bold leading-tight text-foreground sm:text-5xl lg:text-6xl">
             Building Legacies{" "}
-            <span className="italic font-normal text-gradient-gold">Since 2007</span>
+            <span className="inline-block whitespace-nowrap italic font-normal text-gradient-gold pr-3">
+              Since 2007
+            </span>
           </h2>
 
           {/* Hairline ornament */}

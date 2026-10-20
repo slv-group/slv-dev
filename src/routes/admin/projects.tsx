@@ -86,6 +86,7 @@ type ProjectFormData = {
   price_from: string;
   sqft_from: string;
   sqft_to: string;
+  area_unit: string;
   launch_date: string;
   rera_number: string;
   cover_image: string;
@@ -115,6 +116,7 @@ const defaultForm: ProjectFormData = {
   price_from: "",
   sqft_from: "",
   sqft_to: "",
+  area_unit: "sqft",
   launch_date: "",
   rera_number: "",
   cover_image: "",
@@ -152,6 +154,7 @@ function exportProjectsCSV(projects: Project[]) {
     "Price From",
     "Sqft From",
     "Sqft To",
+    "Area Unit",
     "Launch Date",
     "RERA",
     "Amenities",
@@ -170,6 +173,7 @@ function exportProjectsCSV(projects: Project[]) {
     p.price_from?.toString() ?? "",
     p.sqft_from?.toString() ?? "",
     (p as Record<string, unknown>).sqft_to?.toString() ?? "",
+    ((p as any).area_unit || (Array.isArray(p.specifications) ? (p.specifications as any[]).find((s) => s?.label === "__area_unit" || s?.label === "Area Unit")?.value : "") || (p.category === "Plots" ? "sq yd" : "sqft")),
     (p as Record<string, unknown>).launch_date?.toString() ?? "",
     p.rera_number ?? "",
     Array.isArray(p.amenities) ? (p.amenities as string[]).join("; ") : "",
@@ -255,7 +259,10 @@ function ProjectsManagement() {
     map_embed: data.map_embed || null,
     amenities: data.amenities,
     gallery: data.gallery,
-    specifications: data.specifications,
+    specifications: [
+      ...(data.specifications || []).filter((s) => !s.label.startsWith("__") && s.label !== "Area Unit"),
+      { label: "__area_unit", value: data.area_unit || "sqft" },
+    ],
     nearby: data.nearby,
     floor_plans: data.floor_plans.map((fp) => ({
       type: fp.type,
@@ -379,11 +386,27 @@ function ProjectsManagement() {
     }
   };
 
+  // Safe project persistence helper that supports area_unit column and gracefully handles schema cache
+  const saveProjectToSupabase = async (payload: Record<string, any>, areaUnit: string, id?: string) => {
+    const fullPayload = { ...payload, area_unit: areaUnit || "sqft" };
+    let res = id
+      ? await supabase.from("projects").update(fullPayload as any).eq("id", id)
+      : await supabase.from("projects").insert(fullPayload as any);
+
+    // If area_unit column does not exist in schema cache yet (PGRST204), fallback to payload without it.
+    // The unit is safely preserved in specifications as __area_unit regardless!
+    if (res.error && res.error.code === "PGRST204") {
+      res = id
+        ? await supabase.from("projects").update(payload as any).eq("id", id)
+        : await supabase.from("projects").insert(payload as any);
+    }
+    if (res.error) throw res.error;
+  };
+
   // Create project
   const createMutation = useMutation({
     mutationFn: async (data: ProjectFormData) => {
-      const { error } = await supabase.from("projects").insert(buildPayload(data));
-      if (error) throw error;
+      await saveProjectToSupabase(buildPayload(data), data.area_unit);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-projects"] });
@@ -401,8 +424,7 @@ function ProjectsManagement() {
     mutationFn: async ({ id, data }: { id: string; data: ProjectFormData }) => {
       const payload = buildPayload(data);
       console.log("Updating project payload:", payload);
-      const { error } = await supabase.from("projects").update(payload).eq("id", id);
-      if (error) throw error;
+      await saveProjectToSupabase(payload, data.area_unit, id);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-projects"] });
@@ -524,6 +546,10 @@ function ProjectsManagement() {
   const openEdit = (p: Project) => {
     setEditingProject(p);
     const raw = p as Record<string, unknown>;
+    const rawSpecs = Array.isArray(p.specifications) ? (p.specifications as SpecItem[]) : [];
+    const unitFromSpecs = rawSpecs.find((s) => s.label === "__area_unit" || s.label === "Area Unit")?.value;
+    const areaUnit = (raw.area_unit as string) ?? unitFromSpecs ?? (p.category === "Plots" ? "sq yd" : "sqft");
+
     setForm({
       _editingId: p.id, // ← embed the ID so we never lose track during edits
       name: p.name,
@@ -538,6 +564,7 @@ function ProjectsManagement() {
       price_from: p.price_from?.toString() ?? "",
       sqft_from: p.sqft_from?.toString() ?? "",
       sqft_to: (raw.sqft_to as number)?.toString() ?? "",
+      area_unit: areaUnit,
       launch_date: (raw.launch_date as string) ?? "",
       rera_number: p.rera_number ?? "",
       cover_image: p.cover_image ?? "",
@@ -545,7 +572,7 @@ function ProjectsManagement() {
       map_embed: p.map_embed ?? "",
       amenities: Array.isArray(p.amenities) ? (p.amenities as string[]) : [],
       gallery: Array.isArray(p.gallery) ? (p.gallery as string[]) : [],
-      specifications: Array.isArray(p.specifications) ? (p.specifications as SpecItem[]) : [],
+      specifications: rawSpecs.filter((s) => !s.label.startsWith("__")),
       nearby: Array.isArray(p.nearby) ? (p.nearby as NearbyItem[]) : [],
       floor_plans: Array.isArray(p.floor_plans)
         ? (p.floor_plans as { type: string; sqft: number; image: string }[]).map((fp) => ({
@@ -931,9 +958,17 @@ function ProjectsManagement() {
                     <Label htmlFor="category">Category</Label>
                     <Select
                       value={form.category || "__none"}
-                      onValueChange={(v) =>
-                        setForm((f) => ({ ...f, category: v === "__none" ? "" : v }))
-                      }
+                      onValueChange={(v) => {
+                        const nextCat = v === "__none" ? "" : v;
+                        setForm((f) => ({
+                          ...f,
+                          category: nextCat,
+                          area_unit:
+                            nextCat === "Plots" && (f.area_unit === "sqft" || !f.area_unit)
+                              ? "sq yd"
+                              : f.area_unit,
+                        }));
+                      }}
                     >
                       <SelectTrigger id="category">
                         <SelectValue placeholder="Select category" />
@@ -1044,25 +1079,59 @@ function ProjectsManagement() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="sqft_from">Area From (sq.ft)</Label>
-                    <Input
-                      id="sqft_from"
-                      type="number"
-                      value={form.sqft_from}
-                      onChange={(e) => setForm((f) => ({ ...f, sqft_from: e.target.value }))}
-                      placeholder="1180"
-                    />
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="sqft_from">Area From</Label>
+                      {/* Measurement unit dropdown beside sqft */}
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[11px] font-medium text-muted-foreground">Unit:</span>
+                        <select
+                          id="area_unit"
+                          value={form.area_unit}
+                          onChange={(e) => setForm((f) => ({ ...f, area_unit: e.target.value }))}
+                          aria-label="Measurement unit"
+                          className="h-6 text-xs rounded border border-border bg-background px-2 py-0 font-semibold text-foreground focus:ring-1 focus:ring-primary shadow-xs cursor-pointer hover:border-gold/60 transition-colors"
+                        >
+                          <option value="sqft">sqft (Sq. Ft)</option>
+                          <option value="sq yd">sq yd (Sq. Yards)</option>
+                          <option value="acres">acres</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div className="relative">
+                      <Input
+                        id="sqft_from"
+                        type="number"
+                        value={form.sqft_from}
+                        onChange={(e) => setForm((f) => ({ ...f, sqft_from: e.target.value }))}
+                        placeholder={form.area_unit === "sq yd" ? "150" : "1180"}
+                        className="pr-16"
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-muted-foreground pointer-events-none uppercase">
+                        {form.area_unit || "sqft"}
+                      </span>
+                    </div>
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="sqft_to">Area To (sq.ft)</Label>
-                    <Input
-                      id="sqft_to"
-                      type="number"
-                      value={form.sqft_to}
-                      onChange={(e) => setForm((f) => ({ ...f, sqft_to: e.target.value }))}
-                      placeholder="1860"
-                    />
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="sqft_to">Area To</Label>
+                      <span className="text-xs font-medium text-muted-foreground">
+                        ({form.area_unit || "sqft"})
+                      </span>
+                    </div>
+                    <div className="relative">
+                      <Input
+                        id="sqft_to"
+                        type="number"
+                        value={form.sqft_to}
+                        onChange={(e) => setForm((f) => ({ ...f, sqft_to: e.target.value }))}
+                        placeholder={form.area_unit === "sq yd" ? "400" : "1860"}
+                        className="pr-16"
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-muted-foreground pointer-events-none uppercase">
+                        {form.area_unit || "sqft"}
+                      </span>
+                    </div>
                   </div>
 
                   <div className="space-y-1.5">
@@ -1648,7 +1717,7 @@ function ProjectsManagement() {
                               />
                             </div>
                             <div className="space-y-1">
-                              <Label className="text-xs">Sqft</Label>
+                              <Label className="text-xs">Area ({form.area_unit || "sqft"})</Label>
                               <Input
                                 type="number"
                                 value={fp.sqft}

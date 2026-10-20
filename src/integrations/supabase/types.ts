@@ -450,6 +450,7 @@ export type Database = {
           specifications: Json;
           sqft_from: number | null;
           sqft_to: number | null;
+          area_unit?: string | null;
           status: Database["public"]["Enums"]["project_status"];
           tagline: string | null;
           updated_at: string;
@@ -480,6 +481,7 @@ export type Database = {
           specifications?: Json;
           sqft_from?: number | null;
           sqft_to?: number | null;
+          area_unit?: string | null;
           status?: Database["public"]["Enums"]["project_status"];
           tagline?: string | null;
           updated_at?: string;
@@ -510,6 +512,7 @@ export type Database = {
           specifications?: Json;
           sqft_from?: number | null;
           sqft_to?: number | null;
+          area_unit?: string | null;
           status?: Database["public"]["Enums"]["project_status"];
           tagline?: string | null;
           updated_at?: string;

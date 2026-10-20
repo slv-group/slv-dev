@@ -141,13 +141,13 @@ const leadershipTeam = [
     verified: true,
   },
   {
-    name: "Executive Leadership",
-    designation: "Leadership Team",
+    name: "Appalaraju",
+    designation: "Director",
     role: "Executive Leadership",
     image: executiveImage,
     imagePosition: "object-center",
     description:
-      "A member of the SLV leadership team contributing to the organisation's continued growth, execution standards and customer-focused approach. This profile is currently presented as sample content until the official name and designation are provided.",
+      "A member of the SLV leadership team contributing to the organisation's continued growth, execution standards and customer-focused approach.",
     highlights: [
       "Strategic execution",
       "Customer-focused operations",
@@ -156,13 +156,13 @@ const leadershipTeam = [
     verified: false,
   },
   {
-    name: "Management Leadership",
-    designation: "Management Team",
+    name: "Chaitanya",
+    designation: "Director",
     role: "Management Leadership",
     image: managementImage,
     imagePosition: "object-center",
     description:
-      "A member of the wider SLV management team supporting the organisation's operational discipline, project coordination and commitment to quality. This profile uses temporary content until the official person's details are provided.",
+      "A member of the wider SLV management team supporting the organisation's operational discipline, project coordination and commitment to quality.",
     highlights: ["Operational coordination", "Project execution", "Quality-focused management"],
     verified: false,
   },
@@ -292,19 +292,6 @@ function LeadershipProfile({
                   </div>
                 ))}
               </div>
-
-              {!member.verified && (
-                <div className="mt-7 rounded-2xl border border-amber-500/20 bg-amber-500/5 p-5">
-                  <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-amber-600">
-                    Temporary Profile
-                  </p>
-
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                    Name, designation and biography should be replaced with the official details
-                    supplied by SLV before publishing.
-                  </p>
-                </div>
-              )}
             </div>
           </Reveal>
         </div>

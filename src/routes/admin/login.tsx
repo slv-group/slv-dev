@@ -6,7 +6,7 @@ import { Eye, EyeOff, LogIn, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import logo from "@/assets/slv-logo.png";
+import logo from "@/assets/SLV_Group_Logo.png";
 
 export const Route = createFileRoute("/admin/login")({
   component: AdminLogin,

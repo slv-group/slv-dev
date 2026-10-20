@@ -423,8 +423,9 @@ export function LaunchPage() {
           </h1>
 
           <p className="max-w-xl mx-auto text-sm md:text-base text-[#d1cbc0] font-light leading-relaxed mb-9 tracking-wide drop-shadow-md">
-            Welcome to the new digital gateway of SLV Group. Experience architectural elegance,
-            uncompromising craftsmanship, and landmark spaces crafted for generations.
+            Welcome to SLV Group. Rooted in nearly two decades of trust across Andhra Pradesh, we
+            sculpt landmark communities and visionary spaces where architectural elegance meets
+            uncompromising craftsmanship.
           </p>
 
           {/* Primary CTA Button */}

@@ -2,7 +2,7 @@ import { useEffect, useState, useRef, useCallback, Fragment } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Menu, X, Phone, Crown, ChevronDown, ArrowUpRight, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
-import slvLogo from "@/assets/slv-logo.png";
+import slvLogo from "@/assets/SLV_Group_Logo.png";
 
 const ourStoryLinks = [
   { label: "About Us", to: "/about" },
@@ -227,7 +227,7 @@ export function Navbar() {
             <img
               src={slvLogo}
               alt="SLV Group"
-              className="h-8 w-auto sm:h-9 transition-transform duration-300 group-hover:scale-105"
+              className="h-9 w-auto sm:h-10 md:h-11 object-contain transition-all duration-300 group-hover:scale-105 drop-shadow-[0_2px_10px_rgba(201,168,76,0.3)]"
             />
           </span>
         </Link>

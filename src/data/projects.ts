@@ -94,6 +94,7 @@ export interface Project {
   bedrooms: string;
   sqftFrom: number;
   sqftTo: number;
+  areaUnit?: string;
   launchDate: string;
   image: string;
   gallery: string[];
@@ -109,6 +110,10 @@ export interface Project {
 import type { Tables } from "@/integrations/supabase/types";
 
 export function mapSupabaseToProject(row: Tables<"projects">): Project {
+  const specs = Array.isArray(row.specifications) ? (row.specifications as any[]) : [];
+  const unitFromSpecs = specs.find((s) => s?.label === "__area_unit" || s?.label === "Area Unit")?.value;
+  const areaUnit = (row as any).area_unit || unitFromSpecs || (row.category === "Plots" ? "sq yd" : "sqft");
+
   return {
     id: row.id,
     slug: row.slug,
@@ -122,12 +127,13 @@ export function mapSupabaseToProject(row: Tables<"projects">): Project {
     bedrooms: row.bedrooms || "",
     sqftFrom: row.sqft_from || 0,
     sqftTo: (row as any).sqft_to || 0,
+    areaUnit,
     launchDate: (row as any).launch_date || "",
     image: row.cover_image || "",
     gallery: Array.isArray(row.gallery) ? (row.gallery as string[]) : [],
     description: row.description || "",
     amenities: Array.isArray(row.amenities) ? (row.amenities as string[]) : [],
-    specifications: Array.isArray(row.specifications) ? (row.specifications as any) : [],
+    specifications: specs.filter((s) => typeof s?.label === "string" && !s.label.startsWith("__")),
     proximity: Array.isArray(row.nearby) ? (row.nearby as any) : [],
     floorPlans: Array.isArray(row.floor_plans) ? (row.floor_plans as any) : [],
     brochureUrl: row.brochure_url || undefined,
