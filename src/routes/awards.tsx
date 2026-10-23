@@ -494,6 +494,7 @@ function AwardsPage() {
                 {/* Floating badge */}
                 <div
                   className="
+        hidden sm:block
         absolute
         -bottom-5
         right-4

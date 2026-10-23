@@ -3,7 +3,6 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import {
   MapPin,
   Heart,
-  Scale,
   Download,
   Check,
   X,
@@ -89,7 +88,7 @@ const tabs = ["Overview", "Amenities & Specs", "Floor Plans"] as const;
 
 function ProjectDetails() {
   const { project, moreProjects } = Route.useLoaderData();
-  const { isWishlisted, toggleWishlist, isComparing, toggleCompare } = useStore();
+  const { isWishlisted, toggleWishlist } = useStore();
   const [tab, setTab] = useState<(typeof tabs)[number]>("Overview");
   const [activeImg, setActiveImg] = useState(0);
   const [lightbox, setLightbox] = useState<string | null>(null);
@@ -97,7 +96,6 @@ function ProjectDetails() {
   const [showBrochure, setShowBrochure] = useState(false);
 
   const wished = isWishlisted(project.id);
-  const comparing = isComparing(project.id);
 
   // Stat cards shown on the hero panel
   const statCards = [
@@ -395,16 +393,6 @@ function ProjectDetails() {
                 )}
               >
                 <Heart className={cn("h-5 w-5", wished && "fill-rose-500")} />
-              </button>
-              <button
-                onClick={() => toggleCompare(project.id)}
-                aria-label="Compare"
-                className={cn(
-                  "flex h-12 w-12 items-center justify-center rounded-xl cursor-pointer",
-                  comparing ? "neu-pressed text-gold-foreground" : "neu-sm",
-                )}
-              >
-                <Scale className="h-5 w-5" />
               </button>
             </div>
           </div>

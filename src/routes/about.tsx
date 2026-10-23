@@ -449,7 +449,8 @@ function AboutPage() {
                   Explore Projects
                 </Link>
 
-                {/* Company Brochure */}
+                {/* Company Brochure — hidden until a company brochure is ready/configured */}
+                {/*
                 <button
                   type="button"
                   onClick={() => {
@@ -486,6 +487,7 @@ function AboutPage() {
                   <Download className="h-3.5 w-3.5 text-gold transition-transform duration-300 group-hover:-translate-y-0.5" />
                   Company Brochure
                 </button>
+                */}
               </div>
             </div>
           </Reveal>

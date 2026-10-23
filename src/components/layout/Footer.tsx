@@ -1,6 +1,24 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { MapPin, Phone, Mail, MessageCircle, ArrowUpRight, Crown } from "lucide-react";
+import {
+  MapPin,
+  Phone,
+  Mail,
+  MessageCircle,
+  ArrowUpRight,
+  Crown,
+  Facebook,
+  Instagram,
+  Twitter,
+  Linkedin,
+} from "lucide-react";
 import slvLogo from "@/assets/SLV_Group_Logo.png";
+
+const socialLinks = [
+  { label: "Facebook", href: "https://facebook.com", icon: Facebook },
+  { label: "Instagram", href: "https://instagram.com", icon: Instagram },
+  { label: "Twitter", href: "https://twitter.com", icon: Twitter },
+  { label: "LinkedIn", href: "https://linkedin.com", icon: Linkedin },
+];
 
 const ourStory = [
   { label: "About Us", to: "/about" },
@@ -210,9 +228,14 @@ export function Footer() {
           <p className="mt-6 flex gap-3 text-sm leading-relaxed text-white/55">
             <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
             <span>
-              <span className="block font-semibold text-white/80">SLV Group</span>
-              8-56-68/5, Beside Tenali Flyover, Sri Saila Nagar, Ward No. 5, Mangalagiri, Guntur,
-              Andhra Pradesh.
+              <span className="block font-semibold text-white/80">SLV Group Office</span>
+              Ground Floor, SLV Tummala Complex,
+              <br />
+              Opp. SLV PNB Commercial, Gunadala,
+              <br />
+              Inner Ring Road, Vijayawada,
+              <br />
+              NTR District, Andhra Pradesh – 520004
             </span>
           </p>
 
@@ -278,6 +301,30 @@ export function Footer() {
               </a>
             </li>
           </ul>
+
+          {/* Social Media Follow Us */}
+          <div className="mt-8">
+            <h5 className="text-xs font-semibold tracking-[0.2em] uppercase text-gold/80">Follow Us</h5>
+            <div className="mt-3 flex items-center gap-2.5">
+              {socialLinks.map((s) => (
+                <a
+                  key={s.label}
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={s.label}
+                  title={s.label}
+                  className="group flex h-8 w-8 items-center justify-center rounded-lg transition-all duration-300 hover:scale-110 hover:border-gold hover:shadow-[0_0_12px_rgba(212,175,55,0.25)]"
+                  style={{
+                    background: "rgba(212,175,55,0.12)",
+                    border: "1px solid rgba(212,175,55,0.2)",
+                  }}
+                >
+                  <s.icon className="h-3.5 w-3.5 text-gold transition-colors duration-300 group-hover:text-gold-light" />
+                </a>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 

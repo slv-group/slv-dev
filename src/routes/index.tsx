@@ -213,12 +213,15 @@ function Index() {
           <div className="flex flex-wrap items-center justify-center gap-2.5">
             {["Vijayawada", "Gannavaram", "Guntupalli", "Amaravathi", "Bhimavaram"].map(
               (location) => (
-                <span
+                <Link
                   key={location}
-                  className="rounded-full border border-border/70 bg-card px-4 py-1.5 text-xs font-medium text-muted-foreground transition-all duration-300 hover:border-gold/40 hover:bg-gold/5 hover:text-foreground"
+                  to="/projects"
+                  search={{ location: location.toLowerCase() }}
+                  className="group flex items-center gap-1.5 rounded-full border border-border/70 bg-card px-4 py-1.5 text-xs font-medium text-muted-foreground transition-all duration-300 hover:border-gold/60 hover:bg-gold/10 hover:text-foreground hover:shadow-sm"
                 >
-                  {location}
-                </span>
+                  <MapPin className="h-3 w-3 text-gold/60 transition-transform duration-300 group-hover:scale-110 group-hover:text-gold" />
+                  <span>{location}</span>
+                </Link>
               ),
             )}
           </div>
@@ -404,7 +407,7 @@ function Index() {
                     )}
                   >
                     {visibleProjects.map((project, index) => (
-                      <Reveal key={project.id} delay={index * 80}>
+                      <Reveal key={project.id} delay={index * 80} className="h-full">
                         <PropertyCard project={project} />
                       </Reveal>
                     ))}
@@ -701,7 +704,7 @@ function Index() {
 
             <Link
               to="/projects"
-              search={{ status: undefined }}
+              search={{ status: "ongoing" }}
               className="group flex items-center gap-3 rounded-2xl border border-white/20 px-10 py-5 text-xs font-bold uppercase tracking-[0.2em] text-white transition-all duration-300 hover:bg-gradient-gold hover:text-gold-foreground hover:border-gold"
             >
               Explore Projects
