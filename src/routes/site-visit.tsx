@@ -70,7 +70,7 @@ function SiteVisitPage() {
       <section className="mx-auto max-w-7xl px-6">
         <div className="grid gap-8 pb-12 md:grid-cols-2 lg:grid-cols-3">
           {projects.map((p) => (
-            <div key={p.id} className="relative group/card">
+            <div key={p.id} className="relative group/card h-full">
               <PropertyCard project={p} />
             </div>
           ))}

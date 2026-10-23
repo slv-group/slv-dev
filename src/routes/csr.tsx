@@ -717,6 +717,7 @@ function CSRPage() {
                 {/* Floating impact badge */}
                 <div
                   className="
+                    hidden sm:block
                     absolute -bottom-5 left-1/2 z-20
                     -translate-x-1/2
                     rounded-2xl

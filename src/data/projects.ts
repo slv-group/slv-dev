@@ -107,6 +107,81 @@ export interface Project {
   imageFit?: "cover" | "contain";
 }
 
+export const LOCATIONS = [
+  "Vijayawada",
+  "Gannavaram",
+  "Gunthapalli",
+  "Amaravathi",
+  "Bhimavaram",
+] as const;
+
+export type LocationName = (typeof LOCATIONS)[number];
+
+export function matchesLocation(project: Project, selectedLocation: string): boolean {
+  if (!selectedLocation || selectedLocation === "All") return true;
+
+  const loc = selectedLocation.toLowerCase().trim();
+  const pLoc = (project.location || "").toLowerCase();
+  const pCity = (project.city || "").toLowerCase();
+  const pName = (project.name || "").toLowerCase();
+  const pTagline = (project.tagline || "").toLowerCase();
+
+  if (loc === "vijayawada") {
+    return (
+      pCity.includes("vijayawada") ||
+      pLoc.includes("vijayawada") ||
+      pLoc.includes("ramavarappadu") ||
+      pLoc.includes("gunadala") ||
+      pLoc.includes("nidamanuru") ||
+      pLoc.includes("bhavanipuram") ||
+      pLoc.includes("kesarapalli")
+    );
+  }
+
+  if (loc === "gannavaram") {
+    return (
+      pLoc.includes("gannavaram") ||
+      pCity.includes("gannavaram") ||
+      pLoc.includes("vedurupavuluru")
+    );
+  }
+
+  if (loc === "gunthapalli" || loc === "guntupalli") {
+    return (
+      pLoc.includes("gunthapalli") ||
+      pLoc.includes("guntupalli") ||
+      pCity.includes("gunthapalli") ||
+      pCity.includes("guntupalli") ||
+      pName.includes("green lands")
+    );
+  }
+
+  if (loc === "amaravathi" || loc === "amaravati") {
+    return (
+      pLoc.includes("amaravathi") ||
+      pLoc.includes("amaravati") ||
+      pCity.includes("amaravathi") ||
+      pCity.includes("amaravati") ||
+      pLoc.includes("mangalagiri") ||
+      pName.includes("amaravathi") ||
+      pName.includes("amaravati") ||
+      pTagline.includes("amaravathi") ||
+      pTagline.includes("amaravati")
+    );
+  }
+
+  if (loc === "bhimavaram") {
+    return (
+      pLoc.includes("bhimavaram") ||
+      pCity.includes("bhimavaram") ||
+      pLoc.includes("undi") ||
+      pCity.includes("undi")
+    );
+  }
+
+  return pLoc.includes(loc) || pCity.includes(loc) || pName.includes(loc);
+}
+
 import type { Tables } from "@/integrations/supabase/types";
 
 export function mapSupabaseToProject(row: Tables<"projects">): Project {
@@ -932,7 +1007,7 @@ export const projects: Project[] = [
     tagline: "Premium gated apartments at the gateway to Amaravati",
     category: "Apartment",
     status: "Ongoing",
-    location: "Mangalagiri",
+    location: "Mangalagiri, Amaravathi",
     city: "Vijayawada",
     priceFrom: 6800000,
     bedrooms: "2 & 3 BHK",
@@ -1424,7 +1499,7 @@ export const projects: Project[] = [
     tagline: "Nature Inspired Living: A smart Investment",
     category: "Plots",
     status: "Completed",
-    location: "Guntupalli",
+    location: "Gunthapalli",
     city: "Vijayawada",
     priceFrom: 3500000,
     bedrooms: "Premium Plots",

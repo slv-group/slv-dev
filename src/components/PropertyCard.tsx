@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Heart, MapPin, Maximize, BedDouble, Scale, ArrowRight } from "lucide-react";
+import { Heart, MapPin, Maximize, BedDouble, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useStore } from "@/store/useStore";
 import { formatPrice, type Project } from "@/data/projects";
@@ -11,19 +11,18 @@ const statusStyles: Record<string, string> = {
 };
 
 export function PropertyCard({ project }: { project: Project }) {
-  const { isWishlisted, toggleWishlist, isComparing, toggleCompare } = useStore();
+  const { isWishlisted, toggleWishlist } = useStore();
   const wished = isWishlisted(project.id);
-  const comparing = isComparing(project.id);
 
   return (
     <article
-      className="group relative overflow-hidden rounded-3xl bg-card transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_60px_-15px_rgba(212,175,55,0.18),0_8px_24px_-8px_rgba(0,0,0,0.15)]"
+      className="group relative flex h-full flex-col overflow-hidden rounded-3xl bg-card transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_60px_-15px_rgba(212,175,55,0.18),0_8px_24px_-8px_rgba(0,0,0,0.15)]"
       style={{
         border: "1px solid color-mix(in oklab, var(--color-gold) 12%, var(--color-border))",
       }}
     >
       {/* Image area */}
-      <div className="relative aspect-[4/3] overflow-hidden">
+      <div className="relative aspect-[4/3] w-full shrink-0 overflow-hidden">
         <img
           src={project.image}
           alt={project.name}
@@ -86,7 +85,7 @@ export function PropertyCard({ project }: { project: Project }) {
       </div>
 
       {/* Card body */}
-      <div className="relative p-5">
+      <div className="relative flex flex-1 flex-col justify-between p-5">
         {/* Inner gold hairline at top */}
         <div
           className="absolute inset-x-5 top-0 h-px"
@@ -96,29 +95,37 @@ export function PropertyCard({ project }: { project: Project }) {
           }}
         />
 
-        <h3 className="font-display text-xl font-semibold text-foreground group-hover:text-gradient-gold transition-all duration-300">
-          {project.name}
-        </h3>
-        <p className="mt-1.5 flex items-center gap-1.5 text-sm text-muted-foreground">
-          <MapPin className="h-3.5 w-3.5 shrink-0" style={{ color: "var(--color-gold)" }} />
-          {project.location}, {project.city}
-        </p>
+        <div className="flex-1">
+          <h3 className="font-display text-xl font-semibold text-foreground group-hover:text-gradient-gold transition-all duration-300">
+            {project.name}
+          </h3>
+          <p className="mt-1.5 flex items-center gap-1.5 text-sm text-muted-foreground">
+            <MapPin className="h-3.5 w-3.5 shrink-0" style={{ color: "var(--color-gold)" }} />
+            {project.location}, {project.city}
+          </p>
 
-        {/* Specs */}
-        {project.status === "Ongoing" && (
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <div className="flex items-center gap-2 rounded-xl bg-secondary/50 px-3 py-2.5 text-xs text-muted-foreground">
-              <BedDouble className="h-3.5 w-3.5 shrink-0" style={{ color: "var(--color-gold)" }} />
-              <span className="font-medium">{project.bedrooms}</span>
+          {/* Specs */}
+          {project.status === "Ongoing" && (
+            <div className="mt-4 grid grid-cols-2 gap-2 sm:gap-2.5">
+              <div
+                className="flex h-10 items-center gap-1.5 rounded-xl bg-secondary/50 px-2.5 text-xs text-muted-foreground min-w-0"
+                title={project.bedrooms}
+              >
+                <BedDouble className="h-3.5 w-3.5 shrink-0" style={{ color: "var(--color-gold)" }} />
+                <span className="font-medium truncate whitespace-nowrap">{project.bedrooms}</span>
+              </div>
+              <div
+                className="flex h-10 items-center gap-1.5 rounded-xl bg-secondary/50 px-2.5 text-xs text-muted-foreground min-w-0"
+                title={`${project.sqftFrom.toLocaleString()}+ ${project.areaUnit || (project.category === "Plots" ? "sq yd" : "sqft")}`}
+              >
+                <Maximize className="h-3.5 w-3.5 shrink-0" style={{ color: "var(--color-gold)" }} />
+                <span className="font-medium truncate whitespace-nowrap">
+                  {project.sqftFrom.toLocaleString()}+ {project.areaUnit || (project.category === "Plots" ? "sq yd" : "sqft")}
+                </span>
+              </div>
             </div>
-            <div className="flex items-center gap-2 rounded-xl bg-secondary/50 px-3 py-2.5 text-xs text-muted-foreground">
-              <Maximize className="h-3.5 w-3.5 shrink-0" style={{ color: "var(--color-gold)" }} />
-              <span className="font-medium">
-                {project.sqftFrom.toLocaleString()}+ {project.areaUnit || (project.category === "Plots" ? "sq yd" : "sqft")}
-              </span>
-            </div>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Actions */}
         <div className="mt-4 flex gap-2">
@@ -134,23 +141,6 @@ export function PropertyCard({ project }: { project: Project }) {
               <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover/btn:translate-x-1" />
             </span>
           </Link>
-          <button
-            onClick={() => toggleCompare(project.id)}
-            aria-label="Add to compare"
-            className={cn(
-              "flex h-12 w-12 items-center justify-center rounded-2xl transition-all duration-300",
-              comparing
-                ? "shadow-inner text-gold"
-                : "neu-sm text-muted-foreground hover:text-foreground hover:scale-105",
-            )}
-            style={
-              comparing
-                ? { background: "var(--gradient-gold)", color: "var(--color-gold-foreground)" }
-                : {}
-            }
-          >
-            <Scale className="h-4.5 w-4.5" />
-          </button>
         </div>
       </div>
     </article>

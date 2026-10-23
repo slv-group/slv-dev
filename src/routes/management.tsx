@@ -141,7 +141,7 @@ const leadershipTeam = [
     verified: true,
   },
   {
-    name: "Appalaraju",
+    name: "Vegesna Appala Narasiamha Raju (NANI)",
     designation: "Director",
     role: "Executive Leadership",
     image: executiveImage,
@@ -156,7 +156,7 @@ const leadershipTeam = [
     verified: false,
   },
   {
-    name: "Chaitanya",
+    name: "Uppalapati Chaitanya Kumar Varma",
     designation: "Director",
     role: "Management Leadership",
     image: managementImage,
@@ -234,7 +234,7 @@ function LeadershipProfile({
 
                   <CornerMarks />
 
-                  <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
+                  <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8 sm:pr-40">
                     <p className="text-[9px] font-bold uppercase tracking-[0.28em] text-gold">
                       {member.role}
                     </p>
@@ -248,8 +248,8 @@ function LeadershipProfile({
                 </div>
               </div>
 
-              {/* Image number */}
-              <div className="absolute -bottom-5 right-4 z-20 rounded-2xl border border-white/10 bg-gradient-obsidian px-5 py-3 text-white shadow-2xl sm:-bottom-6 sm:right-7 sm:px-6 sm:py-4">
+              {/* Floating role badge (visible on sm+ screens where there is space) */}
+              <div className="hidden sm:block absolute -bottom-5 right-4 z-20 rounded-2xl border border-white/10 bg-gradient-obsidian px-5 py-3 text-white shadow-2xl sm:-bottom-6 sm:right-7 sm:px-6 sm:py-4">
                 <p className="text-[7px] font-bold uppercase tracking-[0.24em] text-white/40">
                   SLV Leadership
                 </p>
@@ -425,7 +425,7 @@ function ManagementPage() {
 
                   <CornerMarks />
 
-                  <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8 lg:p-10">
+                  <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8 lg:p-10 pr-28 sm:pr-36">
                     <p className="text-[9px] font-bold uppercase tracking-[0.28em] text-gold">
                       Sri Lakshmi Venkateswara Group
                     </p>
@@ -438,7 +438,7 @@ function ManagementPage() {
                   </div>
                 </div>
 
-                <div className="absolute -bottom-6 right-4 z-20 rounded-2xl border border-white/10 bg-black/85 px-5 py-4 text-white shadow-2xl backdrop-blur-xl sm:-bottom-7 sm:right-7 sm:px-7 sm:py-5">
+                <div className="hidden sm:block absolute -bottom-6 right-4 z-20 rounded-2xl border border-white/10 bg-black/85 px-5 py-4 text-white shadow-2xl backdrop-blur-xl sm:-bottom-7 sm:right-7 sm:px-7 sm:py-5">
                   <p className="text-[6px] font-bold uppercase tracking-[0.24em] text-white/40">
                     Entered Construction
                   </p>
