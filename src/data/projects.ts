@@ -99,12 +99,31 @@ export interface Project {
   image: string;
   gallery: string[];
   description: string;
-  amenities: string[];
-  specifications: { label: string; value: string }[];
+  amenities: (string | AmenityItem)[];
+  specifications: SpecificationItem[];
   proximity: { label: string; distance: string }[];
   floorPlans: { type: string; sqft: number; image: string }[];
   brochureUrl?: string; // Brochure PDF URL for full-screen view
   imageFit?: "cover" | "contain";
+}
+
+export type AmenityItem = { name: string; icon_url?: string };
+export type SpecificationItem = { label: string; value: string; icon_url?: string };
+
+/** Normalize amenities from DB — handles old string[] and new object[] formats */
+export function normalizeAmenities(raw: unknown): AmenityItem[] {
+  if (!Array.isArray(raw)) return [];
+  return raw.map((item) =>
+    typeof item === "string" ? { name: item } : { name: item?.name ?? "", icon_url: item?.icon_url ?? undefined }
+  );
+}
+
+/** Normalize specifications from DB — adds icon_url support */
+export function normalizeSpecs(raw: unknown): SpecificationItem[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .filter((s) => typeof s?.label === "string" && !s.label.startsWith("__"))
+    .map((s) => ({ label: s.label, value: s.value ?? "", icon_url: s.icon_url ?? undefined }));
 }
 
 export const LOCATIONS = [
@@ -207,8 +226,8 @@ export function mapSupabaseToProject(row: Tables<"projects">): Project {
     image: row.cover_image || "",
     gallery: Array.isArray(row.gallery) ? (row.gallery as string[]) : [],
     description: row.description || "",
-    amenities: Array.isArray(row.amenities) ? (row.amenities as string[]) : [],
-    specifications: specs.filter((s) => typeof s?.label === "string" && !s.label.startsWith("__")),
+    amenities: normalizeAmenities(row.amenities),
+    specifications: normalizeSpecs(row.specifications),
     proximity: Array.isArray(row.nearby) ? (row.nearby as any) : [],
     floorPlans: Array.isArray(row.floor_plans) ? (row.floor_plans as any) : [],
     brochureUrl: row.brochure_url || undefined,

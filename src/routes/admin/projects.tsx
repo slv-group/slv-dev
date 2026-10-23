@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { projects as staticProjects } from "@/data/projects";
+import { projects as staticProjects, normalizeAmenities, normalizeSpecs } from "@/data/projects";
+import type { AmenityItem, SpecificationItem } from "@/data/projects";
 import { toast } from "sonner";
 import type { Tables } from "@/integrations/supabase/types";
 import {
@@ -20,6 +21,9 @@ import {
   MapPin,
   ListChecks,
   Image as ImageIcon,
+  ArrowUp,
+  ArrowDown,
+  ImagePlus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -68,7 +72,7 @@ const statusColors: Record<ProjectStatus, string> = {
 };
 
 // ── Helpers for JSONB sub-structures ──
-type SpecItem = { label: string; value: string };
+type SpecItem = { label: string; value: string; icon_url?: string };
 type NearbyItem = { label: string; distance: string };
 type FloorPlanItem = { type: string; sqft: string; image: string };
 
@@ -92,7 +96,7 @@ type ProjectFormData = {
   cover_image: string;
   brochure_url: string;
   map_embed: string;
-  amenities: string[];
+  amenities: AmenityItem[];
   gallery: string[];
   specifications: SpecItem[];
   nearby: NearbyItem[];
@@ -122,7 +126,7 @@ const defaultForm: ProjectFormData = {
   cover_image: "",
   brochure_url: "",
   map_embed: "",
-  amenities: [],
+  amenities: [] as AmenityItem[],
   gallery: [],
   specifications: [],
   nearby: [],
@@ -176,7 +180,7 @@ function exportProjectsCSV(projects: Project[]) {
     ((p as any).area_unit || (Array.isArray(p.specifications) ? (p.specifications as any[]).find((s) => s?.label === "__area_unit" || s?.label === "Area Unit")?.value : "") || (p.category === "Plots" ? "sq yd" : "sqft")),
     (p as Record<string, unknown>).launch_date?.toString() ?? "",
     p.rera_number ?? "",
-    Array.isArray(p.amenities) ? (p.amenities as string[]).join("; ") : "",
+    Array.isArray(p.amenities) ? (p.amenities as any[]).map((a: any) => typeof a === "string" ? a : a?.name ?? "").join("; ") : "",
     p.is_published ? "Yes" : "No",
     p.is_featured ? "Yes" : "No",
     new Date(p.created_at).toLocaleDateString(),
@@ -221,9 +225,13 @@ function ProjectsManagement() {
   const [isSeeding, setIsSeeding] = useState(false);
 
   // ── New amenity / spec / nearby input states ──
-  const [newAmenity, setNewAmenity] = useState("");
-  const [newSpec, setNewSpec] = useState<SpecItem>({ label: "", value: "" });
+  const [newAmenity, setNewAmenity] = useState<AmenityItem>({ name: "", icon_url: "" });
+  const [newSpec, setNewSpec] = useState<SpecItem>({ label: "", value: "", icon_url: "" });
   const [newNearby, setNewNearby] = useState<NearbyItem>({ label: "", distance: "" });
+  const [uploadingAmenityIcon, setUploadingAmenityIcon] = useState<number | null>(null);
+  const [uploadingSpecIcon, setUploadingSpecIcon] = useState<number | null>(null);
+  const [uploadingNewAmenityIcon, setUploadingNewAmenityIcon] = useState(false);
+  const [uploadingNewSpecIcon, setUploadingNewSpecIcon] = useState(false);
 
   // Fetch projects
   const { data: projects = [], isLoading } = useQuery({
@@ -257,7 +265,7 @@ function ProjectsManagement() {
     cover_image: data.cover_image || null,
     brochure_url: data.brochure_url || null,
     map_embed: data.map_embed || null,
-    amenities: data.amenities,
+    amenities: data.amenities.map((a) => ({ name: a.name, ...(a.icon_url ? { icon_url: a.icon_url } : {}) })),
     gallery: data.gallery,
     specifications: [
       ...(data.specifications || []).filter((s) => !s.label.startsWith("__") && s.label !== "Area Unit"),
@@ -539,12 +547,95 @@ function ProjectsManagement() {
     }
   };
 
+  // ── Amenity & Spec Reordering & Icon Uploads ──
+  const moveAmenity = (index: number, direction: "up" | "down") => {
+    setForm((f) => {
+      const target = direction === "up" ? index - 1 : index + 1;
+      if (target < 0 || target >= f.amenities.length) return f;
+      const next = [...f.amenities];
+      const [item] = next.splice(index, 1);
+      next.splice(target, 0, item);
+      return { ...f, amenities: next };
+    });
+  };
+
+  const moveSpec = (index: number, direction: "up" | "down") => {
+    setForm((f) => {
+      const target = direction === "up" ? index - 1 : index + 1;
+      if (target < 0 || target >= f.specifications.length) return f;
+      const next = [...f.specifications];
+      const [item] = next.splice(index, 1);
+      next.splice(target, 0, item);
+      return { ...f, specifications: next };
+    });
+  };
+
+  const handleAmenityIconUpload = async (index: number, file: File) => {
+    setUploadingAmenityIcon(index);
+    try {
+      const url = await uploadToStorage("project-media", "amenities", file);
+      setForm((f) => {
+        const next = [...f.amenities];
+        next[index] = { ...next[index], icon_url: url };
+        return { ...f, amenities: next };
+      });
+      toast.success("Amenity icon uploaded");
+    } catch (err: any) {
+      toast.error("Upload failed: " + (err?.message || "Unknown error"));
+    } finally {
+      setUploadingAmenityIcon(null);
+    }
+  };
+
+  const handleNewAmenityIconUpload = async (file: File) => {
+    setUploadingNewAmenityIcon(true);
+    try {
+      const url = await uploadToStorage("project-media", "amenities", file);
+      setNewAmenity((prev) => ({ ...prev, icon_url: url }));
+      toast.success("Icon uploaded");
+    } catch (err: any) {
+      toast.error("Upload failed: " + (err?.message || "Unknown error"));
+    } finally {
+      setUploadingNewAmenityIcon(false);
+    }
+  };
+
+  const handleSpecIconUpload = async (index: number, file: File) => {
+    setUploadingSpecIcon(index);
+    try {
+      const url = await uploadToStorage("project-media", "specs", file);
+      setForm((f) => {
+        const next = [...f.specifications];
+        next[index] = { ...next[index], icon_url: url };
+        return { ...f, specifications: next };
+      });
+      toast.success("Specification icon uploaded");
+    } catch (err: any) {
+      toast.error("Upload failed: " + (err?.message || "Unknown error"));
+    } finally {
+      setUploadingSpecIcon(null);
+    }
+  };
+
+  const handleNewSpecIconUpload = async (file: File) => {
+    setUploadingNewSpecIcon(true);
+    try {
+      const url = await uploadToStorage("project-media", "specs", file);
+      setNewSpec((prev) => ({ ...prev, icon_url: url }));
+      toast.success("Icon uploaded");
+    } catch (err: any) {
+      toast.error("Upload failed: " + (err?.message || "Unknown error"));
+    } finally {
+      setUploadingNewSpecIcon(false);
+    }
+  };
+
   // ── Form open/close ──
   const openCreate = () => {
     setEditingProject(null);
     setForm(defaultForm);
-    setNewAmenity("");
-    setNewSpec({ label: "", value: "" });
+    setNewAmenity({ name: "", icon_url: "" });
+    setNewSpec({ label: "", value: "", icon_url: "" });
     setNewNearby({ label: "", distance: "" });
     setShowForm(true);
   };
@@ -576,9 +667,11 @@ function ProjectsManagement() {
       cover_image: p.cover_image ?? "",
       brochure_url: p.brochure_url ?? "",
       map_embed: p.map_embed ?? "",
-      amenities: Array.isArray(p.amenities) ? (p.amenities as string[]) : [],
+      amenities: normalizeAmenities(p.amenities),
       gallery: Array.isArray(p.gallery) ? (p.gallery as string[]) : [],
-      specifications: rawSpecs.filter((s) => !s.label.startsWith("__")),
+      specifications: rawSpecs
+        .filter((s) => !s.label.startsWith("__"))
+        .map((s) => ({ label: s.label, value: s.value, icon_url: (s as any).icon_url })),
       nearby: Array.isArray(p.nearby) ? (p.nearby as NearbyItem[]) : [],
       floor_plans: Array.isArray(p.floor_plans)
         ? (p.floor_plans as { type: string; sqft: number; image: string }[]).map((fp) => ({
@@ -591,8 +684,8 @@ function ProjectsManagement() {
       is_published: p.is_published,
       sort_order: p.sort_order.toString(),
     });
-    setNewAmenity("");
-    setNewSpec({ label: "", value: "" });
+    setNewAmenity({ name: "", icon_url: "" });
+    setNewSpec({ label: "", value: "", icon_url: "" });
     setNewNearby({ label: "", distance: "" });
     setShowForm(true);
   };
@@ -1381,61 +1474,209 @@ function ProjectsManagement() {
               {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
                   TAB 4: Amenities & Specifications
               ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-              <TabsContent value="amenities" className="space-y-6">
-                {/* Amenities */}
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <ListChecks className="w-4 h-4 text-gold" />
-                    <Label className="text-base font-semibold">
-                      Amenities ({form.amenities.length})
-                    </Label>
+              <TabsContent value="amenities" className="space-y-8">
+                {/* ── Amenities Section ── */}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <ListChecks className="w-4 h-4 text-gold" />
+                      <Label className="text-base font-semibold">
+                        Amenities ({form.amenities.length})
+                      </Label>
+                    </div>
+                    <span className="text-xs text-muted-foreground">
+                      Use ↑ ↓ to arrange display order on website
+                    </span>
                   </div>
-                  <div className="flex gap-2">
-                    <Input
-                      value={newAmenity}
-                      onChange={(e) => setNewAmenity(e.target.value)}
-                      placeholder="e.g. Swimming Pool"
-                      className="flex-1"
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault();
-                          if (newAmenity.trim()) {
+
+                  {/* Add New Amenity Bar */}
+                  <div className="flex flex-col sm:flex-row gap-2 rounded-xl border border-border/60 bg-muted/20 p-3">
+                    <div className="relative flex-1">
+                      <Input
+                        value={newAmenity.name}
+                        onChange={(e) =>
+                          setNewAmenity((prev) => ({ ...prev, name: e.target.value }))
+                        }
+                        placeholder="Amenity Name (e.g. Grand Clubhouse, Olympic Pool)"
+                        className="bg-background"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            if (newAmenity.name.trim()) {
+                              setForm((f) => ({
+                                ...f,
+                                amenities: [
+                                  ...f.amenities,
+                                  { name: newAmenity.name.trim(), icon_url: newAmenity.icon_url || undefined },
+                                ],
+                              }));
+                              setNewAmenity({ name: "", icon_url: "" });
+                            }
+                          }
+                        }}
+                      />
+                    </div>
+
+                    {/* Logo/Icon Upload for new amenity */}
+                    <div className="flex items-center gap-2">
+                      <label className="cursor-pointer">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) handleNewAmenityIconUpload(file);
+                          }}
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          asChild
+                          disabled={uploadingNewAmenityIcon}
+                          className="gap-1.5 shrink-0"
+                        >
+                          <span>
+                            {uploadingNewAmenityIcon ? (
+                              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                            ) : newAmenity.icon_url ? (
+                              <img
+                                src={newAmenity.icon_url}
+                                alt="icon"
+                                className="w-4 h-4 object-contain rounded"
+                              />
+                            ) : (
+                              <ImagePlus className="w-3.5 h-3.5" />
+                            )}
+                            <span className="text-xs">
+                              {newAmenity.icon_url ? "Logo Added" : "Add Logo"}
+                            </span>
+                          </span>
+                        </Button>
+                      </label>
+
+                      {newAmenity.icon_url && (
+                        <button
+                          type="button"
+                          onClick={() => setNewAmenity((prev) => ({ ...prev, icon_url: "" }))}
+                          className="text-xs text-muted-foreground hover:text-destructive"
+                          title="Remove logo"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+
+                      <Button
+                        type="button"
+                        size="sm"
+                        onClick={() => {
+                          if (newAmenity.name.trim()) {
                             setForm((f) => ({
                               ...f,
-                              amenities: [...f.amenities, newAmenity.trim()],
+                              amenities: [
+                                ...f.amenities,
+                                { name: newAmenity.name.trim(), icon_url: newAmenity.icon_url || undefined },
+                              ],
                             }));
-                            setNewAmenity("");
+                            setNewAmenity({ name: "", icon_url: "" });
                           }
-                        }
-                      }}
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        if (newAmenity.trim()) {
-                          setForm((f) => ({
-                            ...f,
-                            amenities: [...f.amenities, newAmenity.trim()],
-                          }));
-                          setNewAmenity("");
-                        }
-                      }}
-                      className="gap-1"
-                    >
-                      <Plus className="w-3.5 h-3.5" /> Add
-                    </Button>
+                        }}
+                        className="gap-1 shrink-0 bg-gold hover:bg-gold/90 text-gold-foreground font-medium"
+                      >
+                        <Plus className="w-3.5 h-3.5" /> Add Amenity
+                      </Button>
+                    </div>
                   </div>
-                  {form.amenities.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
-                      {form.amenities.map((a, i) => (
-                        <Badge
+
+                  {/* Amenities List with Arrangement & Logo controls */}
+                  {form.amenities.length > 0 ? (
+                    <div className="grid gap-2 sm:grid-cols-2">
+                      {form.amenities.map((amenity, i) => (
+                        <div
                           key={i}
-                          variant="secondary"
-                          className="gap-1.5 pl-3 pr-1.5 py-1.5 text-sm"
+                          className="flex items-center gap-2 p-2.5 rounded-xl border border-border bg-card/60 shadow-xs hover:border-gold/30 transition-all"
                         >
-                          {a}
+                          {/* Reorder Buttons */}
+                          <div className="flex flex-col gap-0.5 shrink-0">
+                            <button
+                              type="button"
+                              disabled={i === 0}
+                              onClick={() => moveAmenity(i, "up")}
+                              className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground disabled:opacity-20 disabled:hover:bg-transparent transition-all"
+                              title="Move Up in order"
+                            >
+                              <ArrowUp className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              disabled={i === form.amenities.length - 1}
+                              onClick={() => moveAmenity(i, "down")}
+                              className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground disabled:opacity-20 disabled:hover:bg-transparent transition-all"
+                              title="Move Down in order"
+                            >
+                              <ArrowDown className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+
+                          {/* Index Badge */}
+                          <span className="text-[11px] font-semibold text-muted-foreground/70 w-4 text-center shrink-0">
+                            {i + 1}
+                          </span>
+
+                          {/* Icon Preview / Upload */}
+                          <label className="cursor-pointer shrink-0">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) handleAmenityIconUpload(i, file);
+                              }}
+                            />
+                            <div
+                              className="h-8 w-8 rounded-lg border border-border flex items-center justify-center bg-muted/40 hover:bg-muted transition-all overflow-hidden"
+                              title="Click to upload/change logo"
+                            >
+                              {uploadingAmenityIcon === i ? (
+                                <Loader2 className="w-3.5 h-3.5 animate-spin text-gold" />
+                              ) : amenity.icon_url ? (
+                                <img
+                                  src={amenity.icon_url}
+                                  alt={amenity.name}
+                                  className="h-full w-full object-contain p-1"
+                                />
+                              ) : (
+                                <ImagePlus className="w-3.5 h-3.5 text-muted-foreground/60" />
+                              )}
+                            </div>
+                          </label>
+
+                          {/* Amenity Name */}
+                          <span className="flex-1 text-sm font-medium text-foreground truncate">
+                            {amenity.name}
+                          </span>
+
+                          {/* Remove Logo if present */}
+                          {amenity.icon_url && (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setForm((f) => {
+                                  const next = [...f.amenities];
+                                  next[i] = { ...next[i], icon_url: undefined };
+                                  return { ...f, amenities: next };
+                                })
+                              }
+                              className="text-xs text-muted-foreground/60 hover:text-destructive p-1"
+                              title="Remove logo"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          )}
+
+                          {/* Delete Amenity */}
                           <button
                             type="button"
                             onClick={() =>
@@ -1444,88 +1685,241 @@ function ProjectsManagement() {
                                 amenities: f.amenities.filter((_, idx) => idx !== i),
                               }))
                             }
-                            className="ml-1 rounded-full hover:bg-destructive/20 p-0.5"
+                            className="p-1 rounded-full text-muted-foreground hover:bg-destructive/15 hover:text-destructive transition-all shrink-0"
+                            title="Remove Amenity"
                           >
-                            <X className="w-3 h-3" />
+                            <Trash2 className="w-3.5 h-3.5" />
                           </button>
-                        </Badge>
+                        </div>
                       ))}
                     </div>
+                  ) : (
+                    <p className="text-xs text-muted-foreground italic py-2">
+                      No amenities added yet. Add your amenities above and arrange them in any order.
+                    </p>
                   )}
                 </div>
 
                 <hr className="border-border/50" />
 
-                {/* Specifications */}
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <GripVertical className="w-4 h-4 text-gold" />
-                    <Label className="text-base font-semibold">
-                      Specifications ({form.specifications.length})
-                    </Label>
+                {/* ── Specifications Section ── */}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <GripVertical className="w-4 h-4 text-gold" />
+                      <Label className="text-base font-semibold">
+                        Specifications ({form.specifications.length})
+                      </Label>
+                    </div>
+                    <span className="text-xs text-muted-foreground">
+                      Use ↑ ↓ to arrange display order on website
+                    </span>
                   </div>
-                  <div className="flex gap-2">
-                    <Input
-                      value={newSpec.label}
-                      onChange={(e) => setNewSpec((s) => ({ ...s, label: e.target.value }))}
-                      placeholder="Label (e.g. Structure)"
-                      className="flex-1"
-                    />
-                    <Input
-                      value={newSpec.value}
-                      onChange={(e) => setNewSpec((s) => ({ ...s, value: e.target.value }))}
-                      placeholder="Value (e.g. RCC framed…)"
-                      className="flex-1"
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault();
+
+                  {/* Add New Spec Bar */}
+                  <div className="flex flex-col gap-2 rounded-xl border border-border/60 bg-muted/20 p-3">
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <Input
+                        value={newSpec.label}
+                        onChange={(e) => setNewSpec((s) => ({ ...s, label: e.target.value }))}
+                        placeholder="Label (e.g. Structure, Flooring, Doors)"
+                        className="sm:w-1/3 bg-background"
+                      />
+                      <Input
+                        value={newSpec.value}
+                        onChange={(e) => setNewSpec((s) => ({ ...s, value: e.target.value }))}
+                        placeholder="Value (e.g. RCC framed structure, Italian marble…)"
+                        className="flex-1 bg-background"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            if (newSpec.label.trim() && newSpec.value.trim()) {
+                              setForm((f) => ({
+                                ...f,
+                                specifications: [
+                                  ...f.specifications,
+                                  {
+                                    label: newSpec.label.trim(),
+                                    value: newSpec.value.trim(),
+                                    icon_url: newSpec.icon_url || undefined,
+                                  },
+                                ],
+                              }));
+                              setNewSpec({ label: "", value: "", icon_url: "" });
+                            }
+                          }
+                        }}
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-end gap-2 pt-1">
+                      <label className="cursor-pointer">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) handleNewSpecIconUpload(file);
+                          }}
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          asChild
+                          disabled={uploadingNewSpecIcon}
+                          className="gap-1.5 shrink-0"
+                        >
+                          <span>
+                            {uploadingNewSpecIcon ? (
+                              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                            ) : newSpec.icon_url ? (
+                              <img
+                                src={newSpec.icon_url}
+                                alt="icon"
+                                className="w-4 h-4 object-contain rounded"
+                              />
+                            ) : (
+                              <ImagePlus className="w-3.5 h-3.5" />
+                            )}
+                            <span className="text-xs">
+                              {newSpec.icon_url ? "Logo Added" : "Add Logo (Optional)"}
+                            </span>
+                          </span>
+                        </Button>
+                      </label>
+
+                      {newSpec.icon_url && (
+                        <button
+                          type="button"
+                          onClick={() => setNewSpec((prev) => ({ ...prev, icon_url: "" }))}
+                          className="text-xs text-muted-foreground hover:text-destructive"
+                          title="Remove logo"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+
+                      <Button
+                        type="button"
+                        size="sm"
+                        onClick={() => {
                           if (newSpec.label.trim() && newSpec.value.trim()) {
                             setForm((f) => ({
                               ...f,
                               specifications: [
                                 ...f.specifications,
-                                { label: newSpec.label.trim(), value: newSpec.value.trim() },
+                                {
+                                  label: newSpec.label.trim(),
+                                  value: newSpec.value.trim(),
+                                  icon_url: newSpec.icon_url || undefined,
+                                },
                               ],
                             }));
-                            setNewSpec({ label: "", value: "" });
+                            setNewSpec({ label: "", value: "", icon_url: "" });
                           }
-                        }
-                      }}
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        if (newSpec.label.trim() && newSpec.value.trim()) {
-                          setForm((f) => ({
-                            ...f,
-                            specifications: [
-                              ...f.specifications,
-                              { label: newSpec.label.trim(), value: newSpec.value.trim() },
-                            ],
-                          }));
-                          setNewSpec({ label: "", value: "" });
-                        }
-                      }}
-                      className="gap-1 shrink-0"
-                    >
-                      <Plus className="w-3.5 h-3.5" /> Add
-                    </Button>
+                        }}
+                        className="gap-1 shrink-0 bg-gold hover:bg-gold/90 text-gold-foreground font-medium"
+                      >
+                        <Plus className="w-3.5 h-3.5" /> Add Specification
+                      </Button>
+                    </div>
                   </div>
-                  {form.specifications.length > 0 && (
+
+                  {/* Specifications List with Arrangement & Logo controls */}
+                  {form.specifications.length > 0 ? (
                     <div className="space-y-2">
                       {form.specifications.map((spec, i) => (
                         <div
                           key={i}
-                          className="flex items-start gap-3 p-3 rounded-lg border border-border bg-muted/10"
+                          className="flex items-center gap-3 p-3 rounded-xl border border-border bg-card/60 shadow-xs hover:border-gold/30 transition-all"
                         >
+                          {/* Reorder Buttons */}
+                          <div className="flex flex-col gap-0.5 shrink-0">
+                            <button
+                              type="button"
+                              disabled={i === 0}
+                              onClick={() => moveSpec(i, "up")}
+                              className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground disabled:opacity-20 disabled:hover:bg-transparent transition-all"
+                              title="Move Up in order"
+                            >
+                              <ArrowUp className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              disabled={i === form.specifications.length - 1}
+                              onClick={() => moveSpec(i, "down")}
+                              className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground disabled:opacity-20 disabled:hover:bg-transparent transition-all"
+                              title="Move Down in order"
+                            >
+                              <ArrowDown className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+
+                          {/* Index Badge */}
+                          <span className="text-[11px] font-semibold text-muted-foreground/70 w-4 text-center shrink-0">
+                            {i + 1}
+                          </span>
+
+                          {/* Logo Upload / Preview */}
+                          <label className="cursor-pointer shrink-0">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) handleSpecIconUpload(i, file);
+                              }}
+                            />
+                            <div
+                              className="h-9 w-9 rounded-lg border border-border flex items-center justify-center bg-muted/40 hover:bg-muted transition-all overflow-hidden"
+                              title="Click to upload/change logo"
+                            >
+                              {uploadingSpecIcon === i ? (
+                                <Loader2 className="w-3.5 h-3.5 animate-spin text-gold" />
+                              ) : spec.icon_url ? (
+                                <img
+                                  src={spec.icon_url}
+                                  alt={spec.label}
+                                  className="h-full w-full object-contain p-1"
+                                />
+                              ) : (
+                                <ImagePlus className="w-3.5 h-3.5 text-muted-foreground/60" />
+                              )}
+                            </div>
+                          </label>
+
+                          {/* Label & Value */}
                           <div className="flex-1 min-w-0">
-                            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                            <p className="text-xs font-semibold text-gold-foreground uppercase tracking-wide">
                               {spec.label}
                             </p>
-                            <p className="text-sm text-foreground mt-0.5">{spec.value}</p>
+                            <p className="text-sm text-foreground mt-0.5 line-clamp-2">
+                              {spec.value}
+                            </p>
                           </div>
+
+                          {/* Remove Logo if present */}
+                          {spec.icon_url && (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setForm((f) => {
+                                  const next = [...f.specifications];
+                                  next[i] = { ...next[i], icon_url: undefined };
+                                  return { ...f, specifications: next };
+                                })
+                              }
+                              className="text-xs text-muted-foreground/60 hover:text-destructive p-1"
+                              title="Remove logo"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          )}
+
+                          {/* Delete Spec */}
                           <button
                             type="button"
                             onClick={() =>
@@ -1534,13 +1928,18 @@ function ProjectsManagement() {
                                 specifications: f.specifications.filter((_, idx) => idx !== i),
                               }))
                             }
-                            className="shrink-0 text-muted-foreground hover:text-destructive"
+                            className="p-1.5 rounded-full text-muted-foreground hover:bg-destructive/15 hover:text-destructive transition-all shrink-0"
+                            title="Remove Specification"
                           >
-                            <X className="w-4 h-4" />
+                            <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
                       ))}
                     </div>
+                  ) : (
+                    <p className="text-xs text-muted-foreground italic py-2">
+                      No specifications added yet. Add specifications above and arrange them in any order.
+                    </p>
                   )}
                 </div>
               </TabsContent>

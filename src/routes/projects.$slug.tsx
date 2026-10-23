@@ -509,14 +509,36 @@ function ProjectDetails() {
               <div>
                 <h2 className="font-display text-2xl font-semibold text-foreground">Amenities</h2>
                 <div className="mt-5 grid grid-cols-1 gap-3 min-[480px]:grid-cols-2">
-                  {project.amenities.map((a: string) => (
-                    <div key={a} className="flex items-center gap-2 rounded-2xl glass p-4 text-sm">
-                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-gold text-gold-foreground flex-shrink-0">
-                        <Check className="h-3.5 w-3.5" />
-                      </span>
-                      {a}
-                    </div>
-                  ))}
+                  {project.amenities.map((item: any, idx: number) => {
+                    const name = typeof item === "string" ? item : item?.name || "";
+                    const iconUrl = typeof item === "string" ? null : item?.icon_url || null;
+                    if (!name) return null;
+                    return (
+                      <div
+                        key={`${name}-${idx}`}
+                        className="flex items-center gap-3 rounded-2xl glass p-4 text-sm transition-all hover:border-gold/30 hover:shadow-sm"
+                      >
+                        {iconUrl ? (
+                          <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/10 p-1.5 flex-shrink-0 border border-gold/20">
+                            <img
+                              src={iconUrl}
+                              alt={name}
+                              className="h-full w-full object-contain"
+                              onError={(e) => {
+                                // fallback if image fails
+                                (e.currentTarget as HTMLElement).style.display = "none";
+                              }}
+                            />
+                          </span>
+                        ) : (
+                          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-gold text-gold-foreground flex-shrink-0 shadow-xs">
+                            <Check className="h-3.5 w-3.5" />
+                          </span>
+                        )}
+                        <span className="font-medium text-foreground">{name}</span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
               <div>
@@ -525,15 +547,34 @@ function ProjectDetails() {
                 </h2>
                 <div className="mt-5 space-y-3">
                   {project.specifications
-                    .filter((s: { label: string; value: string }) => !s.label.startsWith("__"))
-                    .map((s: { label: string; value: string }) => (
-                    <div key={s.label} className="rounded-2xl bg-card p-5 neu-sm">
-                      <p className="text-xs uppercase tracking-wider text-gold-foreground">
-                        {s.label}
-                      </p>
-                      <p className="mt-1 text-foreground">{s.value}</p>
-                    </div>
-                  ))}
+                    .filter((s: any) => typeof s?.label === "string" && !s.label.startsWith("__"))
+                    .map((s: any, idx: number) => (
+                      <div
+                        key={`${s.label}-${idx}`}
+                        className="flex items-start gap-3 rounded-2xl bg-card p-5 neu-sm transition-all hover:border-gold/30"
+                      >
+                        {s.icon_url && (
+                          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gold/10 p-2 flex-shrink-0 border border-gold/20 mt-0.5">
+                            <img
+                              src={s.icon_url}
+                              alt={s.label}
+                              className="h-full w-full object-contain"
+                              onError={(e) => {
+                                (e.currentTarget as HTMLElement).style.display = "none";
+                              }}
+                            />
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs uppercase tracking-wider text-gold-foreground font-semibold">
+                            {s.label}
+                          </p>
+                          <p className="mt-1 text-foreground leading-relaxed text-sm sm:text-base">
+                            {s.value}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
                 </div>
               </div>
             </div>
