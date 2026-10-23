@@ -54,7 +54,15 @@ function ComparePage() {
     { label: "Status", render: (p) => p.status },
     { label: "Location", render: (p) => `${p.location}, ${p.city}` },
     { label: "Launch", render: (p) => p.launchDate },
-    { label: "Key Amenities", render: (p) => p.amenities.slice(0, 4).join(", ") },
+    {
+      label: "Key Amenities",
+      render: (p) =>
+        p.amenities
+          .slice(0, 4)
+          .map((a: any) => (typeof a === "string" ? a : a?.name || ""))
+          .filter(Boolean)
+          .join(", "),
+    },
   ];
 
   return (
