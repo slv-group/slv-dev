@@ -26,11 +26,32 @@ import nriHeroImage from "@/assets/nri/nri-hero.jpg";
 export const Route = createFileRoute("/nri-corner")({
   head: () => ({
     meta: [
-      { title: "NRI Corner — SLV Group" },
+      { title: "NRI Corner — Real Estate Investments in Andhra Pradesh | SLV Group" },
       {
         name: "description",
         content:
-          "Invest in India. Build Your Future with SLV Group. Dedicated support and premium properties for Non-Resident Indians.",
+          "Invest with confidence in Andhra Pradesh's growth corridor. Dedicated end-to-end investment assistance, legal due diligence, and property management for Non-Resident Indians.",
+      },
+      { property: "og:site_name", content: "SLV Group" },
+      { property: "og:title", content: "NRI Corner — SLV Group" },
+      {
+        property: "og:description",
+        content: "Dedicated real estate investment support for Non-Resident Indians.",
+      },
+      { property: "og:url", content: "https://www.slvgroup.co.in/nri-corner" },
+      { property: "og:image", content: "https://www.slvgroup.co.in/slv-logo.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "NRI Corner — SLV Group" },
+      {
+        name: "twitter:description",
+        content: "Dedicated real estate investment support for Non-Resident Indians.",
+      },
+      { name: "twitter:image", content: "https://www.slvgroup.co.in/slv-logo.png" },
+    ],
+    links: [
+      {
+        rel: "canonical",
+        href: "https://www.slvgroup.co.in/nri-corner",
       },
     ],
   }),

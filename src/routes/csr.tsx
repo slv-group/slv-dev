@@ -72,8 +72,9 @@ export const Route = createFileRoute("/csr")({
       {
         name: "description",
         content:
-          "Discover SLV Group' community initiatives, charitable activities, donations and social-impact programs.",
+          "Discover SLV Group's community initiatives, charitable activities, and social-impact programs across Andhra Pradesh.",
       },
+      { property: "og:site_name", content: "SLV Group" },
       {
         property: "og:title",
         content: "CSR & Community Initiatives — SLV Group",
@@ -81,11 +82,25 @@ export const Route = createFileRoute("/csr")({
       {
         property: "og:description",
         content:
-          "Building communities goes beyond construction. Explore SLV's social-impact initiatives.",
+          "Building communities goes beyond construction. Explore SLV Group's social-impact initiatives.",
       },
+      { property: "og:url", content: "https://www.slvgroup.co.in/csr" },
       {
         property: "og:image",
-        content: heroImage,
+        content: "https://www.slvgroup.co.in/slv-logo.png",
+      },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "CSR & Community Initiatives — SLV Group" },
+      {
+        name: "twitter:description",
+        content: "Explore SLV Group's social-impact initiatives and community programs.",
+      },
+      { name: "twitter:image", content: "https://www.slvgroup.co.in/slv-logo.png" },
+    ],
+    links: [
+      {
+        rel: "canonical",
+        href: "https://www.slvgroup.co.in/csr",
       },
     ],
   }),
@@ -117,8 +132,6 @@ type CSRInitiative = {
   beneficiaries?: string;
   featured?: boolean;
 };
-
-
 
 // -----------------------------------------------------------------------------
 // FILTERS
@@ -185,7 +198,9 @@ function InitiativeDetailModal({
   useEffect(() => {
     if (initiative) {
       document.body.style.overflow = "hidden";
-      return () => { document.body.style.overflow = ""; };
+      return () => {
+        document.body.style.overflow = "";
+      };
     }
   }, [initiative]);
 
@@ -204,10 +219,7 @@ function InitiativeDetailModal({
   if (!initiative) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-[100] flex items-center justify-center"
-      onClick={onClose}
-    >
+    <div className="fixed inset-0 z-[100] flex items-center justify-center" onClick={onClose}>
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/70 backdrop-blur-sm"
@@ -292,10 +304,7 @@ function InitiativeDetailModal({
             {/* Detail paragraphs */}
             <div className="mt-7 space-y-5">
               {initiative.detailParagraphs.map((para, i) => (
-                <p
-                  key={i}
-                  className="text-base leading-[1.85] text-muted-foreground sm:text-lg"
-                >
+                <p key={i} className="text-base leading-[1.85] text-muted-foreground sm:text-lg">
                   {para}
                 </p>
               ))}
@@ -460,9 +469,7 @@ function InitiativeCard({
           </h3>
 
           {initiative.subtitle && (
-            <p className="mt-2 text-xs italic text-gold/80 font-medium">
-              {initiative.subtitle}
-            </p>
+            <p className="mt-2 text-xs italic text-gold/80 font-medium">{initiative.subtitle}</p>
           )}
 
           <p className="mt-4 text-sm leading-relaxed text-muted-foreground">

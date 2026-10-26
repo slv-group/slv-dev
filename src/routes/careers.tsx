@@ -8,16 +8,32 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/careers")({
   head: () => ({
     meta: [
-      { title: "Careers — SLV Group" },
+      { title: "Careers — SLV Group | Build Your Career in Real Estate" },
       {
         name: "description",
         content:
-          "Join SLV Group. Explore open roles in sales, design, and marketing, and submit your application online.",
+          "Explore career opportunities with SLV Group. Discover open roles across engineering, sales, architecture, and project management in Andhra Pradesh.",
       },
-      { property: "og:title", content: "Careers — SLV Group" },
+      { property: "og:site_name", content: "SLV Group" },
+      { property: "og:title", content: "Careers at SLV Group" },
       {
         property: "og:description",
-        content: "Build your career with India's luxury real estate leader.",
+        content: "Build your career with one of Andhra Pradesh's leading real estate developers.",
+      },
+      { property: "og:url", content: "https://www.slvgroup.co.in/careers" },
+      { property: "og:image", content: "https://www.slvgroup.co.in/slv-logo.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Careers at SLV Group" },
+      {
+        name: "twitter:description",
+        content: "Build your career with one of Andhra Pradesh's leading real estate developers.",
+      },
+      { name: "twitter:image", content: "https://www.slvgroup.co.in/slv-logo.png" },
+    ],
+    links: [
+      {
+        rel: "canonical",
+        href: "https://www.slvgroup.co.in/careers",
       },
     ],
   }),

@@ -40,18 +40,37 @@ import journey3 from "@/assets/slv-image.png";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About Us — SLV Group" },
+      { title: "About Us — SLV Group | 20+ Years of Real Estate Excellence" },
       {
         name: "description",
         content:
-          "Since 2007, SLV Group has crafted trusted homes across Bhimavaram, Vijayawada, and the Amaravati region — built on the 4 Ts: Trust, Teamwork, Timely Delivery, and Transparency.",
+          "Since 2007, SLV Group has crafted trusted residential communities, open plots, and commercial landmarks across Vijayawada, Guntur, and the Amaravati region.",
       },
-      { property: "og:title", content: "About SLV Group" },
+      { property: "og:site_name", content: "SLV Group" },
+      {
+        property: "og:title",
+        content: "About SLV Group — Real Estate Excellence in Andhra Pradesh",
+      },
       {
         property: "og:description",
-        content: "20 years of building trusted homes across Andhra Pradesh.",
+        content:
+          "20+ years of building trusted communities and residential landmarks across Andhra Pradesh.",
       },
-      { property: "og:image", content: heroImage },
+      { property: "og:url", content: "https://www.slvgroup.co.in/about" },
+      { property: "og:image", content: "https://www.slvgroup.co.in/slv-logo.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "About SLV Group" },
+      {
+        name: "twitter:description",
+        content: "20+ years of building trusted communities across Andhra Pradesh.",
+      },
+      { name: "twitter:image", content: "https://www.slvgroup.co.in/slv-logo.png" },
+    ],
+    links: [
+      {
+        rel: "canonical",
+        href: "https://www.slvgroup.co.in/about",
+      },
     ],
   }),
   component: AboutPage,

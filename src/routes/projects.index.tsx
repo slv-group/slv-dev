@@ -16,14 +16,35 @@ import { Search, MapPin, RotateCcw } from "lucide-react";
 export const Route = createFileRoute("/projects/")({
   head: () => ({
     meta: [
-      { title: "Projects — SLV Group" },
+      { title: "Residential Projects & Open Plots in Vijayawada & Amaravati — SLV Group" },
       {
         name: "description",
         content:
-          "Explore ongoing, completed, and upcoming luxury villas, penthouses, and apartments by SLV Group.",
+          "Explore ongoing, upcoming, and completed residential gated communities, open plots, and commercial projects across Vijayawada, Guntur, and the Amaravati region by SLV Group.",
       },
-      { property: "og:title", content: "Projects — SLV Group" },
-      { property: "og:description", content: "Browse our curated portfolio of luxury residences." },
+      { property: "og:site_name", content: "SLV Group" },
+      { property: "og:title", content: "Projects Portfolio — SLV Group" },
+      {
+        property: "og:description",
+        content:
+          "Browse our portfolio of plotted developments, residential communities, and commercial landmarks in Vijayawada and Amaravati.",
+      },
+      { property: "og:url", content: "https://www.slvgroup.co.in/projects" },
+      { property: "og:image", content: "https://www.slvgroup.co.in/slv-logo.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Projects Portfolio — SLV Group" },
+      {
+        name: "twitter:description",
+        content:
+          "Browse our portfolio of plotted developments, residential communities, and commercial landmarks in Vijayawada and Amaravati.",
+      },
+      { name: "twitter:image", content: "https://www.slvgroup.co.in/slv-logo.png" },
+    ],
+    links: [
+      {
+        rel: "canonical",
+        href: "https://www.slvgroup.co.in/projects",
+      },
     ],
   }),
   validateSearch: (search: Record<string, unknown>): { status?: string; location?: string } => ({
@@ -38,22 +59,8 @@ export const Route = createFileRoute("/projects/")({
       .eq("is_published", true)
       .order("sort_order", { ascending: true });
 
-    let allProjects = [...staticProjects];
-
-    if (data && data.length > 0) {
-      const dbProjects = data.map(mapSupabaseToProject);
-      // Build Sets of DB slugs and normalized names for fast lookup
-      const dbSlugs = new Set(dbProjects.map((p) => p.slug));
-      const dbNames = new Set(dbProjects.map((p) => p.name.toLowerCase().trim()));
-
-      // Keep only static projects that DON'T have a DB counterpart (by slug OR name)
-      allProjects = staticProjects.filter(
-        (s) => !dbSlugs.has(s.slug) && !dbNames.has(s.name.toLowerCase().trim()),
-      );
-
-      // Append all DB projects (they take priority)
-      allProjects.push(...dbProjects);
-    }
+    const allProjects =
+      data && data.length > 0 ? data.map(mapSupabaseToProject) : [...staticProjects];
 
     // Sort projects: Ongoing → Upcoming → Completed
     const statusOrder: Record<ProjectStatus, number> = {
@@ -67,7 +74,6 @@ export const Route = createFileRoute("/projects/")({
     });
 
     return { projects: allProjects };
-
   },
   component: ProjectsPage,
 });
@@ -181,7 +187,8 @@ function ProjectsPage() {
           Find Your Projects
         </h1>
         <p className="mt-4 max-w-2xl text-muted-foreground">
-          Refine by location, status, type, and price to discover the home that matches your aspirations.
+          Refine by location, status, type, and price to discover the home that matches your
+          aspirations.
         </p>
 
         {/* Filter bar */}
@@ -280,12 +287,8 @@ function ProjectsPage() {
             {location !== "All" && (
               <span className="ml-1 text-gold font-medium">in {location}</span>
             )}
-            {status !== "All" && (
-              <span className="ml-1 text-muted-foreground">({status})</span>
-            )}
-            {category !== "All" && (
-              <span className="ml-1 text-muted-foreground">• {category}</span>
-            )}
+            {status !== "All" && <span className="ml-1 text-muted-foreground">({status})</span>}
+            {category !== "All" && <span className="ml-1 text-muted-foreground">• {category}</span>}
           </p>
 
           {hasActiveFilters && (
@@ -306,9 +309,7 @@ function ProjectsPage() {
         </div>
         {filtered.length === 0 && (
           <div className="py-20 text-center">
-            <p className="text-muted-foreground">
-              No residences match these filters yet.
-            </p>
+            <p className="text-muted-foreground">No residences match these filters yet.</p>
             {hasActiveFilters && (
               <button
                 onClick={resetFilters}

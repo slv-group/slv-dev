@@ -114,7 +114,9 @@ export type SpecificationItem = { label: string; value: string; icon_url?: strin
 export function normalizeAmenities(raw: unknown): AmenityItem[] {
   if (!Array.isArray(raw)) return [];
   return raw.map((item) =>
-    typeof item === "string" ? { name: item } : { name: item?.name ?? "", icon_url: item?.icon_url ?? undefined }
+    typeof item === "string"
+      ? { name: item }
+      : { name: item?.name ?? "", icon_url: item?.icon_url ?? undefined },
   );
 }
 
@@ -159,9 +161,7 @@ export function matchesLocation(project: Project, selectedLocation: string): boo
 
   if (loc === "gannavaram") {
     return (
-      pLoc.includes("gannavaram") ||
-      pCity.includes("gannavaram") ||
-      pLoc.includes("vedurupavuluru")
+      pLoc.includes("gannavaram") || pCity.includes("gannavaram") || pLoc.includes("vedurupavuluru")
     );
   }
 
@@ -205,12 +205,15 @@ import type { Tables } from "@/integrations/supabase/types";
 
 export function mapSupabaseToProject(row: Tables<"projects">): Project {
   const specs = Array.isArray(row.specifications) ? (row.specifications as any[]) : [];
-  const unitFromSpecs = specs.find((s) => s?.label === "__area_unit" || s?.label === "Area Unit")?.value;
-  const areaUnit = (row as any).area_unit || unitFromSpecs || (row.category === "Plots" ? "sq yd" : "sqft");
+  const unitFromSpecs = specs.find(
+    (s) => s?.label === "__area_unit" || s?.label === "Area Unit",
+  )?.value;
+  const areaUnit =
+    (row as any).area_unit || unitFromSpecs || (row.category === "Plots" ? "sq yd" : "sqft");
 
   return {
     id: row.id,
-    slug: row.slug,
+    slug: row.slug === "slv-greenhorizon-2" ? "slv-green-horizon-2" : row.slug,
     name: row.name,
     tagline: row.tagline || "",
     category: (row.category as ProjectCategory) || "Apartment",
@@ -1868,26 +1871,97 @@ export const projects: Project[] = [
       { type: "3 BHK", sqft: 1800, image: img(3) },
     ],
   },
-  // ── 34 ──────────────────────────────────────────────
-
   {
-    id: "34",
-    slug: "slv-aerocity-2",
-    name: "SLV Aerocity-2",
+    id: "4109d9e4-5fe3-444b-8935-aa8f9e05fbb1",
+    name: "SLV Green Horizon",
+    slug: "slv-green-horizon",
+    tagline: "Premium plots at the gateway to Gannavaram Airport",
+    category: "Plots",
+    status: "Ongoing",
+    location: "Purushothapatnam, Gannavaram",
+    city: "Gannavaram",
+    priceFrom: 4000000,
+    bedrooms: "Villa Plots",
+    sqftFrom: 1800,
+    sqftTo: 5000,
+    areaUnit: "sqft",
+    launchDate: "Feb 2026",
+    image:
+      "https://zjvnxolsmfkurrwissru.supabase.co/storage/v1/object/public/project-media/covers/1792476244713-wu918a7rccp.png",
+    gallery: [
+      "https://zjvnxolsmfkurrwissru.supabase.co/storage/v1/object/public/project-media/gallery/1786567115781-3ke3h8loeia.jpg",
+      "https://zjvnxolsmfkurrwissru.supabase.co/storage/v1/object/public/project-media/gallery/1786567116360-x15g8cvnbea.jpg",
+      "https://zjvnxolsmfkurrwissru.supabase.co/storage/v1/object/public/project-media/gallery/1786567117230-uijra808dwk.jpg",
+      "https://zjvnxolsmfkurrwissru.supabase.co/storage/v1/object/public/project-media/gallery/1792476260150-nm6lqjjb0vi.png",
+    ],
+    description:
+      "SLV Aerocity-1 — premium plotted layout at Purushothapatnam, Gannavaram, positioned at the gateway to the new airport city. Currently under development, Aerocity-1 is ideally located for those looking to invest in the Gannavaram aviation-driven growth corridor.",
+    amenities: [
+      "Swimming Pool",
+      "Gym",
+      "Indoor Games",
+      "Outdoor Games & Shuttle Court",
+      "Volleyball Court",
+      "Cricket Net",
+      "Outdoor Gym",
+      "Outdoor Children's Play Zone",
+      "Function Hall",
+      "Amphitheatre",
+      "Grand Dining Hall",
+      "Suite Rooms",
+      "Bird's Nest",
+      "Duck Pond",
+    ],
+    specifications: [
+      { label: "Type", value: "Plotted Layout" },
+      { label: "Location", value: "Purushothapatnam, Gannavaram" },
+      { label: "Commencement", value: "Feb 2026" },
+      { label: "Completion", value: "Ongoing" },
+    ],
+    proximity: [
+      { label: "Gannavaram Airport", distance: "5 km" },
+      { label: "NH-16 Highway", distance: "3 km" },
+      { label: "Vijayawada City Centre", distance: "12 km" },
+      { label: "Schools", distance: "3 km" },
+    ],
+    floorPlans: [
+      {
+        type: "Villa Plot",
+        sqft: 1800,
+        image:
+          "https://zjvnxolsmfkurrwissru.supabase.co/storage/v1/object/public/project-media/gallery/1786567117855-ae7b2vfkdx.jpg",
+      },
+      {
+        type: "Premium Plot",
+        sqft: 5000,
+        image:
+          "https://zjvnxolsmfkurrwissru.supabase.co/storage/v1/object/public/project-media/gallery/1786567118255-zezgrlqsmz.jpg",
+      },
+    ],
+  },
+  {
+    id: "a299c375-de58-4bd3-a80e-f13bd11930c5",
+    name: "SLV Green Horizon-2",
+    slug: "slv-green-horizon-2",
     tagline: "Expansive plotted layouts near Gannavaram's aviation hub",
     category: "Plots",
     status: "Ongoing",
     location: "Vedurupavuluru, Gannavaram",
     city: "Gannavaram",
-    priceFrom: 3800000,
+    priceFrom: 0,
     bedrooms: "Villa Plots",
     sqftFrom: 1800,
     sqftTo: 5400,
-    launchDate: "Ongoing",
-    image: img(1),
-    gallery: gallery(1),
+    areaUnit: "sqft",
+    launchDate: "Mar 2025",
+    image:
+      "https://zjvnxolsmfkurrwissru.supabase.co/storage/v1/object/public/project-media/covers/1792648403884-w3xh71gn049.png",
+    gallery: [
+      "https://zjvnxolsmfkurrwissru.supabase.co/storage/v1/object/public/project-media/gallery/1792474800146-9262scpt4a9.png",
+      "https://zjvnxolsmfkurrwissru.supabase.co/storage/v1/object/public/project-media/gallery/1792648412192-ksortyeyxh.png",
+    ],
     description:
-      "SLV Aerocity-2 — an expansive plotted layout at Vedurupavuluru, Gannavaram. Currently under development, Aerocity-2 offers a unique opportunity to own land in the emerging Aerocity zone adjacent to Gannavaram Airport.",
+      "SLV Green Horizon-2 — an expansive plotted layout at Vedurupavuluru, Gannavaram. Currently under development, Aerocity-2 offers a unique opportunity to own land in the emerging Aerocity zone adjacent to Gannavaram Airport.",
     amenities: [
       "Gated Entrance",
       "Wide Roads",
@@ -1910,9 +1984,21 @@ export const projects: Project[] = [
       { label: "Schools", distance: "3 km" },
     ],
     floorPlans: [
-      { type: "Villa Plot", sqft: 1800, image: img(1) },
-      { type: "Premium Plot", sqft: 5400, image: img(2) },
+      {
+        type: "Villa Plot",
+        sqft: 1800,
+        image:
+          "https://zjvnxolsmfkurrwissru.supabase.co/storage/v1/object/public/project-media/gallery/1786567120821-xpqzn3gb9gg.jpg",
+      },
+      {
+        type: "Premium Plot",
+        sqft: 5400,
+        image:
+          "https://zjvnxolsmfkurrwissru.supabase.co/storage/v1/object/public/project-media/gallery/1786567121217-wm9v8m0hnf.jpg",
+      },
     ],
+    brochureUrl:
+      "https://zjvnxolsmfkurrwissru.supabase.co/storage/v1/object/public/brochures/brochures/1790593419719-iaezca1hj7.pdf",
   },
 ];
 

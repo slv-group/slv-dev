@@ -6,16 +6,32 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/buyers-guide")({
   head: () => ({
     meta: [
-      { title: "Buyer's Guide & FAQs — SLV Group" },
+      { title: "Home Buyer's Guide — SLV Group" },
       {
         name: "description",
         content:
-          "Everything you need to know before buying a luxury home — from RERA and home loans to registration, due diligence, and possession. Plus 15 frequently asked questions answered.",
+          "A comprehensive guide to buying property in Andhra Pradesh — covering RERA verification, home loan financing, registration, legal due diligence, and property handover.",
       },
-      { property: "og:title", content: "Buyer's Guide & FAQs — SLV Group" },
+      { property: "og:site_name", content: "SLV Group" },
+      { property: "og:title", content: "Home Buyer's Guide — SLV Group" },
       {
         property: "og:description",
-        content: "A step-by-step guide to buying your luxury home with confidence.",
+        content: "A step-by-step guide to buying property and open plots with confidence.",
+      },
+      { property: "og:url", content: "https://www.slvgroup.co.in/buyers-guide" },
+      { property: "og:image", content: "https://www.slvgroup.co.in/slv-logo.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Home Buyer's Guide — SLV Group" },
+      {
+        name: "twitter:description",
+        content: "A step-by-step guide to buying property and open plots with confidence.",
+      },
+      { name: "twitter:image", content: "https://www.slvgroup.co.in/slv-logo.png" },
+    ],
+    links: [
+      {
+        rel: "canonical",
+        href: "https://www.slvgroup.co.in/buyers-guide",
       },
     ],
   }),
@@ -317,11 +333,11 @@ function BuyersGuide() {
                 📞 +91 98595 95939
               </a>
               <a
-                href="mailto:slv.bvrm@gmail.com"
+                href="mailto:info@slvgroup.co.in"
                 id="cta-email-experts"
                 className="inline-flex items-center gap-2 rounded-xl border border-gold/30 px-6 py-3 text-sm font-medium text-foreground transition-all duration-200 hover:border-gold/60 hover:bg-gold/5"
               >
-                ✉ slv.bvrm@gmail.com
+                ✉ info@slvgroup.co.in
               </a>
             </div>
           </div>

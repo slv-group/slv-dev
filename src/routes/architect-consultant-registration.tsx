@@ -5,6 +5,25 @@ import {
 } from "@/components/registration/WorkingRegistrationForm";
 
 export const Route = createFileRoute("/architect-consultant-registration")({
+  head: () => ({
+    meta: [
+      { title: "Architect & Consultant Registration — SLV Group" },
+      {
+        name: "description",
+        content:
+          "Partner with SLV Group. Register as an architect, structural consultant, or design partner for our real estate developments.",
+      },
+      { property: "og:title", content: "Architect & Consultant Registration — SLV Group" },
+      {
+        property: "og:url",
+        content: "https://www.slvgroup.co.in/architect-consultant-registration",
+      },
+      { property: "og:image", content: "https://www.slvgroup.co.in/slv-logo.png" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://www.slvgroup.co.in/architect-consultant-registration" },
+    ],
+  }),
   component: ArchitectConsultantRegistration,
 });
 

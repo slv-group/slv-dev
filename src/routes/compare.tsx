@@ -72,7 +72,8 @@ function ComparePage() {
     { label: "Configurations", render: (p) => p.bedrooms },
     {
       label: "Area",
-      render: (p) => `${p.sqftFrom.toLocaleString()} - ${p.sqftTo.toLocaleString()} ${p.areaUnit || (p.category === "Plots" ? "sq yd" : "sqft")}`,
+      render: (p) =>
+        `${p.sqftFrom.toLocaleString()} - ${p.sqftTo.toLocaleString()} ${p.areaUnit || (p.category === "Plots" ? "sq yd" : "sqft")}`,
     },
     { label: "Status", render: (p) => p.status },
     { label: "Location", render: (p) => `${p.location}, ${p.city}` },

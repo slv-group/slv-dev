@@ -111,7 +111,10 @@ export function PropertyCard({ project }: { project: Project }) {
                 className="flex h-10 items-center gap-1.5 rounded-xl bg-secondary/50 px-2.5 text-xs text-muted-foreground min-w-0"
                 title={project.bedrooms}
               >
-                <BedDouble className="h-3.5 w-3.5 shrink-0" style={{ color: "var(--color-gold)" }} />
+                <BedDouble
+                  className="h-3.5 w-3.5 shrink-0"
+                  style={{ color: "var(--color-gold)" }}
+                />
                 <span className="font-medium truncate whitespace-nowrap">{project.bedrooms}</span>
               </div>
               <div
@@ -120,7 +123,8 @@ export function PropertyCard({ project }: { project: Project }) {
               >
                 <Maximize className="h-3.5 w-3.5 shrink-0" style={{ color: "var(--color-gold)" }} />
                 <span className="font-medium truncate whitespace-nowrap">
-                  {project.sqftFrom.toLocaleString()}+ {project.areaUnit || (project.category === "Plots" ? "sq yd" : "sqft")}
+                  {project.sqftFrom.toLocaleString()}+{" "}
+                  {project.areaUnit || (project.category === "Plots" ? "sq yd" : "sqft")}
                 </span>
               </div>
             </div>

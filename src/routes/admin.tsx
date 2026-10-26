@@ -7,6 +7,9 @@ import { Crown, ShieldOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/admin")({
+  head: () => ({
+    meta: [{ name: "robots", content: "noindex, nofollow" }, { title: "Admin Portal — SLV Group" }],
+  }),
   component: AdminLayout,
 });
 

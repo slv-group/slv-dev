@@ -9,15 +9,17 @@ const ourStoryLinks = [
   { label: "Leadership & Management", to: "/management" },
   { label: "Awards", to: "/awards" },
   { label: "CSR", to: "/csr" },
-  { label: "Gallery", to: "/projects" },
+  { label: "Gallery", to: "/gallery" },
 ];
 
 const buyersGuideLinks = [
+  { label: "Buyer's Guide Overview", to: "/buyers-guide" },
   { label: "EMI Calculator", to: "/emi-calculator" },
   { label: "FAQ'S", to: "/faq" },
 ];
 
 const projectLinks = [
+  { label: "All Projects", to: "/projects" },
   { label: "Ongoing Projects", to: "/projects", search: { status: "ongoing" } },
   { label: "Upcoming Projects", to: "/projects", search: { status: "upcoming" } },
   { label: "Completed Projects", to: "/projects", search: { status: "completed" } },
@@ -107,11 +109,19 @@ export function Navbar() {
         setActiveDropdown(null);
       }
     };
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setActiveDropdown(null);
+        setOpen(false);
+      }
+    };
     document.addEventListener("mousedown", handleClickOutside);
     document.addEventListener("touchstart", handleClickOutside);
+    document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("touchstart", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
 
@@ -125,42 +135,49 @@ export function Navbar() {
       className="relative"
       onMouseEnter={() => openDropdown(key)}
       onMouseLeave={closeDropdown}
+      onKeyDown={(e) => {
+        if (e.key === "Escape") {
+          setActiveDropdown(null);
+        }
+      }}
     >
       <button
         onClick={() => toggleDropdown(key)}
+        aria-haspopup="true"
+        aria-expanded={activeDropdown === key}
         className={cn(
-          "flex items-center gap-1 rounded-lg px-3 py-2 text-[0.82rem] font-medium transition-all duration-300 cursor-pointer",
+          "flex items-center gap-1 rounded-lg px-3 py-2 text-[0.82rem] font-medium transition-all duration-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60",
           scrolled ? "text-black/50 hover:text-foreground" : "text-white/70 hover:text-white",
         )}
       >
         {label}
         <ChevronDown
-          className={cn(
-            "h-3 w-3 transition-transform",
-            activeDropdown === key ? "rotate-180" : "",
-          )}
+          className={cn("h-3 w-3 transition-transform", activeDropdown === key ? "rotate-180" : "")}
         />
       </button>
 
       {activeDropdown === key && (
         <div
+          role="menu"
+          aria-label={label}
           className="absolute left-0 top-full pt-1 z-50"
           style={{ minWidth }}
           onMouseEnter={() => openDropdown(key)}
           onMouseLeave={closeDropdown}
         >
-          <div className="rounded-2xl border border-white/10 bg-black/80 p-4 backdrop-blur-xl">
+          <div className="rounded-2xl border border-white/10 bg-black/80 p-4 backdrop-blur-xl shadow-xl">
             <ul className="space-y-3">
               {links.map((item) => (
-                <li key={item.label}>
+                <li key={item.label} role="none">
                   <Link
                     to={item.to}
                     search={item.search}
+                    role="menuitem"
                     onClick={() => {
                       scrollToTopIfSamePage(item.to);
                       setActiveDropdown(null);
                     }}
-                    className="flex items-center justify-between text-sm text-white/70 hover:text-gold"
+                    className="flex items-center justify-between text-sm text-white/70 hover:text-gold transition-colors focus-visible:outline-none focus-visible:text-gold"
                   >
                     {item.label}
                     <ArrowUpRight className="h-3 w-3" />
@@ -309,7 +326,7 @@ export function Navbar() {
             style={{ background: "var(--gradient-gold)" }}
           >
             <MapPin className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5" />
-            <span>Book Your Site</span>
+            <span>Book a Site Visit</span>
           </Link>
           <button
             onClick={() => setOpen((o) => !o)}
@@ -462,7 +479,7 @@ export function Navbar() {
               className="mt-1 flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold text-gold-foreground"
               style={{ background: "var(--gradient-gold)" }}
             >
-              <MapPin className="h-4 w-4" /> Book Your Site Visit
+              <MapPin className="h-4 w-4" /> Book a Site Visit
             </Link>
             <a
               href="tel:+919859595939"

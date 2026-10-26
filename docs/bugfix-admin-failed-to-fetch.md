@@ -2,7 +2,7 @@
 
 **Date:** 2026-08-01  
 **Branch:** `feat/admin-panel-integration`  
-**Severity:** 🔴 Critical – blocks all admin authentication  
+**Severity:** 🔴 Critical – blocks all admin authentication
 
 ---
 
@@ -22,13 +22,10 @@ The wrapper logic was:
 
 ```ts
 // Buggy logic (removed)
-if (
-  isNewSupabaseApiKey(supabaseKey) &&
-  headers.get("Authorization") === `Bearer ${supabaseKey}`
-) {
-  headers.delete("Authorization");   // ❌ strips the auth header
+if (isNewSupabaseApiKey(supabaseKey) && headers.get("Authorization") === `Bearer ${supabaseKey}`) {
+  headers.delete("Authorization"); // ❌ strips the auth header
 }
-headers.set("apikey", supabaseKey);  // adds apikey header
+headers.set("apikey", supabaseKey); // adds apikey header
 return fetch(input, { ...init, headers });
 ```
 
@@ -37,6 +34,7 @@ return fetch(input, { ...init, headers });
 The new Supabase JS client (`@supabase/supabase-js ^2.108`) already handles the `sb_publishable_*` key format natively — it sends the key in the `apikey` header **without** a `Bearer Authorization` header for auth endpoints.
 
 When the custom fetch wrapper intercepted the request, it:
+
 1. Received an `init.headers` object where `Authorization` was **not** set as a plain string but as an internal `Headers` object reference.
 2. The `new Headers(init.headers)` copy did not correctly clone all internal SDK headers in some browser environments.
 3. The resulting modified request had malformed / missing headers, causing the browser to reject the fetch with a CORS / network error that surfaces as **"Failed to fetch"**.
@@ -67,14 +65,14 @@ Also removed the unused helper functions `isNewSupabaseApiKey` and `createSupaba
 
 ## Verification
 
-- [ ] Navigate to `/admin/signup` → fill form → submit → account created ✅  
-- [ ] Navigate to `/admin/login` → fill credentials → submit → redirected to `/admin` ✅  
-- [ ] No "Failed to fetch" error toast appears  
+- [ ] Navigate to `/admin/signup` → fill form → submit → account created ✅
+- [ ] Navigate to `/admin/login` → fill credentials → submit → redirected to `/admin` ✅
+- [ ] No "Failed to fetch" error toast appears
 
 ---
 
 ## Notes
 
-- Supabase project ID: `zjvnxolsmfkurrwissru`  
-- Key type in use: `sb_publishable_*` (new opaque format, not a JWT)  
+- Supabase project ID: `zjvnxolsmfkurrwissru`
+- Key type in use: `sb_publishable_*` (new opaque format, not a JWT)
 - The `@supabase/supabase-js ^2.108` SDK handles this key type natively — no custom fetch wrapper is needed.
