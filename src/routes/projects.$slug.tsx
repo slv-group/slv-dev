@@ -24,30 +24,10 @@ import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/projects/$slug")({
   loader: async ({ params }) => {
-    // Permanent 301 redirect for retired unhyphenated slug
-    if (params.slug === "slv-greenhorizon-2") {
-      throw redirect({
-        to: "/projects/$slug",
-        params: { slug: "slv-green-horizon-2" },
-        statusCode: 301,
-      });
-    }
-
-    // First try Supabase with canonical slug
-    let { data } = await supabase
-      .from("projects")
-      .select("*")
-      .eq("slug", params.slug)
-      .maybeSingle();
-
-    // Transition fallback if DB has not yet applied the slug update
-    if (!data && params.slug === "slv-green-horizon-2") {
-      const fallback = await supabase
-        .from("projects")
-        .select("*")
-        .eq("slug", "slv-greenhorizon-2")
-        .maybeSingle();
-      data = fallback.data;
+    // First try Supabase
+    const { data, error } = await supabase.from("projects").select("*").eq("slug", params.slug).maybeSingle();
+    if (error) {
+      console.warn(`[projects.$slug] Supabase query error for slug '${params.slug}':`, error.message);
     }
 
     let project;

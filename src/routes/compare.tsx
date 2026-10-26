@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { X, Scale } from "lucide-react";
 import { useStore } from "@/store/useStore";
-import { projects, formatPrice } from "@/data/projects";
+import { projects as staticProjects, formatPrice, mapSupabaseToProject, type Project } from "@/data/projects";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/compare")({
   head: () => ({
@@ -14,12 +15,34 @@ export const Route = createFileRoute("/compare")({
       },
     ],
   }),
+  loader: async () => {
+    const { data } = await supabase
+      .from("projects")
+      .select("*")
+      .eq("is_published", true)
+      .order("sort_order", { ascending: true });
+
+    let allProjects: Project[] = [...staticProjects];
+    if (data && data.length > 0) {
+      const dbProjects = data.map(mapSupabaseToProject);
+      const dbSlugs = new Set(dbProjects.map((p) => p.slug));
+      const dbIds = new Set(dbProjects.map((p) => p.id));
+      const dbNames = new Set(dbProjects.map((p) => p.name.toLowerCase().trim()));
+
+      allProjects = staticProjects.filter(
+        (s) => !dbSlugs.has(s.slug) && !dbIds.has(s.id) && !dbNames.has(s.name.toLowerCase().trim()),
+      );
+      allProjects.push(...dbProjects);
+    }
+    return { allProjects };
+  },
   component: ComparePage,
 });
 
 function ComparePage() {
+  const { allProjects } = Route.useLoaderData();
   const { compare, toggleCompare } = useStore();
-  const selected = projects.filter((p) => compare.includes(p.id));
+  const selected = allProjects.filter((p) => compare.includes(p.id) || compare.includes(p.slug));
 
   if (selected.length === 0) {
     return (

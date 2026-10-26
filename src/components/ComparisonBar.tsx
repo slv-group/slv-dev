@@ -1,13 +1,33 @@
 import { Link } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
 import { X, Scale, ArrowRight } from "lucide-react";
 import { useStore } from "@/store/useStore";
-import { projects } from "@/data/projects";
+import { projects as staticProjects, mapSupabaseToProject, type Project } from "@/data/projects";
+import { supabase } from "@/integrations/supabase/client";
 
 export function ComparisonBar() {
   const { compare, toggleCompare, clearCompare } = useStore();
+  const [allProjects, setAllProjects] = useState<Project[]>(staticProjects);
+
+  useEffect(() => {
+    supabase
+      .from("projects")
+      .select("*")
+      .eq("is_published", true)
+      .then(({ data }) => {
+        if (data && data.length > 0) {
+          const dbProjects = data.map(mapSupabaseToProject);
+          const dbSlugs = new Set(dbProjects.map((p) => p.slug));
+          const dbIds = new Set(dbProjects.map((p) => p.id));
+          const nonDb = staticProjects.filter((s) => !dbSlugs.has(s.slug) && !dbIds.has(s.id));
+          setAllProjects([...dbProjects, ...nonDb]);
+        }
+      });
+  }, []);
+
   if (compare.length === 0) return null;
 
-  const selected = projects.filter((p) => compare.includes(p.id));
+  const selected = allProjects.filter((p) => compare.includes(p.id) || compare.includes(p.slug));
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-50 px-3 pb-3 sm:px-6 sm:pb-5">

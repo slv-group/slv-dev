@@ -4,8 +4,18 @@ import { projects } from "../src/data/projects";
 async function seed() {
   console.log(`Starting seed of ${projects.length} static projects...`);
   let successCount = 0;
+  let skippedCount = 0;
+
+  const { data: existing } = await supabase.from("projects").select("slug, name");
+  const existingSlugs = new Set((existing || []).map((e) => e.slug));
+  const existingNames = new Set((existing || []).map((e) => (e.name || "").toLowerCase().trim()));
 
   for (const project of projects) {
+    if (existingSlugs.has(project.slug) || existingNames.has(project.name.toLowerCase().trim())) {
+      skippedCount++;
+      continue;
+    }
+
     const payload = {
       slug: project.slug,
       name: project.name,
@@ -31,7 +41,7 @@ async function seed() {
       sort_order: parseInt(project.id) || 0,
     };
 
-    const { error } = await supabase.from("projects").upsert(payload, { onConflict: "slug" });
+    const { error } = await supabase.from("projects").insert(payload);
 
     if (error) {
       console.error("Failed to insert:", project.name, error);
@@ -40,7 +50,7 @@ async function seed() {
     }
   }
 
-  console.log(`Successfully seeded ${successCount} projects into Supabase!`);
+  console.log(`Successfully seeded ${successCount} projects into Supabase! (${skippedCount} existing preserved)`);
 }
 
 seed();

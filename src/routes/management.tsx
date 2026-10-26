@@ -16,7 +16,7 @@ import { Reveal } from "@/components/Reveal";
 import { cn } from "@/lib/utils";
 
 import heroImage from "@/assets/about_slv.jpg";
-import chairmanImage from "@/assets/penmetsa_srinivasa_raju.png";
+import chairmanImage from "@/assets/penmetsa_srinivasa_raju.jpg";
 import executiveImage from "@/assets/management/srinivasa-raju-office.png";
 import managementImage from "@/assets/management/srinivasa-raju-portrait.png";
 import visionImage from "@/assets/concept-to-completion.jpg";
@@ -157,7 +157,7 @@ const leadershipTeam = [
     verified: true,
   },
   {
-    name: "Vegesna Appala Narasiamha Raju (NANI)",
+    name: "V.A.N Raju(NANI)",
     designation: "Director",
     role: "Executive Leadership",
     image: executiveImage,
@@ -172,7 +172,7 @@ const leadershipTeam = [
     verified: false,
   },
   {
-    name: "Uppalapati Chaitanya Kumar Varma",
+    name: "U. Chaitanya Varma",
     designation: "Director",
     role: "Management Leadership",
     image: managementImage,

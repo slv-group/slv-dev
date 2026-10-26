@@ -20,8 +20,19 @@ function SeedPage() {
 
     try {
       let successCount = 0;
+      let skippedCount = 0;
+
+      // Fetch existing projects to protect them
+      const { data: existing } = await supabase.from("projects").select("slug, name");
+      const existingSlugs = new Set((existing || []).map((e) => e.slug));
+      const existingNames = new Set((existing || []).map((e) => (e.name || "").toLowerCase().trim()));
 
       for (const project of projects) {
+        if (existingSlugs.has(project.slug) || existingNames.has(project.name.toLowerCase().trim())) {
+          skippedCount++;
+          continue; // Never overwrite an existing project or its uploaded images!
+        }
+
         const payload = {
           slug: project.slug,
           name: project.name,
@@ -47,7 +58,7 @@ function SeedPage() {
           sort_order: parseInt(project.id) || 0,
         };
 
-        const { error } = await supabase.from("projects").upsert(payload, { onConflict: "slug" });
+        const { error } = await supabase.from("projects").insert(payload);
 
         if (error) {
           console.error("Error inserting", project.name, error);
@@ -56,7 +67,7 @@ function SeedPage() {
         }
       }
 
-      setResult(`Successfully seeded ${successCount} projects to the database!`);
+      setResult(`Done! Added ${successCount} missing projects. ${skippedCount} existing projects & their images were safely preserved.`);
     } catch (err: any) {
       setResult("Error: " + err.message);
     } finally {

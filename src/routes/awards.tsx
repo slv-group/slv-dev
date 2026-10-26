@@ -24,7 +24,7 @@ import { cn } from "@/lib/utils";
 // Replace these later with images uploaded from your Admin Panel / Supabase.
 // -----------------------------------------------------------------------------
 import heroAwardImage from "@/assets/heroawardsection.png";
-import leadershipImage from "@/assets/penmetsa_srinivasa_raju.png";
+import leadershipImage from "@/assets/penmetsa_srinivasa_raju.jpg";
 
 // -----------------------------------------------------------------------------
 // ROUTE
