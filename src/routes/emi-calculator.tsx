@@ -6,16 +6,34 @@ import { formatCurrency } from "@/data/projects";
 export const Route = createFileRoute("/emi-calculator")({
   head: () => ({
     meta: [
-      { title: "EMI Calculator — SLV Group" },
+      { title: "Home Loan EMI Calculator — SLV Group" },
       {
         name: "description",
         content:
-          "Plan your home loan with our interactive EMI calculator. Estimate monthly EMI, total interest, and total payable instantly.",
+          "Plan your home loan with our interactive EMI calculator. Estimate monthly installments, interest payable, and amortization for residential properties and open plots.",
       },
+      { property: "og:site_name", content: "SLV Group" },
       { property: "og:title", content: "Home Loan EMI Calculator — SLV Group" },
       {
         property: "og:description",
-        content: "Estimate your monthly EMI, interest, and total amount in seconds.",
+        content:
+          "Estimate your monthly EMI, interest, and total payable amount with our interactive calculator.",
+      },
+      { property: "og:url", content: "https://www.slvgroup.co.in/emi-calculator" },
+      { property: "og:image", content: "https://www.slvgroup.co.in/slv-logo.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Home Loan EMI Calculator — SLV Group" },
+      {
+        name: "twitter:description",
+        content:
+          "Estimate your monthly EMI, interest, and total payable amount with our interactive calculator.",
+      },
+      { name: "twitter:image", content: "https://www.slvgroup.co.in/slv-logo.png" },
+    ],
+    links: [
+      {
+        rel: "canonical",
+        href: "https://www.slvgroup.co.in/emi-calculator",
       },
     ],
   }),

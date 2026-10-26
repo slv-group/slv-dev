@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 import {
   MapPin,
   Heart,
@@ -24,8 +24,31 @@ import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/projects/$slug")({
   loader: async ({ params }) => {
-    // First try Supabase
-    const { data } = await supabase.from("projects").select("*").eq("slug", params.slug).single();
+    // Permanent 301 redirect for retired unhyphenated slug
+    if (params.slug === "slv-greenhorizon-2") {
+      throw redirect({
+        to: "/projects/$slug",
+        params: { slug: "slv-green-horizon-2" },
+        statusCode: 301,
+      });
+    }
+
+    // First try Supabase with canonical slug
+    let { data } = await supabase
+      .from("projects")
+      .select("*")
+      .eq("slug", params.slug)
+      .maybeSingle();
+
+    // Transition fallback if DB has not yet applied the slug update
+    if (!data && params.slug === "slv-green-horizon-2") {
+      const fallback = await supabase
+        .from("projects")
+        .select("*")
+        .eq("slug", "slv-greenhorizon-2")
+        .maybeSingle();
+      data = fallback.data;
+    }
 
     let project;
     if (data) {
@@ -43,6 +66,7 @@ export const Route = createFileRoute("/projects/$slug")({
       .select("*")
       .eq("is_published", true)
       .neq("slug", params.slug)
+      .neq("slug", "slv-greenhorizon-2")
       .limit(3);
 
     let moreProjects;
@@ -57,14 +81,35 @@ export const Route = createFileRoute("/projects/$slug")({
   },
   head: ({ loaderData }) => {
     const p = loaderData?.project;
+    const projectUrl = p
+      ? `https://www.slvgroup.co.in/projects/${p.slug}`
+      : "https://www.slvgroup.co.in/projects";
+    const imageUrl = p?.image || "https://www.slvgroup.co.in/slv-logo.png";
+
     return {
       meta: [
         { title: p ? `${p.name} — SLV Group` : "Project — SLV Group" },
-        { name: "description", content: p?.tagline ?? "Luxury residence by SLV Group." },
-        { property: "og:title", content: p?.name ?? "Project" },
-        { property: "og:description", content: p?.tagline ?? "" },
-        { property: "og:image", content: p?.image ?? "" },
-        { name: "twitter:image", content: p?.image ?? "" },
+        {
+          name: "description",
+          content:
+            p?.tagline ||
+            p?.description ||
+            "Residential development by SLV Group in Vijayawada & Amaravati region.",
+        },
+        { property: "og:title", content: p ? `${p.name} — SLV Group` : "Project — SLV Group" },
+        { property: "og:description", content: p?.tagline || "" },
+        { property: "og:image", content: imageUrl },
+        { property: "og:url", content: projectUrl },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: p ? `${p.name} — SLV Group` : "Project — SLV Group" },
+        { name: "twitter:description", content: p?.tagline || "" },
+        { name: "twitter:image", content: imageUrl },
+      ],
+      links: [
+        {
+          rel: "canonical",
+          href: projectUrl,
+        },
       ],
     };
   },
@@ -119,6 +164,35 @@ function ProjectDetails() {
 
   return (
     <div className="pt-20 sm:pt-24">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "RealEstateListing",
+            name: project.name,
+            description: project.tagline || project.description,
+            url: `https://www.slvgroup.co.in/projects/${project.slug}`,
+            image: project.image || project.gallery[0],
+            category: project.category,
+            address: {
+              "@type": "PostalAddress",
+              addressLocality: project.city || "Vijayawada",
+              addressRegion: "Andhra Pradesh",
+              addressCountry: "IN",
+            },
+            offers: {
+              "@type": "Offer",
+              priceCurrency: "INR",
+              price: project.priceFrom || undefined,
+              availability:
+                project.status === "Completed"
+                  ? "https://schema.org/InStock"
+                  : "https://schema.org/PreOrder",
+            },
+          }),
+        }}
+      />
       {/* ════════════════════════════════════════════════
           GALLERY — Cinematic Hero + Thumbnail Strip
       ════════════════════════════════════════════════ */}
@@ -626,7 +700,8 @@ function ProjectDetails() {
                     Saleable Area
                   </p>
                   <p className="font-display text-2xl font-semibold text-gold-foreground">
-                    {project.floorPlans[plan].sqft.toLocaleString()} {project.areaUnit || (project.category === "Plots" ? "sq yd" : "sqft")}
+                    {project.floorPlans[plan].sqft.toLocaleString()}{" "}
+                    {project.areaUnit || (project.category === "Plots" ? "sq yd" : "sqft")}
                   </p>
                 </div>
               </div>

@@ -5,6 +5,20 @@ import {
 } from "@/components/registration/WorkingRegistrationForm";
 
 export const Route = createFileRoute("/contractor-registration")({
+  head: () => ({
+    meta: [
+      { title: "Contractor Registration — SLV Group" },
+      {
+        name: "description",
+        content:
+          "Register as an approved civil, electrical, plumbing, or infrastructure contractor with SLV Group.",
+      },
+      { property: "og:title", content: "Contractor Registration — SLV Group" },
+      { property: "og:url", content: "https://www.slvgroup.co.in/contractor-registration" },
+      { property: "og:image", content: "https://www.slvgroup.co.in/slv-logo.png" },
+    ],
+    links: [{ rel: "canonical", href: "https://www.slvgroup.co.in/contractor-registration" }],
+  }),
   component: ContractorRegistration,
 });
 

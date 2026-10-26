@@ -347,10 +347,7 @@ export function LaunchPage() {
       </div>
 
       {/* ── 2. FIRECRACKERS & FESTIVE CANVAS LAYER ── */}
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 pointer-events-none z-30 w-full h-full"
-      />
+      <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none z-30 w-full h-full" />
 
       {/* ── 3. CINEMATIC REVEAL ARCHITECTURAL LINES ── */}
       <div className="slv-portal-layer absolute inset-0 pointer-events-none z-25">

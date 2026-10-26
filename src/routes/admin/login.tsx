@@ -107,7 +107,7 @@ function AdminLogin() {
                 id="email"
                 type="email"
                 autoComplete="email"
-                placeholder="admin@slvbuilders.com"
+                placeholder="admin@slvgroup.co.in"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="bg-white/8 border-white/15 text-white placeholder:text-white/30 focus-visible:ring-gold/50 focus-visible:border-gold/50 h-11"
@@ -160,21 +160,10 @@ function AdminLogin() {
             </Button>
           </form>
 
-          <div className="mt-6 text-center">
-            <p className="text-white/40 text-sm">
-              Need an account?{" "}
-              <Link
-                to="/admin/signup"
-                className="text-gold hover:text-gold-light transition-colors font-medium"
-              >
-                Sign up
-              </Link>
-            </p>
-          </div>
-
           <div className="mt-6 p-3 rounded-lg bg-white/5 border border-white/10">
-            <p className="text-xs text-white/40 text-center">
-              🔒 Secure admin access. Your role must be assigned by a system administrator.
+            <p className="text-xs text-white/50 text-center">
+              🔒 Authorized personnel only. Administrator accounts are provisioned exclusively by
+              system administrators.
             </p>
           </div>
         </div>

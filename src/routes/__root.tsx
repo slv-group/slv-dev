@@ -143,42 +143,52 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "SLV Group" },
+      { title: "SLV Group — Premium Real Estate in Vijayawada & Amaravati" },
       {
         name: "description",
         content:
-          "A premium real estate platform with RBAC for secure, department-specific access and advanced user features.",
+          "SLV Group — Leading real estate developers in Vijayawada, Guntur & Amaravati CRDA region. Delivering premium residential layouts, gated communities, and luxury living spaces.",
       },
       { name: "author", content: "SLV Group" },
-      { property: "og:title", content: "SLV Group" },
+      { property: "og:title", content: "SLV Group — Premium Real Estate Developers" },
       {
         property: "og:description",
         content:
-          "A premium real estate platform with RBAC for secure, department-specific access and advanced user features.",
+          "Explore premium gated communities, open plots, and luxury residences across Vijayawada, Guntur, and Amaravati by SLV Group.",
       },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
+      { property: "og:url", content: "https://www.slvgroup.co.in" },
+      { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@slvgroup" },
-      { name: "twitter:title", content: "SLV Group" },
+      { name: "twitter:title", content: "SLV Group — Premium Real Estate Developers" },
       {
         name: "twitter:description",
         content:
-          "A premium real estate platform with RBAC for secure, department-specific access and advanced user features.",
+          "Leading real estate developers in Vijayawada, Guntur & Amaravati CRDA region. Delivering premium layouts and residences.",
       },
       {
         property: "og:image",
-        content: "https://slv-dev-pi.vercel.app/slv-logo.png",
+        content: "https://www.slvgroup.co.in/slv-logo.png",
       },
       {
         name: "twitter:image",
-        content: "https://slv-dev-pi.vercel.app/slv-logo.png",
+        content: "https://www.slvgroup.co.in/slv-logo.png",
       },
     ],
     links: [
       {
+        rel: "canonical",
+        href: "https://www.slvgroup.co.in",
+      },
+      {
         rel: "icon",
         type: "image/png",
         href: "/slv-logo.png",
+      },
+      {
+        rel: "icon",
+        type: "image/x-icon",
+        href: "/favicon.ico",
       },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },

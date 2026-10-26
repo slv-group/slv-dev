@@ -4,6 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { projects } from "@/data/projects";
 
 export const Route = createFileRoute("/seed")({
+  head: () => ({
+    meta: [{ name: "robots", content: "noindex, nofollow" }],
+  }),
   component: SeedPage,
 });
 

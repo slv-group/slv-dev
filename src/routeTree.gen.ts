@@ -9,130 +9,58 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as WorkshopRouteImport } from './routes/workshop'
-import { Route as VendorsSuppliersRegistrationRouteImport } from './routes/vendors-suppliers-registration'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as SiteVisitRouteImport } from './routes/site-visit'
-import { Route as SeedRouteImport } from './routes/seed'
-import { Route as NriCornerRouteImport } from './routes/nri-corner'
-import { Route as ManagementRouteImport } from './routes/management'
-import { Route as LaunchRouteImport } from './routes/launch'
-import { Route as LandProposalsRouteImport } from './routes/land-proposals'
-import { Route as FaqRouteImport } from './routes/faq'
-import { Route as EmiCalculatorRouteImport } from './routes/emi-calculator'
-import { Route as CsrRouteImport } from './routes/csr'
-import { Route as ContractorRegistrationRouteImport } from './routes/contractor-registration'
-import { Route as ContactRouteImport } from './routes/contact'
-import { Route as CompareRouteImport } from './routes/compare'
-import { Route as CareersRouteImport } from './routes/careers'
-import { Route as BuyersGuideRouteImport } from './routes/buyers-guide'
-import { Route as AwardsRouteImport } from './routes/awards'
-import { Route as ArchitectConsultantRegistrationRouteImport } from './routes/architect-consultant-registration'
-import { Route as AdminRouteImport } from './routes/admin'
-import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ProjectsIndexRouteImport } from './routes/projects.index'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as ArchitectConsultantRegistrationRouteImport } from './routes/architect-consultant-registration'
+import { Route as AwardsRouteImport } from './routes/awards'
+import { Route as BuyersGuideRouteImport } from './routes/buyers-guide'
+import { Route as CareersRouteImport } from './routes/careers'
+import { Route as CompareRouteImport } from './routes/compare'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as ContractorRegistrationRouteImport } from './routes/contractor-registration'
+import { Route as CsrRouteImport } from './routes/csr'
+import { Route as DisclaimerRouteImport } from './routes/disclaimer'
+import { Route as EmiCalculatorRouteImport } from './routes/emi-calculator'
+import { Route as FaqRouteImport } from './routes/faq'
+import { Route as GalleryRouteImport } from './routes/gallery'
+import { Route as LandProposalsRouteImport } from './routes/land-proposals'
+import { Route as LaunchRouteImport } from './routes/launch'
+import { Route as ManagementRouteImport } from './routes/management'
+import { Route as NriCornerRouteImport } from './routes/nri-corner'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as SeedRouteImport } from './routes/seed'
+import { Route as SiteVisitRouteImport } from './routes/site-visit'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as VendorsSuppliersRegistrationRouteImport } from './routes/vendors-suppliers-registration'
+import { Route as WorkshopRouteImport } from './routes/workshop'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
-import { Route as ProjectsSlugRouteImport } from './routes/projects.$slug'
-import { Route as ApiChatRouteImport } from './routes/api/chat'
-import { Route as AdminSignupRouteImport } from './routes/admin/signup'
-import { Route as AdminProjectsRouteImport } from './routes/admin/projects'
-import { Route as AdminMessagesRouteImport } from './routes/admin/messages'
-import { Route as AdminMediaRouteImport } from './routes/admin/media'
-import { Route as AdminLoginRouteImport } from './routes/admin/login'
-import { Route as AdminEnquiriesRouteImport } from './routes/admin/enquiries'
-import { Route as AdminCsrRouteImport } from './routes/admin/csr'
 import { Route as AdminAwardsRouteImport } from './routes/admin/awards'
+import { Route as AdminCsrRouteImport } from './routes/admin/csr'
+import { Route as AdminEnquiriesRouteImport } from './routes/admin/enquiries'
+import { Route as AdminLoginRouteImport } from './routes/admin/login'
+import { Route as AdminMediaRouteImport } from './routes/admin/media'
+import { Route as AdminMessagesRouteImport } from './routes/admin/messages'
+import { Route as AdminProjectsRouteImport } from './routes/admin/projects'
+import { Route as AdminSignupRouteImport } from './routes/admin/signup'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as ProjectsIndexRouteImport } from './routes/projects.index'
+import { Route as ProjectsSlugRouteImport } from './routes/projects.$slug'
 
-const WorkshopRoute = WorkshopRouteImport.update({
-  id: '/workshop',
-  path: '/workshop',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const VendorsSuppliersRegistrationRoute =
-  VendorsSuppliersRegistrationRouteImport.update({
-    id: '/vendors-suppliers-registration',
-    path: '/vendors-suppliers-registration',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SiteVisitRoute = SiteVisitRouteImport.update({
-  id: '/site-visit',
-  path: '/site-visit',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SeedRoute = SeedRouteImport.update({
-  id: '/seed',
-  path: '/seed',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NriCornerRoute = NriCornerRouteImport.update({
-  id: '/nri-corner',
-  path: '/nri-corner',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ManagementRoute = ManagementRouteImport.update({
-  id: '/management',
-  path: '/management',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LaunchRoute = LaunchRouteImport.update({
-  id: '/launch',
-  path: '/launch',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LandProposalsRoute = LandProposalsRouteImport.update({
-  id: '/land-proposals',
-  path: '/land-proposals',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FaqRoute = FaqRouteImport.update({
-  id: '/faq',
-  path: '/faq',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EmiCalculatorRoute = EmiCalculatorRouteImport.update({
-  id: '/emi-calculator',
-  path: '/emi-calculator',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CsrRoute = CsrRouteImport.update({
-  id: '/csr',
-  path: '/csr',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContractorRegistrationRoute = ContractorRegistrationRouteImport.update({
-  id: '/contractor-registration',
-  path: '/contractor-registration',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CompareRoute = CompareRouteImport.update({
-  id: '/compare',
-  path: '/compare',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CareersRoute = CareersRouteImport.update({
-  id: '/careers',
-  path: '/careers',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BuyersGuideRoute = BuyersGuideRouteImport.update({
-  id: '/buyers-guide',
-  path: '/buyers-guide',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AwardsRoute = AwardsRouteImport.update({
-  id: '/awards',
-  path: '/awards',
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ArchitectConsultantRegistrationRoute =
@@ -141,24 +69,115 @@ const ArchitectConsultantRegistrationRoute =
     path: '/architect-consultant-registration',
     getParentRoute: () => rootRouteImport,
   } as any)
-const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
+const AwardsRoute = AwardsRouteImport.update({
+  id: '/awards',
+  path: '/awards',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
+const BuyersGuideRoute = BuyersGuideRouteImport.update({
+  id: '/buyers-guide',
+  path: '/buyers-guide',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const CareersRoute = CareersRouteImport.update({
+  id: '/careers',
+  path: '/careers',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProjectsIndexRoute = ProjectsIndexRouteImport.update({
-  id: '/projects/',
-  path: '/projects/',
+const CompareRoute = CompareRouteImport.update({
+  id: '/compare',
+  path: '/compare',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContractorRegistrationRoute = ContractorRegistrationRouteImport.update({
+  id: '/contractor-registration',
+  path: '/contractor-registration',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CsrRoute = CsrRouteImport.update({
+  id: '/csr',
+  path: '/csr',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DisclaimerRoute = DisclaimerRouteImport.update({
+  id: '/disclaimer',
+  path: '/disclaimer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmiCalculatorRoute = EmiCalculatorRouteImport.update({
+  id: '/emi-calculator',
+  path: '/emi-calculator',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GalleryRoute = GalleryRouteImport.update({
+  id: '/gallery',
+  path: '/gallery',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LandProposalsRoute = LandProposalsRouteImport.update({
+  id: '/land-proposals',
+  path: '/land-proposals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LaunchRoute = LaunchRouteImport.update({
+  id: '/launch',
+  path: '/launch',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ManagementRoute = ManagementRouteImport.update({
+  id: '/management',
+  path: '/management',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NriCornerRoute = NriCornerRouteImport.update({
+  id: '/nri-corner',
+  path: '/nri-corner',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SeedRoute = SeedRouteImport.update({
+  id: '/seed',
+  path: '/seed',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SiteVisitRoute = SiteVisitRouteImport.update({
+  id: '/site-visit',
+  path: '/site-visit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VendorsSuppliersRegistrationRoute =
+  VendorsSuppliersRegistrationRouteImport.update({
+    id: '/vendors-suppliers-registration',
+    path: '/vendors-suppliers-registration',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const WorkshopRoute = WorkshopRouteImport.update({
+  id: '/workshop',
+  path: '/workshop',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
@@ -166,44 +185,9 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
-const ProjectsSlugRoute = ProjectsSlugRouteImport.update({
-  id: '/projects/$slug',
-  path: '/projects/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiChatRoute = ApiChatRouteImport.update({
-  id: '/api/chat',
-  path: '/api/chat',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminSignupRoute = AdminSignupRouteImport.update({
-  id: '/signup',
-  path: '/signup',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminProjectsRoute = AdminProjectsRouteImport.update({
-  id: '/projects',
-  path: '/projects',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminMessagesRoute = AdminMessagesRouteImport.update({
-  id: '/messages',
-  path: '/messages',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminMediaRoute = AdminMediaRouteImport.update({
-  id: '/media',
-  path: '/media',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminLoginRoute = AdminLoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminEnquiriesRoute = AdminEnquiriesRouteImport.update({
-  id: '/enquiries',
-  path: '/enquiries',
+const AdminAwardsRoute = AdminAwardsRouteImport.update({
+  id: '/awards',
+  path: '/awards',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminCsrRoute = AdminCsrRouteImport.update({
@@ -211,10 +195,50 @@ const AdminCsrRoute = AdminCsrRouteImport.update({
   path: '/csr',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminAwardsRoute = AdminAwardsRouteImport.update({
-  id: '/awards',
-  path: '/awards',
+const AdminEnquiriesRoute = AdminEnquiriesRouteImport.update({
+  id: '/enquiries',
+  path: '/enquiries',
   getParentRoute: () => AdminRoute,
+} as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminMediaRoute = AdminMediaRouteImport.update({
+  id: '/media',
+  path: '/media',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminMessagesRoute = AdminMessagesRouteImport.update({
+  id: '/messages',
+  path: '/messages',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminProjectsRoute = AdminProjectsRouteImport.update({
+  id: '/projects',
+  path: '/projects',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSignupRoute = AdminSignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => AdminRoute,
+} as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectsIndexRoute = ProjectsIndexRouteImport.update({
+  id: '/projects/',
+  path: '/projects/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectsSlugRoute = ProjectsSlugRouteImport.update({
+  id: '/projects/$slug',
+  path: '/projects/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -229,15 +253,19 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/contractor-registration': typeof ContractorRegistrationRoute
   '/csr': typeof CsrRoute
+  '/disclaimer': typeof DisclaimerRoute
   '/emi-calculator': typeof EmiCalculatorRoute
   '/faq': typeof FaqRoute
+  '/gallery': typeof GalleryRoute
   '/land-proposals': typeof LandProposalsRoute
   '/launch': typeof LaunchRoute
   '/management': typeof ManagementRoute
   '/nri-corner': typeof NriCornerRoute
+  '/privacy': typeof PrivacyRoute
   '/seed': typeof SeedRoute
   '/site-visit': typeof SiteVisitRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms': typeof TermsRoute
   '/vendors-suppliers-registration': typeof VendorsSuppliersRegistrationRoute
   '/workshop': typeof WorkshopRoute
   '/admin/awards': typeof AdminAwardsRoute
@@ -264,15 +292,19 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/contractor-registration': typeof ContractorRegistrationRoute
   '/csr': typeof CsrRoute
+  '/disclaimer': typeof DisclaimerRoute
   '/emi-calculator': typeof EmiCalculatorRoute
   '/faq': typeof FaqRoute
+  '/gallery': typeof GalleryRoute
   '/land-proposals': typeof LandProposalsRoute
   '/launch': typeof LaunchRoute
   '/management': typeof ManagementRoute
   '/nri-corner': typeof NriCornerRoute
+  '/privacy': typeof PrivacyRoute
   '/seed': typeof SeedRoute
   '/site-visit': typeof SiteVisitRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms': typeof TermsRoute
   '/vendors-suppliers-registration': typeof VendorsSuppliersRegistrationRoute
   '/workshop': typeof WorkshopRoute
   '/admin/awards': typeof AdminAwardsRoute
@@ -301,15 +333,19 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/contractor-registration': typeof ContractorRegistrationRoute
   '/csr': typeof CsrRoute
+  '/disclaimer': typeof DisclaimerRoute
   '/emi-calculator': typeof EmiCalculatorRoute
   '/faq': typeof FaqRoute
+  '/gallery': typeof GalleryRoute
   '/land-proposals': typeof LandProposalsRoute
   '/launch': typeof LaunchRoute
   '/management': typeof ManagementRoute
   '/nri-corner': typeof NriCornerRoute
+  '/privacy': typeof PrivacyRoute
   '/seed': typeof SeedRoute
   '/site-visit': typeof SiteVisitRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms': typeof TermsRoute
   '/vendors-suppliers-registration': typeof VendorsSuppliersRegistrationRoute
   '/workshop': typeof WorkshopRoute
   '/admin/awards': typeof AdminAwardsRoute
@@ -339,15 +375,19 @@ export interface FileRouteTypes {
     | '/contact'
     | '/contractor-registration'
     | '/csr'
+    | '/disclaimer'
     | '/emi-calculator'
     | '/faq'
+    | '/gallery'
     | '/land-proposals'
     | '/launch'
     | '/management'
     | '/nri-corner'
+    | '/privacy'
     | '/seed'
     | '/site-visit'
     | '/sitemap.xml'
+    | '/terms'
     | '/vendors-suppliers-registration'
     | '/workshop'
     | '/admin/awards'
@@ -374,15 +414,19 @@ export interface FileRouteTypes {
     | '/contact'
     | '/contractor-registration'
     | '/csr'
+    | '/disclaimer'
     | '/emi-calculator'
     | '/faq'
+    | '/gallery'
     | '/land-proposals'
     | '/launch'
     | '/management'
     | '/nri-corner'
+    | '/privacy'
     | '/seed'
     | '/site-visit'
     | '/sitemap.xml'
+    | '/terms'
     | '/vendors-suppliers-registration'
     | '/workshop'
     | '/admin/awards'
@@ -410,15 +454,19 @@ export interface FileRouteTypes {
     | '/contact'
     | '/contractor-registration'
     | '/csr'
+    | '/disclaimer'
     | '/emi-calculator'
     | '/faq'
+    | '/gallery'
     | '/land-proposals'
     | '/launch'
     | '/management'
     | '/nri-corner'
+    | '/privacy'
     | '/seed'
     | '/site-visit'
     | '/sitemap.xml'
+    | '/terms'
     | '/vendors-suppliers-registration'
     | '/workshop'
     | '/admin/awards'
@@ -447,15 +495,19 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   ContractorRegistrationRoute: typeof ContractorRegistrationRoute
   CsrRoute: typeof CsrRoute
+  DisclaimerRoute: typeof DisclaimerRoute
   EmiCalculatorRoute: typeof EmiCalculatorRoute
   FaqRoute: typeof FaqRoute
+  GalleryRoute: typeof GalleryRoute
   LandProposalsRoute: typeof LandProposalsRoute
   LaunchRoute: typeof LaunchRoute
   ManagementRoute: typeof ManagementRoute
   NriCornerRoute: typeof NriCornerRoute
+  PrivacyRoute: typeof PrivacyRoute
   SeedRoute: typeof SeedRoute
   SiteVisitRoute: typeof SiteVisitRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  TermsRoute: typeof TermsRoute
   VendorsSuppliersRegistrationRoute: typeof VendorsSuppliersRegistrationRoute
   WorkshopRoute: typeof WorkshopRoute
   ApiChatRoute: typeof ApiChatRoute
@@ -465,144 +517,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/workshop': {
-      id: '/workshop'
-      path: '/workshop'
-      fullPath: '/workshop'
-      preLoaderRoute: typeof WorkshopRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/vendors-suppliers-registration': {
-      id: '/vendors-suppliers-registration'
-      path: '/vendors-suppliers-registration'
-      fullPath: '/vendors-suppliers-registration'
-      preLoaderRoute: typeof VendorsSuppliersRegistrationRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/site-visit': {
-      id: '/site-visit'
-      path: '/site-visit'
-      fullPath: '/site-visit'
-      preLoaderRoute: typeof SiteVisitRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/seed': {
-      id: '/seed'
-      path: '/seed'
-      fullPath: '/seed'
-      preLoaderRoute: typeof SeedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/nri-corner': {
-      id: '/nri-corner'
-      path: '/nri-corner'
-      fullPath: '/nri-corner'
-      preLoaderRoute: typeof NriCornerRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/management': {
-      id: '/management'
-      path: '/management'
-      fullPath: '/management'
-      preLoaderRoute: typeof ManagementRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/launch': {
-      id: '/launch'
-      path: '/launch'
-      fullPath: '/launch'
-      preLoaderRoute: typeof LaunchRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/land-proposals': {
-      id: '/land-proposals'
-      path: '/land-proposals'
-      fullPath: '/land-proposals'
-      preLoaderRoute: typeof LandProposalsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/faq': {
-      id: '/faq'
-      path: '/faq'
-      fullPath: '/faq'
-      preLoaderRoute: typeof FaqRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/emi-calculator': {
-      id: '/emi-calculator'
-      path: '/emi-calculator'
-      fullPath: '/emi-calculator'
-      preLoaderRoute: typeof EmiCalculatorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/csr': {
-      id: '/csr'
-      path: '/csr'
-      fullPath: '/csr'
-      preLoaderRoute: typeof CsrRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contractor-registration': {
-      id: '/contractor-registration'
-      path: '/contractor-registration'
-      fullPath: '/contractor-registration'
-      preLoaderRoute: typeof ContractorRegistrationRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/compare': {
-      id: '/compare'
-      path: '/compare'
-      fullPath: '/compare'
-      preLoaderRoute: typeof CompareRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/careers': {
-      id: '/careers'
-      path: '/careers'
-      fullPath: '/careers'
-      preLoaderRoute: typeof CareersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/buyers-guide': {
-      id: '/buyers-guide'
-      path: '/buyers-guide'
-      fullPath: '/buyers-guide'
-      preLoaderRoute: typeof BuyersGuideRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/awards': {
-      id: '/awards'
-      path: '/awards'
-      fullPath: '/awards'
-      preLoaderRoute: typeof AwardsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/architect-consultant-registration': {
-      id: '/architect-consultant-registration'
-      path: '/architect-consultant-registration'
-      fullPath: '/architect-consultant-registration'
-      preLoaderRoute: typeof ArchitectConsultantRegistrationRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -612,18 +531,172 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/projects/': {
-      id: '/projects/'
-      path: '/projects'
-      fullPath: '/projects/'
-      preLoaderRoute: typeof ProjectsIndexRouteImport
+    '/architect-consultant-registration': {
+      id: '/architect-consultant-registration'
+      path: '/architect-consultant-registration'
+      fullPath: '/architect-consultant-registration'
+      preLoaderRoute: typeof ArchitectConsultantRegistrationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/awards': {
+      id: '/awards'
+      path: '/awards'
+      fullPath: '/awards'
+      preLoaderRoute: typeof AwardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/buyers-guide': {
+      id: '/buyers-guide'
+      path: '/buyers-guide'
+      fullPath: '/buyers-guide'
+      preLoaderRoute: typeof BuyersGuideRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/careers': {
+      id: '/careers'
+      path: '/careers'
+      fullPath: '/careers'
+      preLoaderRoute: typeof CareersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/compare': {
+      id: '/compare'
+      path: '/compare'
+      fullPath: '/compare'
+      preLoaderRoute: typeof CompareRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contractor-registration': {
+      id: '/contractor-registration'
+      path: '/contractor-registration'
+      fullPath: '/contractor-registration'
+      preLoaderRoute: typeof ContractorRegistrationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/csr': {
+      id: '/csr'
+      path: '/csr'
+      fullPath: '/csr'
+      preLoaderRoute: typeof CsrRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/disclaimer': {
+      id: '/disclaimer'
+      path: '/disclaimer'
+      fullPath: '/disclaimer'
+      preLoaderRoute: typeof DisclaimerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/emi-calculator': {
+      id: '/emi-calculator'
+      path: '/emi-calculator'
+      fullPath: '/emi-calculator'
+      preLoaderRoute: typeof EmiCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gallery': {
+      id: '/gallery'
+      path: '/gallery'
+      fullPath: '/gallery'
+      preLoaderRoute: typeof GalleryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/land-proposals': {
+      id: '/land-proposals'
+      path: '/land-proposals'
+      fullPath: '/land-proposals'
+      preLoaderRoute: typeof LandProposalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/launch': {
+      id: '/launch'
+      path: '/launch'
+      fullPath: '/launch'
+      preLoaderRoute: typeof LaunchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/management': {
+      id: '/management'
+      path: '/management'
+      fullPath: '/management'
+      preLoaderRoute: typeof ManagementRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/nri-corner': {
+      id: '/nri-corner'
+      path: '/nri-corner'
+      fullPath: '/nri-corner'
+      preLoaderRoute: typeof NriCornerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/seed': {
+      id: '/seed'
+      path: '/seed'
+      fullPath: '/seed'
+      preLoaderRoute: typeof SeedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/site-visit': {
+      id: '/site-visit'
+      path: '/site-visit'
+      fullPath: '/site-visit'
+      preLoaderRoute: typeof SiteVisitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vendors-suppliers-registration': {
+      id: '/vendors-suppliers-registration'
+      path: '/vendors-suppliers-registration'
+      fullPath: '/vendors-suppliers-registration'
+      preLoaderRoute: typeof VendorsSuppliersRegistrationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/workshop': {
+      id: '/workshop'
+      path: '/workshop'
+      fullPath: '/workshop'
+      preLoaderRoute: typeof WorkshopRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/': {
@@ -633,60 +706,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/projects/$slug': {
-      id: '/projects/$slug'
-      path: '/projects/$slug'
-      fullPath: '/projects/$slug'
-      preLoaderRoute: typeof ProjectsSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/chat': {
-      id: '/api/chat'
-      path: '/api/chat'
-      fullPath: '/api/chat'
-      preLoaderRoute: typeof ApiChatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/signup': {
-      id: '/admin/signup'
-      path: '/signup'
-      fullPath: '/admin/signup'
-      preLoaderRoute: typeof AdminSignupRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/projects': {
-      id: '/admin/projects'
-      path: '/projects'
-      fullPath: '/admin/projects'
-      preLoaderRoute: typeof AdminProjectsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/messages': {
-      id: '/admin/messages'
-      path: '/messages'
-      fullPath: '/admin/messages'
-      preLoaderRoute: typeof AdminMessagesRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/media': {
-      id: '/admin/media'
-      path: '/media'
-      fullPath: '/admin/media'
-      preLoaderRoute: typeof AdminMediaRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/login': {
-      id: '/admin/login'
-      path: '/login'
-      fullPath: '/admin/login'
-      preLoaderRoute: typeof AdminLoginRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/enquiries': {
-      id: '/admin/enquiries'
-      path: '/enquiries'
-      fullPath: '/admin/enquiries'
-      preLoaderRoute: typeof AdminEnquiriesRouteImport
+    '/admin/awards': {
+      id: '/admin/awards'
+      path: '/awards'
+      fullPath: '/admin/awards'
+      preLoaderRoute: typeof AdminAwardsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/csr': {
@@ -696,12 +720,68 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCsrRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/awards': {
-      id: '/admin/awards'
-      path: '/awards'
-      fullPath: '/admin/awards'
-      preLoaderRoute: typeof AdminAwardsRouteImport
+    '/admin/enquiries': {
+      id: '/admin/enquiries'
+      path: '/enquiries'
+      fullPath: '/admin/enquiries'
+      preLoaderRoute: typeof AdminEnquiriesRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/media': {
+      id: '/admin/media'
+      path: '/media'
+      fullPath: '/admin/media'
+      preLoaderRoute: typeof AdminMediaRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/messages': {
+      id: '/admin/messages'
+      path: '/messages'
+      fullPath: '/admin/messages'
+      preLoaderRoute: typeof AdminMessagesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/projects': {
+      id: '/admin/projects'
+      path: '/projects'
+      fullPath: '/admin/projects'
+      preLoaderRoute: typeof AdminProjectsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/signup': {
+      id: '/admin/signup'
+      path: '/signup'
+      fullPath: '/admin/signup'
+      preLoaderRoute: typeof AdminSignupRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects/': {
+      id: '/projects/'
+      path: '/projects'
+      fullPath: '/projects/'
+      preLoaderRoute: typeof ProjectsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects/$slug': {
+      id: '/projects/$slug'
+      path: '/projects/$slug'
+      fullPath: '/projects/$slug'
+      preLoaderRoute: typeof ProjectsSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -744,15 +824,19 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   ContractorRegistrationRoute: ContractorRegistrationRoute,
   CsrRoute: CsrRoute,
+  DisclaimerRoute: DisclaimerRoute,
   EmiCalculatorRoute: EmiCalculatorRoute,
   FaqRoute: FaqRoute,
+  GalleryRoute: GalleryRoute,
   LandProposalsRoute: LandProposalsRoute,
   LaunchRoute: LaunchRoute,
   ManagementRoute: ManagementRoute,
   NriCornerRoute: NriCornerRoute,
+  PrivacyRoute: PrivacyRoute,
   SeedRoute: SeedRoute,
   SiteVisitRoute: SiteVisitRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  TermsRoute: TermsRoute,
   VendorsSuppliersRegistrationRoute: VendorsSuppliersRegistrationRoute,
   WorkshopRoute: WorkshopRoute,
   ApiChatRoute: ApiChatRoute,

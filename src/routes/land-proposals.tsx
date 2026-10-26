@@ -5,6 +5,20 @@ import {
 } from "@/components/registration/WorkingRegistrationForm";
 
 export const Route = createFileRoute("/land-proposals")({
+  head: () => ({
+    meta: [
+      { title: "Submit Land Proposals — SLV Group | Joint Development & Outright" },
+      {
+        name: "description",
+        content:
+          "Submit land proposals for joint development, plotted layouts, or outright purchase with SLV Group across Andhra Pradesh.",
+      },
+      { property: "og:title", content: "Submit Land Proposals — SLV Group" },
+      { property: "og:url", content: "https://www.slvgroup.co.in/land-proposals" },
+      { property: "og:image", content: "https://www.slvgroup.co.in/slv-logo.png" },
+    ],
+    links: [{ rel: "canonical", href: "https://www.slvgroup.co.in/land-proposals" }],
+  }),
   component: LandProposals,
 });
 

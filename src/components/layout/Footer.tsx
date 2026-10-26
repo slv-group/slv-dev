@@ -25,7 +25,7 @@ const ourStory = [
   { label: "Leadership & Management", to: "/management" },
   { label: "Awards", to: "/awards" },
   { label: "CSR", to: "/csr" },
-  { label: "Gallery", to: "/projects" },
+  { label: "Gallery", to: "/gallery" },
 ];
 
 const projectLinks = [
@@ -36,14 +36,15 @@ const projectLinks = [
 
 const workWithUs = [
   { label: "Careers", to: "/careers" },
-  { label: "Architect & Consultant", to: "/careers" },
-  { label: "Contractor Registration", to: "/careers" },
-  { label: "Vendors & Suppliers", to: "/careers" },
+  { label: "Architect & Consultant", to: "/architect-consultant-registration" },
+  { label: "Contractor Registration", to: "/contractor-registration" },
+  { label: "Vendors & Suppliers", to: "/vendors-suppliers-registration" },
   { label: "Land Proposals", to: "/land-proposals" },
-  { label: "Work Shop", to: "/workshop" },
+  { label: "Workshop", to: "/workshop" },
 ] as const;
 
 const buyersGuide = [
+  { label: "Buyer's Guide Overview", to: "/buyers-guide" },
   { label: "EMI Calculator", to: "/emi-calculator" },
   { label: "FAQ'S", to: "/faq" },
 ];
@@ -264,9 +265,7 @@ export function Footer() {
             </li>
             <li>
               <a
-                href="https://mail.google.com/mail/?view=cm&fs=1&to=slv.bvrm@gmail.com"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="mailto:info@slvgroup.co.in"
                 className="group flex items-center gap-3 transition-all duration-300 hover:text-gold"
               >
                 <span
@@ -278,7 +277,7 @@ export function Footer() {
                 >
                   <Mail className="h-3.5 w-3.5 text-gold" />
                 </span>
-                slv.bvrm@gmail.com
+                info@slvgroup.co.in
               </a>
             </li>
             <li>
@@ -304,7 +303,9 @@ export function Footer() {
 
           {/* Social Media Follow Us */}
           <div className="mt-8">
-            <h5 className="text-xs font-semibold tracking-[0.2em] uppercase text-gold/80">Follow Us</h5>
+            <h5 className="text-xs font-semibold tracking-[0.2em] uppercase text-gold/80">
+              Follow Us
+            </h5>
             <div className="mt-3 flex items-center gap-2.5">
               {socialLinks.map((s) => (
                 <a
@@ -330,9 +331,34 @@ export function Footer() {
 
       {/* Bottom strip */}
       <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-6 py-6 text-xs text-white/35 sm:flex-row">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 py-6 text-xs text-white/45 sm:flex-row">
           <p>© {new Date().getFullYear()} SLV Group. All rights reserved.</p>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center justify-center gap-4 text-xs">
+            <Link
+              to="/privacy"
+              onClick={() => scrollToTopIfSamePage("/privacy")}
+              className="text-white/50 transition-colors hover:text-gold"
+            >
+              Privacy Policy
+            </Link>
+            <span className="text-white/20">·</span>
+            <Link
+              to="/terms"
+              onClick={() => scrollToTopIfSamePage("/terms")}
+              className="text-white/50 transition-colors hover:text-gold"
+            >
+              Terms & Conditions
+            </Link>
+            <span className="text-white/20">·</span>
+            <Link
+              to="/disclaimer"
+              onClick={() => scrollToTopIfSamePage("/disclaimer")}
+              className="text-white/50 transition-colors hover:text-gold"
+            >
+              Disclaimer
+            </Link>
+          </div>
+          <div className="flex items-center gap-3 text-white/35">
             <div className="h-px w-4 opacity-30" style={{ background: "var(--color-gold)" }} />
             <p>RERA Registered · Crafted for discerning homeowners.</p>
           </div>

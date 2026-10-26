@@ -19,12 +19,28 @@ export const Route = createFileRoute("/faq")({
       {
         name: "description",
         content:
-          "Have questions about SLV Group? Read our FAQs on property locations, customization, RERA compliance, amenities, and more.",
+          "Find answers to frequently asked questions about SLV Group properties, RERA compliance, payment plans, site visits, and amenities in Vijayawada & Amaravati.",
       },
+      { property: "og:site_name", content: "SLV Group" },
       { property: "og:title", content: "Frequently Asked Questions — SLV Group" },
       {
         property: "og:description",
-        content: "Answers to all your questions about our premium residential & layout projects.",
+        content: "Answers to questions about our residential communities and plotted developments.",
+      },
+      { property: "og:url", content: "https://www.slvgroup.co.in/faq" },
+      { property: "og:image", content: "https://www.slvgroup.co.in/slv-logo.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Frequently Asked Questions — SLV Group" },
+      {
+        name: "twitter:description",
+        content: "Answers to questions about our residential communities and plotted developments.",
+      },
+      { name: "twitter:image", content: "https://www.slvgroup.co.in/slv-logo.png" },
+    ],
+    links: [
+      {
+        rel: "canonical",
+        href: "https://www.slvgroup.co.in/faq",
       },
     ],
   }),
@@ -348,11 +364,11 @@ function FaqPage() {
                 <span>+91 98595 95939</span>
               </a>
               <a
-                href="mailto:slv.bvrm@gmail.com"
+                href="mailto:info@slvgroup.co.in"
                 className="inline-flex items-center justify-center gap-2 rounded-xl border border-gold/30 px-6 py-3.5 text-sm font-medium text-foreground transition-all duration-250 hover:border-gold/60 hover:bg-gold/5"
               >
                 <Mail className="h-4 w-4" />
-                <span>slv.bvrm@gmail.com</span>
+                <span>info@slvgroup.co.in</span>
               </a>
             </div>
           </div>

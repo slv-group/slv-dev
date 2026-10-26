@@ -15,16 +15,32 @@ Thank you.`);
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact Us — SLV Group" },
+      { title: "Contact Us — SLV Group | Vijayawada & Amaravati" },
       {
         name: "description",
         content:
-          "Get in touch with SLV Group. Book a site visit, call us, or message us on WhatsApp. Office in Vijayawada, Andhra Pradesh.",
+          "Get in touch with SLV Group. Book a site visit, call +91 98595 95939, or visit our office in Mangalagiri, Guntur District, Andhra Pradesh.",
       },
+      { property: "og:site_name", content: "SLV Group" },
       { property: "og:title", content: "Contact SLV Group" },
       {
         property: "og:description",
-        content: "Book a private viewing or reach our relationship team.",
+        content: "Book a site visit or reach our relationship management team.",
+      },
+      { property: "og:url", content: "https://www.slvgroup.co.in/contact" },
+      { property: "og:image", content: "https://www.slvgroup.co.in/slv-logo.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Contact SLV Group" },
+      {
+        name: "twitter:description",
+        content: "Book a site visit or reach our relationship management team.",
+      },
+      { name: "twitter:image", content: "https://www.slvgroup.co.in/slv-logo.png" },
+    ],
+    links: [
+      {
+        rel: "canonical",
+        href: "https://www.slvgroup.co.in/contact",
       },
     ],
   }),
@@ -42,8 +58,8 @@ const info = [
   {
     icon: Mail,
     label: "Email Us",
-    value: "info@slvdevelopers.in",
-    href: "mailto:info@slvdevelopers.in",
+    value: "info@slvgroup.co.in",
+    href: "mailto:info@slvgroup.co.in",
   },
   { icon: Clock, label: "Office Hours", value: "Mon – Sat · 9:30 AM to 7:00 PM" },
 ];

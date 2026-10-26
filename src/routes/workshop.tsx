@@ -25,20 +25,35 @@ import {
 export const Route = createFileRoute("/workshop")({
   head: () => ({
     meta: [
-      { title: "Workshop — SLV Group" },
+      { title: "Technical Workshops & Site Masterclasses — SLV Group" },
       {
         name: "description",
         content:
-          "Hands-on workshops from SLV Group — site walkthroughs, design sessions, and industry masterclasses for architects, engineers, and partners.",
+          "Hands-on workshops from SLV Group — site walkthroughs, design sessions, and industry masterclasses for architects, engineers, and real estate professionals.",
       },
-      { property: "og:title", content: "Workshop — SLV Group" },
+      { property: "og:site_name", content: "SLV Group" },
+      { property: "og:title", content: "Technical Workshops — SLV Group" },
       {
         property: "og:description",
         content:
-          "Learn on-site with SLV. Practical workshops on design, construction, and materials.",
+          "Learn on-site with SLV Group. Practical workshops on structural engineering, sustainable architecture, and construction management.",
       },
+      { property: "og:url", content: "https://www.slvgroup.co.in/workshop" },
+      { property: "og:image", content: "https://www.slvgroup.co.in/slv-logo.png" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Technical Workshops — SLV Group" },
+      {
+        name: "twitter:description",
+        content: "Practical workshops on design, construction, and materials with SLV Group.",
+      },
+      { name: "twitter:image", content: "https://www.slvgroup.co.in/slv-logo.png" },
+    ],
+    links: [
+      {
+        rel: "canonical",
+        href: "https://www.slvgroup.co.in/workshop",
+      },
     ],
   }),
   component: WorkshopPage,

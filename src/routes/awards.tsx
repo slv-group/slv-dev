@@ -37,19 +37,36 @@ export const Route = createFileRoute("/awards")({
       },
       {
         name: "description",
-        content: "Explore the awards and recognition earned by  & Developers and its leadership.",
+        content:
+          "Explore the industry awards and professional recognition earned by SLV Group and its leadership.",
       },
+      { property: "og:site_name", content: "SLV Group" },
       {
         property: "og:title",
         content: "Awards & Recognition — SLV Group",
       },
       {
         property: "og:description",
-        content: "Recognition earned by SLV Group and its leadership.",
+        content:
+          "Recognition earned by SLV Group and its leadership across real estate excellence.",
       },
+      { property: "og:url", content: "https://www.slvgroup.co.in/awards" },
       {
         property: "og:image",
-        content: heroAwardImage,
+        content: "https://www.slvgroup.co.in/slv-logo.png",
+      },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Awards & Recognition — SLV Group" },
+      {
+        name: "twitter:description",
+        content: "Recognition earned by SLV Group and its leadership.",
+      },
+      { name: "twitter:image", content: "https://www.slvgroup.co.in/slv-logo.png" },
+    ],
+    links: [
+      {
+        rel: "canonical",
+        href: "https://www.slvgroup.co.in/awards",
       },
     ],
   }),

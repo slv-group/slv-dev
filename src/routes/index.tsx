@@ -27,17 +27,34 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "SLV Group — Premium Homes in Vijayawada & Amaravati" },
+      { title: "SLV Group — Premium Homes & Plotted Layouts in Vijayawada & Amaravati" },
       {
         name: "description",
         content:
-          "Discover premium villas, penthouses, and residences by SLV Group. Crafted architecture, world-class amenities, and a seamless buying journey.",
+          "Discover premier residential gated communities, open plots, and luxury developments across Vijayawada, Guntur, and the Amaravati capital region by SLV Group.",
       },
-      { property: "og:title", content: "SLV Group — Luxury Real Estate" },
+      { property: "og:site_name", content: "SLV Group" },
+      { property: "og:title", content: "SLV Group — Leading Real Estate Developers" },
       {
         property: "og:description",
         content:
-          "A curated portfolio of luxury villas, penthouses, and residences in India's finest locations.",
+          "Premier plotted layouts, luxury villas, and residential developments across the Vijayawada and Amaravati capital region.",
+      },
+      { property: "og:url", content: "https://www.slvgroup.co.in" },
+      { property: "og:image", content: "https://www.slvgroup.co.in/slv-logo.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "SLV Group — Leading Real Estate Developers" },
+      {
+        name: "twitter:description",
+        content:
+          "Premier plotted layouts, luxury villas, and residential developments across the Vijayawada and Amaravati capital region.",
+      },
+      { name: "twitter:image", content: "https://www.slvgroup.co.in/slv-logo.png" },
+    ],
+    links: [
+      {
+        rel: "canonical",
+        href: "https://www.slvgroup.co.in",
       },
     ],
   }),
@@ -165,29 +182,77 @@ function Index() {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "RealEstateAgent",
+            name: "SLV Group",
+            url: "https://www.slvgroup.co.in",
+            logo: "https://www.slvgroup.co.in/slv-logo.png",
+            description:
+              "Premier real estate developer in Andhra Pradesh, delivering residential gated communities, open plots, and commercial landmarks across Vijayawada, Guntur, and Amaravati.",
+            telephone: "+91-98595-95939",
+            email: "info@slvgroup.co.in",
+            address: {
+              "@type": "PostalAddress",
+              streetAddress: "8-56-68/5, Beside Tenali Flyover, Sri Saila Nagar, Ward No.5",
+              addressLocality: "Mangalagiri",
+              addressRegion: "Andhra Pradesh",
+              postalCode: "522503",
+              addressCountry: "IN",
+            },
+          }),
+        }}
+      />
       <HeroSection />
 
       {/* ── Accolades marquee strip ── */}
-      <section className="relative overflow-hidden border-b border-border/60 bg-card py-0">
+      <section
+        aria-label="Accreditations and certifications"
+        className="relative overflow-hidden border-b border-border/60 bg-card py-0"
+      >
         {/* Gold accent lines */}
-        <div className="absolute inset-x-0 top-0 h-px hairline-gold opacity-70" />
-        <div className="absolute inset-x-0 bottom-0 h-px hairline-gold opacity-70" />
+        <div className="absolute inset-x-0 top-0 h-px hairline-gold opacity-70" aria-hidden />
+        <div className="absolute inset-x-0 bottom-0 h-px hairline-gold opacity-70" aria-hidden />
 
         <div className="flex overflow-hidden py-4">
-          <div className="animate-marquee flex shrink-0 items-center gap-0 whitespace-nowrap">
-            {[...accolades, ...accolades, ...accolades, ...accolades].map((a, i) => (
-              <span
-                key={i}
-                className="flex items-center gap-3 px-8 text-[0.72rem] font-bold uppercase tracking-[0.3em] text-muted-foreground"
-              >
-                <a.icon className="h-3.5 w-3.5 text-gold shrink-0" />
-                {a.text}
+          <div className="animate-marquee motion-reduce:animate-none flex shrink-0 items-center gap-0 whitespace-nowrap">
+            {/* Primary set announced to assistive technologies */}
+            <div className="flex items-center gap-0 shrink-0">
+              {accolades.map((a, i) => (
                 <span
-                  className="ml-4 h-px w-8 opacity-30"
-                  style={{ background: "var(--gradient-gold)" }}
-                />
-              </span>
-            ))}
+                  key={`primary-${i}`}
+                  className="flex items-center gap-3 px-8 text-[0.72rem] font-bold uppercase tracking-[0.3em] text-muted-foreground"
+                >
+                  <a.icon className="h-3.5 w-3.5 text-gold shrink-0" aria-hidden />
+                  {a.text}
+                  <span
+                    aria-hidden
+                    className="ml-4 h-px w-8 opacity-30"
+                    style={{ background: "var(--gradient-gold)" }}
+                  />
+                </span>
+              ))}
+            </div>
+
+            {/* Decorative duplicate loops hidden from screen readers to prevent repetition */}
+            <div aria-hidden="true" className="flex items-center gap-0 shrink-0 select-none">
+              {[...accolades, ...accolades, ...accolades].map((a, i) => (
+                <span
+                  key={`deco-${i}`}
+                  className="flex items-center gap-3 px-8 text-[0.72rem] font-bold uppercase tracking-[0.3em] text-muted-foreground"
+                >
+                  <a.icon className="h-3.5 w-3.5 text-gold shrink-0" />
+                  {a.text}
+                  <span
+                    className="ml-4 h-px w-8 opacity-30"
+                    style={{ background: "var(--gradient-gold)" }}
+                  />
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -395,6 +460,20 @@ function Index() {
             <div className="relative mt-10 sm:mt-14">
               {/* Projects */}
               <div className="mx-auto w-full">
+                {/* Search Engine & Accessibility HTML Index for Crawlers */}
+                <div className="sr-only">
+                  <h3>All Ongoing Real Estate Projects by SLV Group</h3>
+                  <ul>
+                    {ongoingProjects.map((p) => (
+                      <li key={`crawler-${p.id}`}>
+                        <Link to="/projects/$slug" params={{ slug: p.slug }}>
+                          {p.name} - {p.category} in {p.location || p.city} ({p.tagline})
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
                 {ongoingProjects.length > 0 ? (
                   <div
                     key={`${currentPage}-${itemsPerPage}`}

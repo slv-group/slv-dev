@@ -177,10 +177,20 @@ function exportProjectsCSV(projects: Project[]) {
     p.price_from?.toString() ?? "",
     p.sqft_from?.toString() ?? "",
     (p as Record<string, unknown>).sqft_to?.toString() ?? "",
-    ((p as any).area_unit || (Array.isArray(p.specifications) ? (p.specifications as any[]).find((s) => s?.label === "__area_unit" || s?.label === "Area Unit")?.value : "") || (p.category === "Plots" ? "sq yd" : "sqft")),
+    (p as any).area_unit ||
+      (Array.isArray(p.specifications)
+        ? (p.specifications as any[]).find(
+            (s) => s?.label === "__area_unit" || s?.label === "Area Unit",
+          )?.value
+        : "") ||
+      (p.category === "Plots" ? "sq yd" : "sqft"),
     (p as Record<string, unknown>).launch_date?.toString() ?? "",
     p.rera_number ?? "",
-    Array.isArray(p.amenities) ? (p.amenities as any[]).map((a: any) => typeof a === "string" ? a : a?.name ?? "").join("; ") : "",
+    Array.isArray(p.amenities)
+      ? (p.amenities as any[])
+          .map((a: any) => (typeof a === "string" ? a : (a?.name ?? "")))
+          .join("; ")
+      : "",
     p.is_published ? "Yes" : "No",
     p.is_featured ? "Yes" : "No",
     new Date(p.created_at).toLocaleDateString(),
@@ -265,10 +275,15 @@ function ProjectsManagement() {
     cover_image: data.cover_image || null,
     brochure_url: data.brochure_url || null,
     map_embed: data.map_embed || null,
-    amenities: data.amenities.map((a) => ({ name: a.name, ...(a.icon_url ? { icon_url: a.icon_url } : {}) })),
+    amenities: data.amenities.map((a) => ({
+      name: a.name,
+      ...(a.icon_url ? { icon_url: a.icon_url } : {}),
+    })),
     gallery: data.gallery,
     specifications: [
-      ...(data.specifications || []).filter((s) => !s.label.startsWith("__") && s.label !== "Area Unit"),
+      ...(data.specifications || []).filter(
+        (s) => !s.label.startsWith("__") && s.label !== "Area Unit",
+      ),
       { label: "__area_unit", value: data.area_unit || "sqft" },
     ],
     nearby: data.nearby,
@@ -395,17 +410,27 @@ function ProjectsManagement() {
   };
 
   // Safe project persistence helper that supports area_unit column and gracefully handles schema cache
-  const saveProjectToSupabase = async (payload: Record<string, any>, areaUnit: string, id?: string) => {
+  const saveProjectToSupabase = async (
+    payload: Record<string, any>,
+    areaUnit: string,
+    id?: string,
+  ) => {
     const fullPayload = { ...payload, area_unit: areaUnit || "sqft" };
     let res = id
-      ? await supabase.from("projects").update(fullPayload as any).eq("id", id)
+      ? await supabase
+          .from("projects")
+          .update(fullPayload as any)
+          .eq("id", id)
       : await supabase.from("projects").insert(fullPayload as any);
 
     // If area_unit column does not exist in schema cache yet (PGRST204), fallback to payload without it.
     // The unit is safely preserved in specifications as __area_unit regardless!
     if (res.error && res.error.code === "PGRST204") {
       res = id
-        ? await supabase.from("projects").update(payload as any).eq("id", id)
+        ? await supabase
+            .from("projects")
+            .update(payload as any)
+            .eq("id", id)
         : await supabase.from("projects").insert(payload as any);
     }
     if (res.error) throw res.error;
@@ -644,8 +669,11 @@ function ProjectsManagement() {
     setEditingProject(p);
     const raw = p as Record<string, unknown>;
     const rawSpecs = Array.isArray(p.specifications) ? (p.specifications as SpecItem[]) : [];
-    const unitFromSpecs = rawSpecs.find((s) => s.label === "__area_unit" || s.label === "Area Unit")?.value;
-    const areaUnit = (raw.area_unit as string) ?? unitFromSpecs ?? (p.category === "Plots" ? "sq yd" : "sqft");
+    const unitFromSpecs = rawSpecs.find(
+      (s) => s.label === "__area_unit" || s.label === "Area Unit",
+    )?.value;
+    const areaUnit =
+      (raw.area_unit as string) ?? unitFromSpecs ?? (p.category === "Plots" ? "sq yd" : "sqft");
 
     setForm({
       _editingId: p.id, // ← embed the ID so we never lose track during edits
@@ -1507,7 +1535,10 @@ function ProjectsManagement() {
                                 ...f,
                                 amenities: [
                                   ...f.amenities,
-                                  { name: newAmenity.name.trim(), icon_url: newAmenity.icon_url || undefined },
+                                  {
+                                    name: newAmenity.name.trim(),
+                                    icon_url: newAmenity.icon_url || undefined,
+                                  },
                                 ],
                               }));
                               setNewAmenity({ name: "", icon_url: "" });
@@ -1576,7 +1607,10 @@ function ProjectsManagement() {
                               ...f,
                               amenities: [
                                 ...f.amenities,
-                                { name: newAmenity.name.trim(), icon_url: newAmenity.icon_url || undefined },
+                                {
+                                  name: newAmenity.name.trim(),
+                                  icon_url: newAmenity.icon_url || undefined,
+                                },
                               ],
                             }));
                             setNewAmenity({ name: "", icon_url: "" });
@@ -1695,7 +1729,8 @@ function ProjectsManagement() {
                     </div>
                   ) : (
                     <p className="text-xs text-muted-foreground italic py-2">
-                      No amenities added yet. Add your amenities above and arrange them in any order.
+                      No amenities added yet. Add your amenities above and arrange them in any
+                      order.
                     </p>
                   )}
                 </div>
@@ -1938,7 +1973,8 @@ function ProjectsManagement() {
                     </div>
                   ) : (
                     <p className="text-xs text-muted-foreground italic py-2">
-                      No specifications added yet. Add specifications above and arrange them in any order.
+                      No specifications added yet. Add specifications above and arrange them in any
+                      order.
                     </p>
                   )}
                 </div>

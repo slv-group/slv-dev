@@ -30,8 +30,9 @@ export const Route = createFileRoute("/management")({
       {
         name: "description",
         content:
-          "Discover the leadership vision, management philosophy and people behind SLV Group.",
+          "Discover the leadership vision, management philosophy, and key executives behind SLV Group's real estate developments in Andhra Pradesh.",
       },
+      { property: "og:site_name", content: "SLV Group" },
       {
         property: "og:title",
         content: "Leadership & Management — SLV Group",
@@ -39,11 +40,26 @@ export const Route = createFileRoute("/management")({
       {
         property: "og:description",
         content:
-          "Discover the leadership vision, management philosophy and values behind SLV Group.",
+          "Discover the leadership vision, management philosophy, and values behind SLV Group.",
       },
+      { property: "og:url", content: "https://www.slvgroup.co.in/management" },
       {
         property: "og:image",
-        content: heroImage,
+        content: "https://www.slvgroup.co.in/slv-logo.png",
+      },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Leadership & Management — SLV Group" },
+      {
+        name: "twitter:description",
+        content:
+          "Discover the leadership vision, management philosophy, and values behind SLV Group.",
+      },
+      { name: "twitter:image", content: "https://www.slvgroup.co.in/slv-logo.png" },
+    ],
+    links: [
+      {
+        rel: "canonical",
+        href: "https://www.slvgroup.co.in/management",
       },
     ],
   }),

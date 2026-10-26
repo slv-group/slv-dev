@@ -8,11 +8,34 @@ import { SiteVisitModal } from "@/components/SiteVisitModal";
 export const Route = createFileRoute("/site-visit")({
   head: () => ({
     meta: [
-      { title: "Book a Site Visit — SLV Group" },
+      { title: "Book a Site Visit — SLV Group | Schedule a Property Tour" },
       {
         name: "description",
         content:
-          "Schedule a private viewing of our ongoing luxury residential and commercial projects.",
+          "Schedule a private site visit to our premium plotted layouts, gated communities, and residential projects across Vijayawada and Amaravati.",
+      },
+      { property: "og:site_name", content: "SLV Group" },
+      { property: "og:title", content: "Book a Site Visit — SLV Group" },
+      {
+        property: "og:description",
+        content:
+          "Schedule a guided site visit to SLV Group's premier residential communities and plotted developments.",
+      },
+      { property: "og:url", content: "https://www.slvgroup.co.in/site-visit" },
+      { property: "og:image", content: "https://www.slvgroup.co.in/slv-logo.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Book a Site Visit — SLV Group" },
+      {
+        name: "twitter:description",
+        content:
+          "Schedule a guided site visit to SLV Group's premier residential communities and plotted developments.",
+      },
+      { name: "twitter:image", content: "https://www.slvgroup.co.in/slv-logo.png" },
+    ],
+    links: [
+      {
+        rel: "canonical",
+        href: "https://www.slvgroup.co.in/site-visit",
       },
     ],
   }),
