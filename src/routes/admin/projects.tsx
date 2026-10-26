@@ -284,11 +284,31 @@ function ProjectsManagement() {
 
   const handleSeedStaticProjects = async () => {
     setIsSeeding(true);
-    toast.loading("Migrating projects & images to Supabase... this may take a minute.");
+    toast.loading("Checking for missing projects to migrate to Supabase...");
 
     try {
+      // Fetch existing projects to protect them from being overwritten
+      const { data: existingRows } = await supabase
+        .from("projects")
+        .select("slug, name");
+      
+      const existingSlugs = new Set((existingRows || []).map((r) => r.slug));
+      const existingNames = new Set((existingRows || []).map((r) => (r.name || "").toLowerCase().trim()));
+
+      // Only migrate projects that do NOT already exist in Supabase
+      const missingProjects = staticProjects.filter(
+        (p) => !existingSlugs.has(p.slug) && !existingNames.has(p.name.toLowerCase().trim()),
+      );
+
+      if (missingProjects.length === 0) {
+        toast.dismiss();
+        toast.info("All projects already exist in database. Existing projects and images were preserved!");
+        return;
+      }
+
+      toast.loading(`Migrating ${missingProjects.length} missing projects... this may take a moment.`);
       let successCount = 0;
-      for (const p of staticProjects) {
+      for (const p of missingProjects) {
         // Upload cover image
         let cover_url = p.image || null;
         if (cover_url && cover_url.startsWith("/")) {
@@ -378,12 +398,12 @@ function ProjectsManagement() {
           sort_order: parseInt(p.id) || 0,
         };
 
-        const { error } = await supabase.from("projects").upsert(payload, { onConflict: "slug" });
+        const { error } = await supabase.from("projects").insert(payload);
         if (!error) successCount++;
       }
       toast.dismiss();
       toast.success(
-        `Successfully migrated ${successCount} projects and uploaded all their images!`,
+        `Successfully migrated ${successCount} missing projects. All existing projects & images remain untouched!`,
       );
       queryClient.invalidateQueries({ queryKey: ["admin-projects"] });
     } catch (err: any) {
@@ -770,9 +790,10 @@ function ProjectsManagement() {
           className="gap-2 bg-muted/30"
           onClick={handleSeedStaticProjects}
           disabled={isSeeding}
+          title="Safely imports any missing static projects into Supabase without touching existing ones"
         >
           {isSeeding ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
-          {isSeeding ? "Migrating..." : "Migrate Static Projects"}
+          {isSeeding ? "Migrating..." : "Migrate Missing Projects"}
         </Button>
       </div>
 

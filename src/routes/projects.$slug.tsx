@@ -25,7 +25,10 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/projects/$slug")({
   loader: async ({ params }) => {
     // First try Supabase
-    const { data } = await supabase.from("projects").select("*").eq("slug", params.slug).single();
+    const { data, error } = await supabase.from("projects").select("*").eq("slug", params.slug).maybeSingle();
+    if (error) {
+      console.warn(`[projects.$slug] Supabase query error for slug '${params.slug}':`, error.message);
+    }
 
     let project;
     if (data) {
