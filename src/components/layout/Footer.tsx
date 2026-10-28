@@ -25,7 +25,7 @@ const ourStory = [
   { label: "Leadership & Management", to: "/management" },
   { label: "Awards", to: "/awards" },
   { label: "CSR", to: "/csr" },
-  // { label: "Gallery", to: "/gallery" }, // Hidden for now – uncomment to restore
+  { label: "Gallery", to: "/gallery" },
 ];
 
 const projectLinks = [
