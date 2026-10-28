@@ -20,8 +20,8 @@ import { PropertyCard } from "@/components/PropertyCard";
 import { Reveal } from "@/components/Reveal";
 import { testimonials, mapSupabaseToProject } from "@/data/projects";
 import { supabase } from "@/integrations/supabase/client";
-import aboutImage from "@/assets/project-1.jpg";
-import aboutImage2 from "@/assets/project-2.jpg";
+import aboutImage from "@/assets/projects/slv-anjani-heights/anjani-elevation-1.jpg";
+import aboutImage2 from "@/assets/projects/slv-amaravati-pride/pride-elevation-1.jpg";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
@@ -318,7 +318,7 @@ function Index() {
               <div className="w-2/3 overflow-hidden rounded-md md:rounded-2xl shadow-2xl">
                 <img
                   src={aboutImage}
-                  alt="An SLV Group gated community in the Vijayawada–Amaravati region"
+                  alt="SLV Anjani Heights — Landmark residential project in Vijayawada"
                   loading="lazy"
                   decoding="async"
                   fetchPriority="low"
@@ -328,7 +328,7 @@ function Index() {
               <div className="mt-20 w-1/3 overflow-hidden rounded-md md:rounded-2xl shadow-xl">
                 <img
                   src={aboutImage2}
-                  alt="Interior detail of an SLV residence"
+                  alt="SLV Amaravati Pride — Premium residential community"
                   loading="lazy"
                   decoding="async"
                   fetchPriority="low"

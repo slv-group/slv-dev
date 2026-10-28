@@ -1,7 +1,3 @@
-import project1 from "@/assets/project-1.jpg";
-import project2 from "@/assets/project-2.jpg";
-import project3 from "@/assets/project-3.jpg";
-
 import prideElevation1 from "@/assets/projects/slv-amaravati-pride/pride-elevation-1.jpg";
 import prideElevation2 from "@/assets/projects/slv-amaravati-pride/pride-elevation-2.jpg";
 import prideElevation3 from "@/assets/projects/slv-amaravati-pride/pride-elevation-3.jpg";
@@ -238,7 +234,7 @@ export function mapSupabaseToProject(row: Tables<"projects">): Project {
 }
 
 // Cycle through available images
-const imgs = [project1, project2, project3];
+const imgs = [anjaniElevation1, prideElevation1, gmAerial];
 const img = (n: number) => imgs[(n - 1) % 3];
 const gallery = (n: number): string[] => [img(n), img(n + 1), img(n + 2)];
 
