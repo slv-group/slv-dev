@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -222,6 +222,7 @@ async function uploadToStorage(bucket: string, folder: string, file: File): Prom
 
 function ProjectsManagement() {
   const queryClient = useQueryClient();
+  const router = useRouter();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [showForm, setShowForm] = useState(false);
@@ -229,10 +230,21 @@ function ProjectsManagement() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [form, setForm] = useState<ProjectFormData>(defaultForm);
   const [uploadingCover, setUploadingCover] = useState(false);
+  const [stagedCoverFile, setStagedCoverFile] = useState<File | null>(null);
+  const [stagedCoverPreview, setStagedCoverPreview] = useState<string | null>(null);
   const [uploadingBrochure, setUploadingBrochure] = useState(false);
   const [uploadingGallery, setUploadingGallery] = useState(false);
   const [uploadingFloorPlan, setUploadingFloorPlan] = useState<number | null>(null);
   const [isSeeding, setIsSeeding] = useState(false);
+
+  // Invalidate all related project queries and route loaders across the app
+  const invalidateAllProjectQueries = () => {
+    queryClient.invalidateQueries({ queryKey: ["admin-projects"] });
+    queryClient.invalidateQueries({ queryKey: ["admin-stats-projects"] });
+    queryClient.invalidateQueries({ queryKey: ["published-projects-list"] });
+    queryClient.invalidateQueries({ queryKey: ["admin-projects-lookup"] });
+    router.invalidate();
+  };
 
   // ── New amenity / spec / nearby input states ──
   const [newAmenity, setNewAmenity] = useState<AmenityItem>({ name: "", icon_url: "" });
@@ -257,45 +269,64 @@ function ProjectsManagement() {
   });
 
   // ── Build payload from form ──
-  const buildPayload = (data: ProjectFormData) => ({
-    name: data.name,
-    slug: data.slug || generateSlug(data.name),
-    tagline: data.tagline || null,
-    description: data.description || null,
-    status: data.status,
-    category: data.category || null,
-    city: data.city || null,
-    location: data.location || null,
-    bedrooms: data.bedrooms || null,
-    price_from: data.price_from ? Number(data.price_from.toString().replace(/,/g, "")) : null,
-    sqft_from: data.sqft_from ? Number(data.sqft_from.toString().replace(/,/g, "")) : null,
-    sqft_to: data.sqft_to ? Number(data.sqft_to.toString().replace(/,/g, "")) : null,
-    launch_date: data.launch_date || null,
-    rera_number: data.rera_number || null,
-    cover_image: data.cover_image || null,
-    brochure_url: data.brochure_url || null,
-    map_embed: data.map_embed || null,
-    amenities: data.amenities.map((a) => ({
-      name: a.name,
-      ...(a.icon_url ? { icon_url: a.icon_url } : {}),
-    })),
-    gallery: data.gallery,
-    specifications: [
-      ...(data.specifications || []).filter(
-        (s) => !s.label.startsWith("__") && s.label !== "Area Unit",
-      ),
-      { label: "__area_unit", value: data.area_unit || "sqft" },
-    ],
-    nearby: data.nearby,
-    floor_plans: data.floor_plans.map((fp) => ({
-      type: fp.type,
-      sqft: fp.sqft ? Number(fp.sqft.toString().replace(/,/g, "")) : 0,
-      image: fp.image,
-    })),
-    is_featured: data.is_featured,
-    is_published: data.is_published,
-    sort_order: Number(data.sort_order) || 0,
-  });
+  const buildPayload = (data: ProjectFormData, existing?: Project | null) => {
+    // Preserve existing DB cover_image when editing if no new replacement was selected
+    let coverImage = data.cover_image?.trim() || null;
+    if (!coverImage && existing) {
+      coverImage = existing.cover_image || null;
+    }
+
+    // Preserve existing gallery when editing if empty/unmodified
+    let gallery = data.gallery;
+    if (
+      (!gallery || gallery.length === 0) &&
+      existing &&
+      Array.isArray(existing.gallery) &&
+      existing.gallery.length > 0
+    ) {
+      gallery = existing.gallery as string[];
+    }
+
+    return {
+      name: data.name,
+      slug: data.slug || generateSlug(data.name),
+      tagline: data.tagline || null,
+      description: data.description || null,
+      status: data.status,
+      category: data.category || null,
+      city: data.city || null,
+      location: data.location || null,
+      bedrooms: data.bedrooms || null,
+      price_from: data.price_from ? Number(data.price_from.toString().replace(/,/g, "")) : null,
+      sqft_from: data.sqft_from ? Number(data.sqft_from.toString().replace(/,/g, "")) : null,
+      sqft_to: data.sqft_to ? Number(data.sqft_to.toString().replace(/,/g, "")) : null,
+      launch_date: data.launch_date || null,
+      rera_number: data.rera_number || null,
+      cover_image: coverImage,
+      brochure_url: data.brochure_url || null,
+      map_embed: data.map_embed || null,
+      amenities: data.amenities.map((a) => ({
+        name: a.name,
+        ...(a.icon_url ? { icon_url: a.icon_url } : {}),
+      })),
+      gallery: gallery || [],
+      specifications: [
+        ...(data.specifications || []).filter(
+          (s) => !s.label.startsWith("__") && s.label !== "Area Unit",
+        ),
+        { label: "__area_unit", value: data.area_unit || "sqft" },
+      ],
+      nearby: data.nearby,
+      floor_plans: data.floor_plans.map((fp) => ({
+        type: fp.type,
+        sqft: fp.sqft ? Number(fp.sqft.toString().replace(/,/g, "")) : 0,
+        image: fp.image,
+      })),
+      is_featured: data.is_featured,
+      is_published: data.is_published,
+      sort_order: Number(data.sort_order) || 0,
+    };
+  };
 
   const handleSeedStaticProjects = async () => {
     setIsSeeding(true);
@@ -303,12 +334,12 @@ function ProjectsManagement() {
 
     try {
       // Fetch existing projects to protect them from being overwritten
-      const { data: existingRows } = await supabase
-        .from("projects")
-        .select("slug, name");
-      
+      const { data: existingRows } = await supabase.from("projects").select("slug, name");
+
       const existingSlugs = new Set((existingRows || []).map((r) => r.slug));
-      const existingNames = new Set((existingRows || []).map((r) => (r.name || "").toLowerCase().trim()));
+      const existingNames = new Set(
+        (existingRows || []).map((r) => (r.name || "").toLowerCase().trim()),
+      );
 
       // Only migrate projects that do NOT already exist in Supabase
       const missingProjects = staticProjects.filter(
@@ -317,11 +348,15 @@ function ProjectsManagement() {
 
       if (missingProjects.length === 0) {
         toast.dismiss();
-        toast.info("All projects already exist in database. Existing projects and images were preserved!");
+        toast.info(
+          "All projects already exist in database. Existing projects and images were preserved!",
+        );
         return;
       }
 
-      toast.loading(`Migrating ${missingProjects.length} missing projects... this may take a moment.`);
+      toast.loading(
+        `Migrating ${missingProjects.length} missing projects... this may take a moment.`,
+      );
       let successCount = 0;
       for (const p of missingProjects) {
         // Upload cover image
@@ -462,7 +497,7 @@ function ProjectsManagement() {
       await saveProjectToSupabase(buildPayload(data), data.area_unit);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-projects"] });
+      invalidateAllProjectQueries();
       toast.success("Project created successfully");
       closeForm();
     },
@@ -475,12 +510,12 @@ function ProjectsManagement() {
   // Update project
   const updateMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: ProjectFormData }) => {
-      const payload = buildPayload(data);
+      const payload = buildPayload(data, editingProject);
       console.log("Updating project payload:", payload);
       await saveProjectToSupabase(payload, data.area_unit, id);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-projects"] });
+      invalidateAllProjectQueries();
       toast.success("Project updated successfully");
       closeForm();
     },
@@ -500,10 +535,7 @@ function ProjectsManagement() {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-projects"] });
-      queryClient.invalidateQueries({ queryKey: ["admin-stats-projects"] });
-      queryClient.invalidateQueries({ queryKey: ["published-projects-list"] });
-      queryClient.invalidateQueries({ queryKey: ["admin-projects-lookup"] });
+      invalidateAllProjectQueries();
       toast.success("Project deleted");
       setDeletingId(null);
     },
@@ -525,23 +557,27 @@ function ProjectsManagement() {
       const { error } = await supabase.from("projects").update(payload).eq("id", id);
       if (error) throw error;
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["admin-projects"] }),
+    onSuccess: () => invalidateAllProjectQueries(),
     onError: (err: Error) => toast.error(err.message),
   });
 
   // ── Upload handlers ──
-  const handleCoverUpload = async (file: File) => {
+  const handleSelectCoverFile = (file: File) => {
     if (!file) return;
-    setUploadingCover(true);
-    try {
-      const url = await uploadToStorage("project-media", "covers", file);
-      setForm((f) => ({ ...f, cover_image: url }));
-      toast.success("Cover image uploaded");
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Upload failed");
-    } finally {
-      setUploadingCover(false);
+    if (stagedCoverPreview) {
+      URL.revokeObjectURL(stagedCoverPreview);
     }
+    const previewUrl = URL.createObjectURL(file);
+    setStagedCoverFile(file);
+    setStagedCoverPreview(previewUrl);
+  };
+
+  const handleCancelCoverReplacement = () => {
+    if (stagedCoverPreview) {
+      URL.revokeObjectURL(stagedCoverPreview);
+    }
+    setStagedCoverFile(null);
+    setStagedCoverPreview(null);
   };
 
   const handleBrochureUpload = async (file: File) => {
@@ -677,6 +713,11 @@ function ProjectsManagement() {
 
   // ── Form open/close ──
   const openCreate = () => {
+    if (stagedCoverPreview) {
+      URL.revokeObjectURL(stagedCoverPreview);
+    }
+    setStagedCoverFile(null);
+    setStagedCoverPreview(null);
     setEditingProject(null);
     setForm(defaultForm);
     setNewAmenity({ name: "", icon_url: "" });
@@ -686,6 +727,11 @@ function ProjectsManagement() {
   };
 
   const openEdit = (p: Project) => {
+    if (stagedCoverPreview) {
+      URL.revokeObjectURL(stagedCoverPreview);
+    }
+    setStagedCoverFile(null);
+    setStagedCoverPreview(null);
     setEditingProject(p);
     const raw = p as Record<string, unknown>;
     const rawSpecs = Array.isArray(p.specifications) ? (p.specifications as SpecItem[]) : [];
@@ -739,36 +785,63 @@ function ProjectsManagement() {
   };
 
   const closeForm = () => {
+    if (stagedCoverPreview) {
+      URL.revokeObjectURL(stagedCoverPreview);
+    }
+    setStagedCoverFile(null);
+    setStagedCoverPreview(null);
     setShowForm(false);
     setEditingProject(null);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name.trim()) {
       toast.error("Project name is required");
       return;
     }
 
-    // Use _editingId from the form itself as primary signal (cannot desync)
     const editId = form._editingId || editingProject?.id;
+    let finalCoverUrl = form.cover_image;
+
+    // If an administrator explicitly selected a replacement image file, upload it now
+    if (stagedCoverFile) {
+      setUploadingCover(true);
+      try {
+        finalCoverUrl = await uploadToStorage("project-media", "covers", stagedCoverFile);
+      } catch (uploadErr) {
+        setUploadingCover(false);
+        const msg = uploadErr instanceof Error ? uploadErr.message : String(uploadErr);
+        toast.error(`Image upload failed: ${msg}. Previous project image remains unchanged.`);
+        return; // Retain previous valid image and abort save
+      }
+      setUploadingCover(false);
+    } else if (editingProject && !finalCoverUrl.trim()) {
+      // Preserve existing DB image if no replacement was chosen
+      finalCoverUrl = editingProject.cover_image || "";
+    }
+
+    const updatedForm: ProjectFormData = {
+      ...form,
+      cover_image: finalCoverUrl,
+    };
 
     console.log("🛠️ Submitting project form", {
       editId,
       editingProject: editingProject?.id,
       formEditingId: form._editingId,
+      hasReplacementFile: !!stagedCoverFile,
+      finalCoverUrl,
     });
 
     if (editId) {
-      // Update existing project
-      updateMutation.mutate({ id: editId, data: form });
+      updateMutation.mutate({ id: editId, data: updatedForm });
     } else {
-      // Create new project
-      createMutation.mutate(form);
+      createMutation.mutate(updatedForm);
     }
   };
 
-  const isSaving = createMutation.isPending || updateMutation.isPending;
+  const isSaving = createMutation.isPending || updateMutation.isPending || uploadingCover;
 
   // Filter
   const filtered = projects.filter((p) => {
@@ -1300,58 +1373,102 @@ function ProjectsManagement() {
               <TabsContent value="media" className="space-y-6">
                 {/* Cover Image */}
                 <div className="space-y-3">
-                  <Label>Cover Image</Label>
-                  {form.cover_image && (
-                    <div className="relative w-full h-40 rounded-xl overflow-hidden border border-border">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-sm font-medium">Cover Image</Label>
+                    {stagedCoverPreview ? (
+                      <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-500 border border-amber-500/30">
+                        New Image Selected (Pending Save)
+                      </span>
+                    ) : form.cover_image ? (
+                      <span className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 border border-emerald-500/30">
+                        Current Saved Image
+                      </span>
+                    ) : null}
+                  </div>
+
+                  {(stagedCoverPreview || form.cover_image) && (
+                    <div className="relative w-full h-44 rounded-xl overflow-hidden border border-border bg-black/10">
                       <img
-                        src={form.cover_image}
-                        alt="Cover"
+                        src={stagedCoverPreview || form.cover_image}
+                        alt="Cover Preview"
                         className="w-full h-full object-cover"
                       />
-                      <button
-                        type="button"
-                        onClick={() => setForm((f) => ({ ...f, cover_image: "" }))}
-                        className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 flex items-center justify-center text-white hover:bg-black/80 transition-colors"
-                      >
-                        <X className="w-3.5 h-3.5" />
-                      </button>
+                      {stagedCoverPreview ? (
+                        <div className="absolute top-2 right-2 flex gap-1.5">
+                          <button
+                            type="button"
+                            onClick={handleCancelCoverReplacement}
+                            className="px-2.5 py-1 text-xs font-medium rounded-md bg-black/80 text-white hover:bg-black transition-colors"
+                          >
+                            Cancel Replacement
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-black/60 text-white text-[10px]">
+                          Saved in database
+                        </div>
+                      )}
                     </div>
                   )}
-                  <div className="flex gap-3">
+
+                  <div className="flex flex-col sm:flex-row gap-2.5">
                     <Input
-                      value={form.cover_image}
+                      value={
+                        stagedCoverPreview ? "(New replacement file selected)" : form.cover_image
+                      }
                       onChange={(e) => setForm((f) => ({ ...f, cover_image: e.target.value }))}
-                      placeholder="Paste image URL or upload below"
+                      placeholder="Paste image URL or choose file below"
+                      disabled={!!stagedCoverPreview}
                       className="flex-1"
                     />
-                    <label className="cursor-pointer">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) handleCoverUpload(file);
-                        }}
-                      />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        disabled={uploadingCover}
-                        className="gap-2 whitespace-nowrap"
-                        asChild
-                      >
-                        <span>
-                          {uploadingCover ? (
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                          ) : (
-                            <Upload className="w-4 h-4" />
-                          )}
-                          Upload
-                        </span>
-                      </Button>
-                    </label>
+                    <div className="flex gap-2">
+                      <label className="cursor-pointer">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) handleSelectCoverFile(file);
+                            e.target.value = "";
+                          }}
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          disabled={uploadingCover}
+                          className="gap-2 whitespace-nowrap"
+                          asChild
+                        >
+                          <span>
+                            {uploadingCover ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <Upload className="w-4 h-4" />
+                            )}
+                            {form.cover_image || stagedCoverPreview
+                              ? "Replace Image"
+                              : "Select Image"}
+                          </span>
+                        </Button>
+                      </label>
+                      {stagedCoverPreview && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleCancelCoverReplacement}
+                          className="text-xs text-muted-foreground hover:text-foreground"
+                        >
+                          Reset
+                        </Button>
+                      )}
+                    </div>
                   </div>
+                  <p className="text-xs text-muted-foreground">
+                    Selecting a new file previews it locally. The image is uploaded and persisted
+                    only when you confirm by clicking &quot;Save Project&quot;.
+                  </p>
                 </div>
 
                 {/* Gallery Images */}

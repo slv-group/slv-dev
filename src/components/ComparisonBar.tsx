@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 export function ComparisonBar() {
   const { compare, toggleCompare, clearCompare } = useStore();
-  const [allProjects, setAllProjects] = useState<Project[]>(staticProjects);
+  const [allProjects, setAllProjects] = useState<Project[]>([]);
 
   useEffect(() => {
     supabase
@@ -17,10 +17,7 @@ export function ComparisonBar() {
       .then(({ data }) => {
         if (data && data.length > 0) {
           const dbProjects = data.map(mapSupabaseToProject);
-          const dbSlugs = new Set(dbProjects.map((p) => p.slug));
-          const dbIds = new Set(dbProjects.map((p) => p.id));
-          const nonDb = staticProjects.filter((s) => !dbSlugs.has(s.slug) && !dbIds.has(s.id));
-          setAllProjects([...dbProjects, ...nonDb]);
+          setAllProjects(dbProjects);
         }
       });
   }, []);

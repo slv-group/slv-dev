@@ -2,7 +2,6 @@ import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { projects } from "@/data/projects";
 import { Reveal } from "@/components/Reveal";
 import {
   Image as ImageIcon,
@@ -66,6 +65,7 @@ function GalleryPage() {
   // Fetch images from the Supabase gallery table
   const { data: dbGallery = [], isLoading } = useQuery({
     queryKey: ["public-gallery-images"],
+    staleTime: 0,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("gallery")
@@ -81,26 +81,15 @@ function GalleryPage() {
     },
   });
 
-  // Collect project gallery images as curated additions
-  const projectGalleryImages: GalleryImage[] = projects.flatMap((p) =>
-    (p.gallery || []).slice(0, 2).map((img, idx) => ({
-      id: `${p.slug}-${idx}`,
-      title: `${p.name} — Perspective ${idx + 1}`,
-      url: img,
-      category: p.category || "Architecture",
-    })),
-  );
-
-  // Combine DB images with project photography
-  const allImages: GalleryImage[] = [
-    ...dbGallery.map((g) => ({
-      id: g.id,
-      title: g.title.replace(/\.(jpg|jpeg|png|webp)$/i, "").replace(/^[A-Z]\s*\.\s*/, ""),
-      url: g.image_url,
-      category: g.category || "Architecture",
-    })),
-    ...projectGalleryImages,
-  ];
+  // Map images from the Supabase gallery table (never substitute static dummy projects)
+  const allImages: GalleryImage[] = dbGallery.map((g) => ({
+    id: g.id,
+    title:
+      (g.title || "").replace(/\.(jpg|jpeg|png|webp)$/i, "").replace(/^[A-Z]\s*\.\s*/, "") ||
+      "Gallery Image",
+    url: g.image_url,
+    category: g.category || "Architecture",
+  }));
 
   const categories = ["All", "Architecture", "Plots", "Apartment", "Commercial"];
 

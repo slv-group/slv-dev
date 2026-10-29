@@ -15,7 +15,7 @@ import {
   Home,
   Eye,
 } from "lucide-react";
-import { formatPrice, projects as staticProjects } from "@/data/projects";
+import { formatPrice, projects as staticProjects, type Project } from "@/data/projects";
 import { supabase } from "@/integrations/supabase/client";
 import { mapSupabaseToProject } from "@/data/projects";
 import { SiteVisitModal } from "@/components/SiteVisitModal";
@@ -24,37 +24,42 @@ import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/projects/$slug")({
   loader: async ({ params }) => {
-    // First try Supabase
-    const { data, error } = await supabase.from("projects").select("*").eq("slug", params.slug).maybeSingle();
+    // First try Supabase with both current slug and possible legacy/variant slug
+    const dbSlug = params.slug === "slv-green-horizon-2" ? "slv-greenhorizon-2" : params.slug;
+    const { data, error } = await supabase
+      .from("projects")
+      .select("*")
+      .or(`slug.eq.${params.slug},slug.eq.${dbSlug}`)
+      .maybeSingle();
     if (error) {
-      console.warn(`[projects.$slug] Supabase query error for slug '${params.slug}':`, error.message);
+      console.warn(
+        `[projects.$slug] Supabase query error for slug '${params.slug}':`,
+        error.message,
+      );
     }
 
     let project;
     if (data) {
       project = mapSupabaseToProject(data);
     } else {
-      // Fallback to static data
-      project = staticProjects.find((p) => p.slug === params.slug);
+      // Fallback to static data only if not in database
+      project = staticProjects.find((p) => p.slug === params.slug || p.slug === dbSlug);
     }
 
     if (!project) throw notFound();
 
-    // Get related projects: try DB first, fallback to static
+    // Get related projects: try DB first
     const { data: moreData } = await supabase
       .from("projects")
       .select("*")
       .eq("is_published", true)
       .neq("slug", params.slug)
-      .neq("slug", "slv-greenhorizon-2")
+      .neq("slug", dbSlug)
       .limit(3);
 
-    let moreProjects;
+    let moreProjects: Project[] = [];
     if (moreData && moreData.length > 0) {
       moreProjects = moreData.map(mapSupabaseToProject);
-    } else {
-      // Fallback to static related projects
-      moreProjects = staticProjects.filter((p) => p.slug !== params.slug).slice(0, 3);
     }
 
     return { project, moreProjects };
@@ -121,6 +126,12 @@ function ProjectDetails() {
   const [showBrochure, setShowBrochure] = useState(false);
 
   const wished = isWishlisted(project.id);
+  const displayGallery =
+    project.gallery && project.gallery.length > 0
+      ? project.gallery
+      : project.image
+        ? [project.image]
+        : [];
 
   // Stat cards shown on the hero panel
   const statCards = [
@@ -185,27 +196,44 @@ function ProjectDetails() {
           <ChevronLeft className="h-4 w-4" /> Back to Projects
         </Link>
 
-        <div className="grid w-full gap-3 lg:grid-cols-[minmax(0,2.5fr)_minmax(220px,1fr)]">
+        <div
+          className={cn(
+            "w-full gap-3",
+            displayGallery.length > 1
+              ? "grid lg:grid-cols-[minmax(0,2.5fr)_minmax(220px,1fr)]"
+              : "block",
+          )}
+        >
           {/* Main image */}
           <div
             className="group relative w-full cursor-pointer overflow-hidden rounded-2xl sm:rounded-3xl aspect-[4/5] min-[480px]:aspect-[4/3] sm:aspect-[16/10] lg:aspect-auto lg:h-[480px] xl:h-[520px] 2xl:h-[560px]"
-            onClick={() => setLightbox(project.gallery[activeImg])}
+            onClick={() => displayGallery[activeImg] && setLightbox(displayGallery[activeImg])}
           >
-            {project.gallery.map((g: string, i: number) => (
-              <img
-                key={i}
-                src={g}
-                alt={`${project.name} view ${i + 1}`}
-                loading={i === 0 ? "eager" : "lazy"}
-                decoding="async"
-                fetchPriority={i === 0 ? "high" : "low"}
-                className={cn(
-                  "absolute inset-0 h-full w-full object-cover bg-black",
-                  "transition-[opacity,transform] duration-700 ease-in-out",
-                  activeImg === i ? "z-[1] scale-100 opacity-100" : "z-0 scale-105 opacity-0",
-                )}
-              />
-            ))}
+            {displayGallery.length > 0 ? (
+              displayGallery.map((g: string, i: number) => (
+                <img
+                  key={i}
+                  src={g}
+                  alt={`${project.name} view ${i + 1}`}
+                  loading={i === 0 ? "eager" : "lazy"}
+                  decoding="async"
+                  fetchPriority={i === 0 ? "high" : "low"}
+                  className={cn(
+                    "absolute inset-0 h-full w-full object-cover bg-black",
+                    "transition-[opacity,transform] duration-700 ease-in-out",
+                    activeImg === i ? "z-[1] scale-100 opacity-100" : "z-0 scale-105 opacity-0",
+                  )}
+                />
+              ))
+            ) : (
+              <div className="absolute inset-0 bg-card flex flex-col items-center justify-center p-6 text-center border border-border/50">
+                <Building2 className="w-16 h-16 text-gold/30 mb-3" />
+                <p className="font-display text-xl text-white font-semibold">{project.name}</p>
+                <p className="text-sm text-white/50 mt-1">
+                  {project.location}, {project.city}
+                </p>
+              </div>
+            )}
 
             {/* Gradients */}
             <div
@@ -350,59 +378,61 @@ function ProjectDetails() {
           </div>
 
           {/* Thumbnail gallery */}
-          <div className="grid grid-cols-3 gap-2 sm:gap-3 lg:block lg:h-[480px] lg:overflow-y-auto lg:pr-1 xl:h-[520px] 2xl:h-[560px]">
-            {project.gallery.map((g: string, i: number) => (
-              <button
-                key={i}
-                type="button"
-                onClick={() => setActiveImg(i)}
-                aria-label={`View image ${i + 1}`}
-                className={cn(
-                  "group relative min-w-0 overflow-hidden rounded-xl transition-all duration-300 aspect-[16/10] sm:rounded-2xl lg:mb-3 lg:block lg:h-[200px] lg:w-full lg:aspect-auto",
-                  activeImg === i ? "ring-2 ring-gold" : "opacity-60 hover:opacity-100",
-                )}
-              >
-                <img
-                  src={g}
-                  alt={`${project.name} ${i + 1}`}
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-
-                {activeImg === i && (
-                  <>
-                    <div
-                      className="absolute inset-0"
-                      style={{
-                        background:
-                          "linear-gradient(to top, rgba(180,140,45,0.3), transparent 60%)",
-                      }}
-                    />
-
-                    <div
-                      className="absolute inset-x-0 bottom-0 h-[3px]"
-                      style={{
-                        background:
-                          "linear-gradient(to right, oklch(0.72 0.13 82), oklch(0.84 0.1 88))",
-                      }}
-                    />
-                  </>
-                )}
-
-                <div
-                  className="absolute bottom-1.5 right-1.5 rounded-full px-1.5 py-0.5 text-[9px] font-bold sm:bottom-2 sm:right-2 sm:px-2 sm:text-[10px]"
-                  style={{
-                    background:
-                      activeImg === i
-                        ? "linear-gradient(135deg,oklch(0.84 0.1 90),oklch(0.7 0.14 78))"
-                        : "rgba(0,0,0,0.6)",
-                    color: activeImg === i ? "oklch(0.13 0.005 265)" : "rgba(255,255,255,0.75)",
-                  }}
+          {displayGallery.length > 1 && (
+            <div className="grid grid-cols-3 gap-2 sm:gap-3 lg:block lg:h-[480px] lg:overflow-y-auto lg:pr-1 xl:h-[520px] 2xl:h-[560px]">
+              {displayGallery.map((g: string, i: number) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => setActiveImg(i)}
+                  aria-label={`View image ${i + 1}`}
+                  className={cn(
+                    "group relative min-w-0 overflow-hidden rounded-xl transition-all duration-300 aspect-[16/10] sm:rounded-2xl lg:mb-3 lg:block lg:h-[200px] lg:w-full lg:aspect-auto",
+                    activeImg === i ? "ring-2 ring-gold" : "opacity-60 hover:opacity-100",
+                  )}
                 >
-                  {String(i + 1).padStart(2, "0")}
-                </div>
-              </button>
-            ))}
-          </div>
+                  <img
+                    src={g}
+                    alt={`${project.name} ${i + 1}`}
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+
+                  {activeImg === i && (
+                    <>
+                      <div
+                        className="absolute inset-0"
+                        style={{
+                          background:
+                            "linear-gradient(to top, rgba(180,140,45,0.3), transparent 60%)",
+                        }}
+                      />
+
+                      <div
+                        className="absolute inset-x-0 bottom-0 h-[3px]"
+                        style={{
+                          background:
+                            "linear-gradient(to right, oklch(0.72 0.13 82), oklch(0.84 0.1 88))",
+                        }}
+                      />
+                    </>
+                  )}
+
+                  <div
+                    className="absolute bottom-1.5 right-1.5 rounded-full px-1.5 py-0.5 text-[9px] font-bold sm:bottom-2 sm:right-2 sm:px-2 sm:text-[10px]"
+                    style={{
+                      background:
+                        activeImg === i
+                          ? "linear-gradient(135deg,oklch(0.84 0.1 90),oklch(0.7 0.14 78))"
+                          : "rgba(0,0,0,0.6)",
+                      color: activeImg === i ? "oklch(0.13 0.005 265)" : "rgba(255,255,255,0.75)",
+                    }}
+                  >
+                    {String(i + 1).padStart(2, "0")}
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 

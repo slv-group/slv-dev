@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,6 +14,7 @@ import {
   Plus,
   ExternalLink,
   FolderOpen,
+  RefreshCw,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -56,11 +57,15 @@ function formatBytes(bytes?: number): string {
 // ─── Gallery Tab ──────────────────────────────────────────────────────────────
 function GalleryTab() {
   const queryClient = useQueryClient();
+  const router = useRouter();
   const [uploading, setUploading] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [replacingItemId, setReplacingItemId] = useState<string | null>(null);
   const [titleInput, setTitleInput] = useState("");
   const [categoryInput, setCategoryInput] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
+  const replaceInputRef = useRef<HTMLInputElement>(null);
+  const [activeReplaceItem, setActiveReplaceItem] = useState<GalleryItem | null>(null);
 
   const { data: items = [], isLoading } = useQuery({
     queryKey: ["admin-gallery"],
@@ -81,11 +86,51 @@ function GalleryTab() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-gallery"] });
+      queryClient.invalidateQueries({ queryKey: ["public-gallery-images"] });
+      router.invalidate();
       toast.success("Image deleted");
       setDeletingId(null);
     },
     onError: (err: Error) => toast.error(err.message),
   });
+
+  const handleTriggerReplace = (item: GalleryItem) => {
+    setActiveReplaceItem(item);
+    replaceInputRef.current?.click();
+  };
+
+  const handleReplaceFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !activeReplaceItem) return;
+    const itemToReplace = activeReplaceItem;
+    setReplacingItemId(itemToReplace.id);
+    try {
+      const ext = file.name.split(".").pop();
+      const path = `gallery/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+      const { error: uploadError } = await supabase.storage
+        .from("project-media")
+        .upload(path, file, { upsert: true });
+      if (uploadError) throw uploadError;
+
+      const { data: urlData } = supabase.storage.from("project-media").getPublicUrl(path);
+      const { error: dbError } = await supabase
+        .from("gallery")
+        .update({ image_url: urlData.publicUrl })
+        .eq("id", itemToReplace.id);
+      if (dbError) throw dbError;
+
+      queryClient.invalidateQueries({ queryKey: ["admin-gallery"] });
+      queryClient.invalidateQueries({ queryKey: ["public-gallery-images"] });
+      router.invalidate();
+      toast.success("Gallery image replaced successfully");
+    } catch (err) {
+      toast.error(`Failed to replace image: ${err instanceof Error ? err.message : String(err)}`);
+    } finally {
+      setReplacingItemId(null);
+      setActiveReplaceItem(null);
+      if (replaceInputRef.current) replaceInputRef.current.value = "";
+    }
+  };
 
   const handleUpload = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
@@ -116,6 +161,8 @@ function GalleryTab() {
     }
     if (successCount > 0) {
       queryClient.invalidateQueries({ queryKey: ["admin-gallery"] });
+      queryClient.invalidateQueries({ queryKey: ["public-gallery-images"] });
+      router.invalidate();
       toast.success(`${successCount} image(s) uploaded`);
       setTitleInput("");
       setCategoryInput("");
@@ -201,45 +248,75 @@ function GalleryTab() {
           <p className="text-muted-foreground">No images yet. Upload your first one above.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-          {items.map((item) => (
-            <div
-              key={item.id}
-              className="group relative royal-card rounded-xl overflow-hidden aspect-square"
-            >
-              <img
-                src={item.image_url}
-                alt={item.title ?? "Gallery image"}
-                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                loading="lazy"
-              />
-              {/* Overlay */}
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all duration-300 flex items-end p-2.5 opacity-0 group-hover:opacity-100">
-                <div className="flex-1 min-w-0">
-                  {item.title && (
-                    <p className="text-white text-xs font-medium truncate">{item.title}</p>
-                  )}
-                  {item.category && (
-                    <p className="text-white/60 text-[10px] truncate">{item.category}</p>
-                  )}
-                </div>
-                <div className="flex gap-1 flex-shrink-0">
-                  <a href={item.image_url} target="_blank" rel="noopener noreferrer">
-                    <button className="w-7 h-7 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/30 transition-colors">
-                      <ExternalLink className="w-3.5 h-3.5" />
+        <>
+          <input
+            ref={replaceInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleReplaceFile}
+          />
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            {items.map((item) => (
+              <div
+                key={item.id}
+                className="group relative royal-card rounded-xl overflow-hidden aspect-square"
+              >
+                <img
+                  src={item.image_url}
+                  alt={item.title ?? "Gallery image"}
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  loading="lazy"
+                />
+                {replacingItemId === item.id && (
+                  <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center gap-2 z-10">
+                    <Loader2 className="w-6 h-6 text-gold animate-spin" />
+                    <span className="text-white text-xs font-medium">Replacing...</span>
+                  </div>
+                )}
+                {/* Overlay */}
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all duration-300 flex items-end p-2.5 opacity-0 group-hover:opacity-100">
+                  <div className="flex-1 min-w-0">
+                    {item.title && (
+                      <p className="text-white text-xs font-medium truncate">{item.title}</p>
+                    )}
+                    {item.category && (
+                      <p className="text-white/60 text-[10px] truncate">{item.category}</p>
+                    )}
+                  </div>
+                  <div className="flex gap-1 flex-shrink-0">
+                    <a href={item.image_url} target="_blank" rel="noopener noreferrer">
+                      <button
+                        type="button"
+                        className="w-7 h-7 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/30 transition-colors"
+                        title="View image"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </button>
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => handleTriggerReplace(item)}
+                      disabled={replacingItemId === item.id}
+                      className="w-7 h-7 rounded-lg bg-gold/80 backdrop-blur-sm flex items-center justify-center text-black hover:bg-gold transition-colors"
+                      title="Replace image"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5" />
                     </button>
-                  </a>
-                  <button
-                    onClick={() => setDeletingId(item.id)}
-                    className="w-7 h-7 rounded-lg bg-rose-500/80 backdrop-blur-sm flex items-center justify-center text-white hover:bg-rose-500 transition-colors"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
+                    <button
+                      type="button"
+                      onClick={() => setDeletingId(item.id)}
+                      className="w-7 h-7 rounded-lg bg-rose-500/80 backdrop-blur-sm flex items-center justify-center text-white hover:bg-rose-500 transition-colors"
+                      title="Delete image"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        </>
       )}
 
       <AlertDialog open={!!deletingId} onOpenChange={(o) => !o && setDeletingId(null)}>

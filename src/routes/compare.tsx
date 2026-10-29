@@ -1,7 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { X, Scale } from "lucide-react";
 import { useStore } from "@/store/useStore";
-import { projects as staticProjects, formatPrice, mapSupabaseToProject, type Project } from "@/data/projects";
+import {
+  projects as staticProjects,
+  formatPrice,
+  mapSupabaseToProject,
+  type Project,
+} from "@/data/projects";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/compare")({
@@ -22,18 +27,8 @@ export const Route = createFileRoute("/compare")({
       .eq("is_published", true)
       .order("sort_order", { ascending: true });
 
-    let allProjects: Project[] = [...staticProjects];
-    if (data && data.length > 0) {
-      const dbProjects = data.map(mapSupabaseToProject);
-      const dbSlugs = new Set(dbProjects.map((p) => p.slug));
-      const dbIds = new Set(dbProjects.map((p) => p.id));
-      const dbNames = new Set(dbProjects.map((p) => p.name.toLowerCase().trim()));
-
-      allProjects = staticProjects.filter(
-        (s) => !dbSlugs.has(s.slug) && !dbIds.has(s.id) && !dbNames.has(s.name.toLowerCase().trim()),
-      );
-      allProjects.push(...dbProjects);
-    }
+    const allProjects: Project[] =
+      data && data.length > 0 ? data.map(mapSupabaseToProject) : [...staticProjects];
     return { allProjects };
   },
   component: ComparePage,

@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Heart, MapPin, Maximize, BedDouble, ArrowRight } from "lucide-react";
+import { Heart, MapPin, Maximize, BedDouble, ArrowRight, Building2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useStore } from "@/store/useStore";
 import { formatPrice, type Project } from "@/data/projects";
@@ -12,7 +13,9 @@ const statusStyles: Record<string, string> = {
 
 export function PropertyCard({ project }: { project: Project }) {
   const { isWishlisted, toggleWishlist } = useStore();
+  const [imgError, setImgError] = useState(false);
   const wished = isWishlisted(project.id);
+  const hasValidImage = Boolean(project.image && !imgError);
 
   return (
     <article
@@ -23,14 +26,27 @@ export function PropertyCard({ project }: { project: Project }) {
     >
       {/* Image area */}
       <div className="relative aspect-[4/3] w-full shrink-0 overflow-hidden">
-        <img
-          src={project.image}
-          alt={project.name}
-          loading="lazy"
-          width={1024}
-          height={768}
-          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-108"
-        />
+        {hasValidImage ? (
+          <img
+            src={project.image}
+            alt={project.name}
+            loading="lazy"
+            width={1024}
+            height={768}
+            onError={() => setImgError(true)}
+            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-108"
+          />
+        ) : (
+          <div className="h-full w-full bg-gradient-to-br from-card via-obsidian to-card flex flex-col items-center justify-center p-6 text-center border-b border-border/40">
+            <Building2 className="h-10 w-10 text-gold/40 mb-2" />
+            <span className="text-xs font-semibold uppercase tracking-wider text-white/60">
+              {project.category}
+            </span>
+            <span className="font-display text-sm font-semibold text-white/90 line-clamp-1 mt-0.5">
+              {project.name}
+            </span>
+          </div>
+        )}
         {/* Multi-layer gradient */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
         <div
