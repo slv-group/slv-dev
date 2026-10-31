@@ -4,6 +4,7 @@ import { PropertyCard } from "@/components/PropertyCard";
 import {
   type ProjectCategory,
   type ProjectStatus,
+  type Project,
   projects as staticProjects,
   LOCATIONS,
   matchesLocation,
@@ -11,7 +12,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { mapSupabaseToProject } from "@/data/projects";
 import { cn } from "@/lib/utils";
-import { Search, MapPin, RotateCcw } from "lucide-react";
+import { Search, MapPin, RotateCcw, BedDouble, ArrowUpDown } from "lucide-react";
 
 export const Route = createFileRoute("/projects/")({
   head: () => ({
@@ -47,9 +48,18 @@ export const Route = createFileRoute("/projects/")({
       },
     ],
   }),
-  validateSearch: (search: Record<string, unknown>): { status?: string; location?: string } => ({
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): {
+    status?: string;
+    location?: string;
+    spec?: string;
+    sort?: string;
+  } => ({
     status: search.status as string | undefined,
     location: search.location as string | undefined,
+    spec: search.spec as string | undefined,
+    sort: search.sort as string | undefined,
   }),
   loader: async () => {
     // Try to fetch any DB projects (admin-added)
@@ -89,6 +99,17 @@ const categoryFilters: (ProjectCategory | "All")[] = [
 const locationFilters = ["All", ...LOCATIONS] as const;
 type LocationFilter = (typeof locationFilters)[number];
 
+const specFilters = ["All", "2 BHK", "3 BHK", "4+ BHK", "Plots", "Commercial"] as const;
+type SpecFilter = (typeof specFilters)[number];
+
+const sortOptions = [
+  { value: "default", label: "Default Order" },
+  { value: "location-asc", label: "Location (A – Z)" },
+  { value: "area-asc", label: "Specification: Area (Low to High)" },
+  { value: "area-desc", label: "Specification: Area (High to Low)" },
+] as const;
+type SortOption = (typeof sortOptions)[number]["value"];
+
 function getStatusFromSearch(searchStatus?: string): (typeof statusFilters)[number] {
   switch (searchStatus?.toLowerCase()) {
     case "ongoing":
@@ -112,6 +133,39 @@ function getLocationFromSearch(searchLocation?: string): LocationFilter {
   return "All";
 }
 
+function getSpecFromSearch(searchSpec?: string): SpecFilter {
+  if (!searchSpec) return "All";
+  const match = specFilters.find((s) => s.toLowerCase() === searchSpec.toLowerCase());
+  return match || "All";
+}
+
+function matchesSpec(p: Project, spec: SpecFilter): boolean {
+  if (spec === "All") return true;
+  const bedrooms = (p.bedrooms || "").toLowerCase();
+  const category = (p.category || "").toLowerCase();
+  if (spec === "2 BHK") {
+    return bedrooms.includes("2") || /2\s*bhk/i.test(p.name);
+  }
+  if (spec === "3 BHK") {
+    return bedrooms.includes("3") || /3\s*bhk/i.test(p.name);
+  }
+  if (spec === "4+ BHK") {
+    return (
+      bedrooms.includes("4") ||
+      bedrooms.includes("5") ||
+      category.includes("villa") ||
+      /4\s*bhk/i.test(p.name)
+    );
+  }
+  if (spec === "Plots") {
+    return category === "plots" || /plot|land/i.test(bedrooms);
+  }
+  if (spec === "Commercial") {
+    return category === "commercial" || /commercial/i.test(bedrooms);
+  }
+  return true;
+}
+
 function ProjectsPage() {
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
@@ -122,6 +176,12 @@ function ProjectsPage() {
   );
   const [location, setLocation] = useState<LocationFilter>(() =>
     getLocationFromSearch(search.location),
+  );
+  const [spec, setSpec] = useState<SpecFilter>(() =>
+    getSpecFromSearch(search.spec),
+  );
+  const [sortBy, setSortBy] = useState<SortOption>(() =>
+    (search.sort as SortOption) || "default",
   );
   const [category, setCategory] = useState<(typeof categoryFilters)[number]>("All");
   const [query, setQuery] = useState("");
@@ -134,12 +194,24 @@ function ProjectsPage() {
     setLocation(getLocationFromSearch(search.location));
   }, [search.location]);
 
+  useEffect(() => {
+    setSpec(getSpecFromSearch(search.spec));
+  }, [search.spec]);
+
+  useEffect(() => {
+    if (search.sort && sortOptions.some((o) => o.value === search.sort)) {
+      setSortBy(search.sort as SortOption);
+    }
+  }, [search.sort]);
+
   const handleStatusChange = (s: (typeof statusFilters)[number]) => {
     setStatus(s);
     navigate({
       search: {
         status: s === "All" ? undefined : s.toLowerCase(),
         location: location === "All" ? undefined : location.toLowerCase(),
+        spec: spec === "All" ? undefined : spec.toLowerCase(),
+        sort: sortBy === "default" ? undefined : sortBy,
       },
     });
   };
@@ -150,34 +222,80 @@ function ProjectsPage() {
       search: {
         status: status === "All" ? undefined : status.toLowerCase(),
         location: l === "All" ? undefined : l.toLowerCase(),
+        spec: spec === "All" ? undefined : spec.toLowerCase(),
+        sort: sortBy === "default" ? undefined : sortBy,
+      },
+    });
+  };
+
+  const handleSpecChange = (sp: SpecFilter) => {
+    setSpec(sp);
+    navigate({
+      search: {
+        status: status === "All" ? undefined : status.toLowerCase(),
+        location: location === "All" ? undefined : location.toLowerCase(),
+        spec: sp === "All" ? undefined : sp.toLowerCase(),
+        sort: sortBy === "default" ? undefined : sortBy,
+      },
+    });
+  };
+
+  const handleSortChange = (so: SortOption) => {
+    setSortBy(so);
+    navigate({
+      search: {
+        status: status === "All" ? undefined : status.toLowerCase(),
+        location: location === "All" ? undefined : location.toLowerCase(),
+        spec: spec === "All" ? undefined : spec.toLowerCase(),
+        sort: so === "default" ? undefined : so,
       },
     });
   };
 
   const hasActiveFilters =
-    status !== "All" || location !== "All" || category !== "All" || query.trim() !== "";
+    status !== "All" ||
+    location !== "All" ||
+    category !== "All" ||
+    spec !== "All" ||
+    sortBy !== "default" ||
+    query.trim() !== "";
 
   const resetFilters = () => {
     setStatus("All");
     setLocation("All");
     setCategory("All");
+    setSpec("All");
+    setSortBy("default");
     setQuery("");
     navigate({ search: {} });
   };
 
   const filtered = useMemo(() => {
     const q = query.toLowerCase().trim();
-    return projects.filter(
+    const result = projects.filter(
       (p) =>
         (status === "All" || p.status === status) &&
         (category === "All" || p.category === category) &&
         matchesLocation(p, location) &&
+        matchesSpec(p, spec) &&
         (q === "" ||
           (p.name || "").toLowerCase().includes(q) ||
           (p.location || "").toLowerCase().includes(q) ||
           (p.city || "").toLowerCase().includes(q)),
     );
-  }, [projects, status, category, location, query]);
+
+    if (sortBy === "location-asc") {
+      result.sort((a, b) =>
+        (a.location || a.city || "").localeCompare(b.location || b.city || ""),
+      );
+    } else if (sortBy === "area-asc") {
+      result.sort((a, b) => (a.sqftFrom || 0) - (b.sqftFrom || 0));
+    } else if (sortBy === "area-desc") {
+      result.sort((a, b) => (b.sqftFrom || 0) - (a.sqftFrom || 0));
+    }
+
+    return result;
+  }, [projects, status, category, location, spec, sortBy, query]);
 
   return (
     <div className="pt-32">
@@ -187,7 +305,7 @@ function ProjectsPage() {
           Find Your Projects
         </h1>
         <p className="mt-4 max-w-2xl text-muted-foreground">
-          Refine by location, status, type, and price to discover the home that matches your
+          Refine by location, specification, status, and type to discover the home that matches your
           aspirations.
         </p>
 
@@ -241,6 +359,27 @@ function ProjectsPage() {
                 </div>
               </div>
 
+              {/* Specifications & Configurations */}
+              <div className="pt-4 border-t border-border/40">
+                <div className="mb-2 flex items-center gap-1.5">
+                  <BedDouble className="h-3.5 w-3.5 text-gold" />
+                  <p className="text-[0.65rem] font-bold uppercase tracking-wider text-muted-foreground">
+                    Specifications & Configuration
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {specFilters.map((sp) => (
+                    <FilterPill
+                      key={sp}
+                      active={spec === sp}
+                      onClick={() => handleSpecChange(sp)}
+                    >
+                      {sp}
+                    </FilterPill>
+                  ))}
+                </div>
+              </div>
+
               {/* Status and Type row */}
               <div className="flex flex-wrap gap-8 pt-4 border-t border-border/40">
                 {/* Status */}
@@ -279,7 +418,7 @@ function ProjectsPage() {
           </div>
         </div>
 
-        {/* Results count & active filter summary */}
+        {/* Results count & active filter summary & Arrange By */}
         <div className="mt-8 flex items-center justify-between flex-wrap gap-4">
           <p className="text-sm text-muted-foreground">
             Showing <span className="font-semibold text-foreground">{filtered.length}</span>{" "}
@@ -287,19 +426,41 @@ function ProjectsPage() {
             {location !== "All" && (
               <span className="ml-1 text-gold font-medium">in {location}</span>
             )}
+            {spec !== "All" && (
+              <span className="ml-1 text-gold font-medium">• {spec}</span>
+            )}
             {status !== "All" && <span className="ml-1 text-muted-foreground">({status})</span>}
             {category !== "All" && <span className="ml-1 text-muted-foreground">• {category}</span>}
           </p>
 
-          {hasActiveFilters && (
-            <button
-              onClick={resetFilters}
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-gold hover:text-gold/80 transition-colors"
-            >
-              <RotateCcw className="h-3 w-3" />
-              <span>Reset filters</span>
-            </button>
-          )}
+          <div className="flex items-center gap-3 flex-wrap">
+            <div className="flex items-center gap-2 rounded-xl bg-card border border-border/70 px-3 py-1.5 text-xs text-muted-foreground neu-sm">
+              <ArrowUpDown className="h-3.5 w-3.5 text-gold" />
+              <span className="font-semibold text-foreground/80">Arrange:</span>
+              <select
+                value={sortBy}
+                onChange={(e) => handleSortChange(e.target.value as SortOption)}
+                aria-label="Arrange projects by"
+                className="bg-transparent text-xs font-medium text-foreground outline-none cursor-pointer"
+              >
+                {sortOptions.map((opt) => (
+                  <option key={opt.value} value={opt.value} className="bg-card text-foreground">
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {hasActiveFilters && (
+              <button
+                onClick={resetFilters}
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-gold hover:text-gold/80 transition-colors cursor-pointer"
+              >
+                <RotateCcw className="h-3 w-3" />
+                <span>Reset filters</span>
+              </button>
+            )}
+          </div>
         </div>
 
         <div className="mt-6 grid gap-8 pb-12 md:grid-cols-2 lg:grid-cols-3">

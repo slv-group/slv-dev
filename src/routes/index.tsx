@@ -14,12 +14,15 @@ import {
   Building2,
   Leaf,
   Landmark,
+  Maximize2,
+  X,
 } from "lucide-react";
 import { HeroSection } from "@/components/home/HeroSection";
 import { PropertyCard } from "@/components/PropertyCard";
 import { Reveal } from "@/components/Reveal";
 import { testimonials, mapSupabaseToProject } from "@/data/projects";
 import { supabase } from "@/integrations/supabase/client";
+import { SOCIAL_LINKS } from "@/lib/social";
 import aboutImage from "@/assets/projects/slv-anjani-heights/anjani-elevation-1.jpg";
 import aboutImage2 from "@/assets/projects/slv-amaravati-pride/pride-elevation-1.jpg";
 import { cn } from "@/lib/utils";
@@ -71,6 +74,7 @@ export const Route = createFileRoute("/")({
 
       return {
         ongoingProjects: [],
+        featuredPhotos: [],
       };
     }
 
@@ -83,8 +87,60 @@ export const Route = createFileRoute("/")({
       return 0;
     });
 
+    // Query genuine project photographs from published projects
+    const { data: allProjectsData } = await supabase
+      .from("projects")
+      .select("id, name, slug, category, location, city, cover_image, gallery")
+      .eq("is_published", true)
+      .order("sort_order", { ascending: true });
+
+    const featuredPhotos: {
+      id: string;
+      url: string;
+      title: string;
+      projectName: string;
+      projectSlug: string;
+      category: string;
+      location: string;
+    }[] = [];
+
+    if (allProjectsData) {
+      for (const p of allProjectsData) {
+        if (Array.isArray(p.gallery) && p.gallery.length > 0) {
+          (p.gallery as unknown as string[]).slice(0, 2).forEach((imgUrl, idx) => {
+            if (typeof imgUrl === "string" && imgUrl.startsWith("http")) {
+              featuredPhotos.push({
+                id: `${p.id}-gal-${idx}`,
+                url: imgUrl,
+                title: `${p.name} View ${idx + 1}`,
+                projectName: p.name,
+                projectSlug: p.slug,
+                category: p.category || "Residential",
+                location: p.location || p.city || "Vijayawada",
+              });
+            }
+          });
+        } else if (
+          p.cover_image &&
+          typeof p.cover_image === "string" &&
+          p.cover_image.startsWith("http")
+        ) {
+          featuredPhotos.push({
+            id: `${p.id}-cover`,
+            url: p.cover_image,
+            title: `${p.name} Elevation`,
+            projectName: p.name,
+            projectSlug: p.slug,
+            category: p.category || "Residential",
+            location: p.location || p.city || "Vijayawada",
+          });
+        }
+      }
+    }
+
     return {
       ongoingProjects,
+      featuredPhotos,
     };
   },
 
@@ -132,7 +188,8 @@ const accolades = [
 
 function Index() {
   const featured = testimonials[0];
-  const { ongoingProjects } = Route.useLoaderData();
+  const { ongoingProjects, featuredPhotos = [] } = Route.useLoaderData();
+  const [activePhoto, setActivePhoto] = useState<string | null>(null);
 
   const [itemsPerPage, setItemsPerPage] = useState(1);
   const [currentPage, setCurrentPage] = useState(0);
@@ -145,10 +202,8 @@ function Index() {
         setItemsPerPage(1);
       } else if (width < 1024) {
         setItemsPerPage(2);
-      } else if (width < 1280) {
-        setItemsPerPage(3);
       } else {
-        setItemsPerPage(4);
+        setItemsPerPage(3);
       }
     };
 
@@ -197,10 +252,10 @@ function Index() {
             email: "info@slvgroup.co.in",
             address: {
               "@type": "PostalAddress",
-              streetAddress: "8-56-68/5, Beside Tenali Flyover, Sri Saila Nagar, Ward No.5",
-              addressLocality: "Mangalagiri",
+              streetAddress: "Ground Floor, SLV Tummala Complex, Opp. SLV PNB Commercial, Gunadala, Inner Ring Road",
+              addressLocality: "Vijayawada",
               addressRegion: "Andhra Pradesh",
-              postalCode: "522503",
+              postalCode: "520004",
               addressCountry: "IN",
             },
           }),
@@ -480,9 +535,8 @@ function Index() {
                     className={cn(
                       "grid gap-5 sm:gap-6",
                       itemsPerPage === 1 && "grid-cols-1",
-                      itemsPerPage === 2 && "grid-cols-2",
-                      itemsPerPage === 3 && "grid-cols-3",
-                      itemsPerPage === 4 && "grid-cols-4",
+                      itemsPerPage === 2 && "grid-cols-1 sm:grid-cols-2",
+                      itemsPerPage === 3 && "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
                     )}
                   >
                     {visibleProjects.map((project, index) => (
@@ -581,6 +635,113 @@ function Index() {
           </Reveal>
         </div>
       </section>
+
+      {/* ── Genuine SLV Project Photographs Showcase ── */}
+      {featuredPhotos.length > 0 && (
+        <section className="relative overflow-hidden py-24 sm:py-28 bg-card/30 border-t border-border/40">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <Reveal>
+              <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <p className="section-label text-gold tracking-[0.28em]">Visual Showcase</p>
+                  <h2 className="mt-3 font-display text-3xl font-bold sm:text-4xl lg:text-5xl text-foreground">
+                    Project Gallery
+                  </h2>
+                  <p className="mt-2 max-w-xl text-sm sm:text-base text-muted-foreground">
+                    Authentic site captures, elevations, and completed architectures
+                    from our developments across Andhra Pradesh.
+                  </p>
+                </div>
+
+                <Link
+                  to="/gallery"
+                  className="group inline-flex w-fit items-center gap-2 rounded-full border border-gold/30 px-5 py-2.5 text-sm font-bold text-foreground transition-all duration-300 hover:border-gold hover:bg-gradient-gold hover:text-gold-foreground cursor-pointer"
+                >
+                  <span>View Full Gallery</span>
+                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                </Link>
+              </div>
+            </Reveal>
+
+            {/* Photos Grid */}
+            <div className="mt-10 sm:mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+              {featuredPhotos.slice(0, 8).map((photo, idx) => (
+                <Reveal key={photo.id} delay={idx * 60} className="h-full">
+                  <div
+                    className="group relative flex flex-col h-full overflow-hidden rounded-2xl bg-card border border-border/60 transition-all duration-300 hover:border-gold/50 hover:shadow-lg cursor-pointer"
+                    onClick={() => setActivePhoto(photo.url)}
+                  >
+                    <div className="relative aspect-[4/3] w-full overflow-hidden bg-black/40">
+                      <img
+                        src={photo.url}
+                        alt={`${photo.projectName} - ${photo.title}`}
+                        loading="lazy"
+                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        onError={(e) => {
+                          (e.currentTarget as HTMLElement).style.display = "none";
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
+
+                      <span className="absolute left-3 top-3 rounded-full bg-black/60 backdrop-blur-md px-2.5 py-1 text-[10px] font-semibold text-white/90 border border-white/10">
+                        {photo.category}
+                      </span>
+
+                      <span className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-black/50 text-white/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <Maximize2 className="h-3.5 w-3.5" />
+                      </span>
+
+                      <div className="absolute inset-x-0 bottom-0 p-3.5">
+                        <p className="font-display text-sm font-bold text-white line-clamp-1">
+                          {photo.projectName}
+                        </p>
+                        <p className="text-[11px] text-white/70 line-clamp-1 flex items-center gap-1 mt-0.5">
+                          <MapPin className="h-3 w-3 text-gold shrink-0" />
+                          <span>{photo.location}</span>
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="p-3 bg-card flex items-center justify-between text-xs border-t border-border/40">
+                      <span className="text-muted-foreground truncate">{photo.title}</span>
+                      <Link
+                        to="/projects/$slug"
+                        params={{ slug: photo.projectSlug }}
+                        onClick={(e) => e.stopPropagation()}
+                        className="text-gold font-semibold hover:underline inline-flex items-center gap-1 shrink-0 ml-2"
+                      >
+                        Details <ArrowRight className="h-3 w-3" />
+                      </Link>
+                    </div>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+
+          {/* Lightbox Modal */}
+          {activePhoto && (
+            <div
+              className="fixed inset-0 z-[70] flex items-center justify-center bg-black/90 p-4"
+              onClick={() => setActivePhoto(null)}
+            >
+              <button
+                onClick={() => setActivePhoto(null)}
+                className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 cursor-pointer"
+                aria-label="Close photo preview"
+              >
+                <X className="h-5 w-5" />
+              </button>
+              <img
+                src={activePhoto}
+                alt="Project Photo Fullscreen"
+                onClick={(e) => e.stopPropagation()}
+                className="max-h-[85vh] max-w-full rounded-xl object-contain shadow-2xl"
+              />
+            </div>
+          )}
+        </section>
+      )}
 
       {/* ── The SLV Philosophy — dark royal ── */}
       <section
@@ -703,7 +864,7 @@ function Index() {
       {/* ── Final CTA — split royal ── */}
       <section className="px-6 pb-24">
         <Reveal
-          className="relative mx-auto flex max-w-7xl flex-col items-center justify-between gap-12 overflow-hidden rounded-3xl px-10 py-24 text-white md:flex-row md:px-24"
+          className="relative mx-auto max-w-7xl overflow-hidden rounded-3xl px-10 py-20 text-white md:px-20"
           style={{
             background: "var(--gradient-royal)",
             border: "1px solid rgba(255,255,255,0.07)",
@@ -733,61 +894,83 @@ function Index() {
             style={{ borderColor: "var(--color-gold)" }}
           />
 
-          <div className="relative z-10 max-w-2xl text-center md:text-left">
-            <p className="section-label text-gold tracking-[0.3em]">Begin Your Journey</p>
-            <h2 className="mt-5 font-display text-5xl font-bold sm:text-6xl lg:text-7xl">
-              Your Future Awaits
-            </h2>
-            <p className="mt-6 text-lg font-light leading-relaxed text-white/65">
-              Schedule a private viewing of our model homes and experience the pinnacle of luxury
-              living in person.
-            </p>
+          <div className="relative z-10 flex flex-col items-center justify-between gap-12 md:flex-row">
+            <div className="max-w-2xl text-center md:text-left">
+              <p className="section-label text-gold tracking-[0.3em]">Begin Your Journey</p>
+              <h2 className="mt-5 font-display text-5xl font-bold sm:text-6xl lg:text-7xl">
+                Your Future Awaits
+              </h2>
+              <p className="mt-6 text-lg font-light leading-relaxed text-white/65">
+                Schedule a private viewing of our model homes and experience the pinnacle of luxury
+                living in person.
+              </p>
+            </div>
+            <div className="flex flex-col gap-4 sm:flex-row">
+              <Link
+                to="/contact"
+                className="
+        group
+        flex items-center gap-3
+        rounded-2xl
+        border border-white/20
+        px-10 py-5
+        text-xs
+        font-bold
+        uppercase
+        tracking-[0.2em]
+        text-white
+        shadow-2xl
+        transition-all
+        duration-300
+        hover:scale-[1.04]
+        hover:text-gold-foreground
+        hover:shadow-gold/20
+      "
+              >
+                <span
+                  className="absolute inset-0 -z-10 rounded-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                  style={{ background: "var(--gradient-gold)" }}
+                />
+
+                <span className="relative z-10 flex items-center gap-3">
+                  Contact Us
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
+                </span>
+              </Link>
+
+              <Link
+                to="/projects"
+                search={{ status: "ongoing" }}
+                className="group flex items-center gap-3 rounded-2xl border border-white/20 px-10 py-5 text-xs font-bold uppercase tracking-[0.2em] text-white transition-all duration-300 hover:bg-gradient-gold hover:text-gold-foreground hover:border-gold"
+              >
+                Explore Projects
+              </Link>
+            </div>
           </div>
-          <div className="relative z-10 flex flex-col gap-4 sm:flex-row">
-            <Link
-              to="/contact"
-              className="
-      group
-      flex items-center gap-3
-      rounded-2xl
-      border border-white/20
-      px-10 py-5
-      text-xs
-      font-bold
-      uppercase
-      tracking-[0.2em]
-      text-white
-      shadow-2xl
-      transition-all
-      duration-300
-      hover:scale-[1.04]
-      hover:text-gold-foreground
-      hover:shadow-gold/20
-    "
-              style={
-                {
-                  // default background stays transparent
-                }
-              }
-            >
-              <span
-                className="absolute inset-0 -z-10 rounded-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                style={{ background: "var(--gradient-gold)" }}
-              />
 
-              <span className="relative z-10 flex items-center gap-3">
-                Contact Us
-                <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
-              </span>
-            </Link>
-
-            <Link
-              to="/projects"
-              search={{ status: "ongoing" }}
-              className="group flex items-center gap-3 rounded-2xl border border-white/20 px-10 py-5 text-xs font-bold uppercase tracking-[0.2em] text-white transition-all duration-300 hover:bg-gradient-gold hover:text-gold-foreground hover:border-gold"
-            >
-              Explore Projects
-            </Link>
+          {/* Official Social Media Channels */}
+          <div className="relative z-10 mt-12 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-white/10 pt-8">
+            <span className="text-xs uppercase tracking-widest text-white/60">
+              Follow SLV Group on Official Social Channels:
+            </span>
+            <div className="flex items-center gap-3">
+              {[SOCIAL_LINKS.facebook, SOCIAL_LINKS.instagram].map((social) => {
+                const Icon = social.icon;
+                return (
+                  <a
+                    key={social.label}
+                    href={social.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-1.5 text-xs font-semibold text-white transition-all duration-300 hover:border-gold hover:bg-gold/20 hover:text-gold"
+                    aria-label={social.ariaLabel}
+                  >
+                    <Icon className="h-3.5 w-3.5" />
+                    <span>{social.label}</span>
+                  </a>
+                );
+              })}
+            </div>
           </div>
         </Reveal>
       </section>

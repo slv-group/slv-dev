@@ -132,13 +132,7 @@ const leadershipJourney = [
 ];
 
 /*
- * IMPORTANT:
- * The official SLV Management page gives verified information about
- * Sri Penmetsa Srinivasa Raju.
- *
- * The other two people in the supplied photographs are not identified
- * on the official Management page. Their names/designations are therefore
- * intentionally left as placeholders instead of inventing information.
+ * Official SLV Group Leadership & Management Team
  */
 const leadershipTeam = [
   {
@@ -157,7 +151,7 @@ const leadershipTeam = [
     verified: true,
   },
   {
-    name: "V.A.N Raju(NANI)",
+    name: "Vegesna Appala Narasiamha Raju (NANI)",
     designation: "Director",
     role: "Executive Leadership",
     image: executiveImage,
@@ -169,10 +163,10 @@ const leadershipTeam = [
       "Customer-focused operations",
       "Supporting organisational growth",
     ],
-    verified: false,
+    verified: true,
   },
   {
-    name: "U. Chaitanya Varma",
+    name: "Uppalapati Chaitanya Kumar Varma",
     designation: "Director",
     role: "Management Leadership",
     image: managementImage,
@@ -180,7 +174,7 @@ const leadershipTeam = [
     description:
       "A member of the wider SLV management team supporting the organisation's operational discipline, project coordination and commitment to quality.",
     highlights: ["Operational coordination", "Project execution", "Quality-focused management"],
-    verified: false,
+    verified: true,
   },
 ];
 

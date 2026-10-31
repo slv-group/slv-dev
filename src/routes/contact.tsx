@@ -52,7 +52,7 @@ const info = [
     icon: MapPin,
     label: "Visit Us",
     value:
-      "8-56-68/5, Beside Tenali Flyover, Sri Saila Nagar, Ward No.5, Mangalgiri, Guntur, Andhra Pradesh.",
+      "Ground Floor, SLV Tummala Complex, Opp. SLV PNB Commercial, Gunadala, Inner Ring Road, Vijayawada, NTR District, Andhra Pradesh – 520004.",
   },
   { icon: Phone, label: "Call Us", value: "+91 98595 95939", href: "tel:+919859595939" },
   {
@@ -134,7 +134,7 @@ function ContactPage() {
             <div className="overflow-hidden rounded-3xl neu-sm">
               <iframe
                 title="SLV Group Office Location"
-                src="https://www.google.com/maps?q=Ramavarappadu,Vijayawada&output=embed"
+                src="https://www.google.com/maps?q=SLV+Tummala+Complex,Gunadala,Vijayawada,Andhra+Pradesh+520004&output=embed"
                 className="h-64 w-full border-0"
                 loading="lazy"
               />

@@ -6,18 +6,15 @@ import {
   MessageCircle,
   ArrowUpRight,
   Crown,
-  Facebook,
-  Instagram,
-  Twitter,
-  Linkedin,
 } from "lucide-react";
 import slvLogo from "@/assets/SLV_Group_Logo.png";
 
-const socialLinks = [
-  { label: "Facebook", href: "https://facebook.com", icon: Facebook },
-  { label: "Instagram", href: "https://instagram.com", icon: Instagram },
-  { label: "Twitter", href: "https://twitter.com", icon: Twitter },
-  { label: "LinkedIn", href: "https://linkedin.com", icon: Linkedin },
+import { SOCIAL_LINKS, type SocialLinkInfo } from "@/lib/social";
+
+const socialLinks: SocialLinkInfo[] = [
+  SOCIAL_LINKS.facebook,
+  SOCIAL_LINKS.instagram,
+  SOCIAL_LINKS.linkedin,
 ];
 
 const ourStory = [
@@ -236,7 +233,7 @@ export function Footer() {
               <br />
               Inner Ring Road, Vijayawada,
               <br />
-              NTR District, Andhra Pradesh – 520004
+              NTR District, Andhra Pradesh – 520004.
             </span>
           </p>
 
@@ -310,10 +307,10 @@ export function Footer() {
               {socialLinks.map((s) => (
                 <a
                   key={s.label}
-                  href={s.href}
+                  href={s.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label={s.label}
+                  aria-label={s.ariaLabel || s.label}
                   title={s.label}
                   className="group flex h-8 w-8 items-center justify-center rounded-lg transition-all duration-300 hover:scale-110 hover:border-gold hover:shadow-[0_0_12px_rgba(212,175,55,0.25)]"
                   style={{

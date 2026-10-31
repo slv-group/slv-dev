@@ -247,8 +247,9 @@ function PrivacyPage() {
                 <strong>Phone:</strong> +91 98595 95939
               </p>
               <p>
-                <strong>Office Address:</strong> 8-56-68/5, Beside Tenali Flyover, Sri Saila Nagar,
-                Ward No.5, Mangalagiri, Guntur District, Andhra Pradesh, India.
+                <strong>Office Address:</strong> Ground Floor, SLV Tummala Complex, Opp. SLV PNB
+                Commercial, Gunadala, Inner Ring Road, Vijayawada, NTR District, Andhra Pradesh –
+                520004.
               </p>
               <p className="text-xs text-muted-foreground pt-2 border-t border-border/50">
                 Data Grievance Officer details will be formally published upon regulatory gazette

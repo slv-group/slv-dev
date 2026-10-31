@@ -156,7 +156,8 @@ function TermsPage() {
               </p>
               <p>Phone: +91 98595 95939</p>
               <p>
-                Address: Beside Tenali Flyover, Sri Saila Nagar, Mangalagiri, Guntur, AP, India.
+                Address: Ground Floor, SLV Tummala Complex, Opp. SLV PNB Commercial, Gunadala,
+                Inner Ring Road, Vijayawada, NTR District, Andhra Pradesh – 520004.
               </p>
             </div>
           </section>

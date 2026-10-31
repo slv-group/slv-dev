@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { toast } from "sonner";
 import {
   Eye,
   Rocket,
@@ -287,6 +288,34 @@ function CountUp({
 function AboutPage() {
   const projectPortfolio = { completed: 42, ongoing: 12, upcoming: 6 };
   const total = projectPortfolio.completed + projectPortfolio.ongoing + projectPortfolio.upcoming;
+
+  const handleBrochureDownload = async () => {
+    const brochureUrl =
+      (import.meta.env.VITE_COMPANY_BROCHURE_URL as string) || "/SLV-Company-Brochure.pdf";
+    try {
+      const res = await fetch(brochureUrl, { method: "HEAD" });
+      if (res.ok) {
+        const link = document.createElement("a");
+        link.href = brochureUrl;
+        link.download = "SLV-Group-Corporate-Brochure.pdf";
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } else {
+        toast.info(
+          "Official SLV Group corporate brochure is currently being updated. Please contact us or browse individual project brochures.",
+          { duration: 5000 },
+        );
+      }
+    } catch {
+      toast.info(
+        "Official SLV Group corporate brochure is currently being updated. Please contact us or browse individual project brochures.",
+        { duration: 5000 },
+      );
+    }
+  };
   return (
     <div className="overflow-hidden">
       {/* ---------- Legacy Hero ---------- */}
@@ -468,13 +497,10 @@ function AboutPage() {
                   Explore Projects
                 </Link>
 
-                {/* Company Brochure — hidden until a company brochure is ready/configured */}
-                {/*
+                {/* Company Brochure */}
                 <button
                   type="button"
-                  onClick={() => {
-                    // Add brochure download functionality later
-                  }}
+                  onClick={handleBrochureDownload}
                   className="
                     group
                     inline-flex
@@ -506,7 +532,6 @@ function AboutPage() {
                   <Download className="h-3.5 w-3.5 text-gold transition-transform duration-300 group-hover:-translate-y-0.5" />
                   Company Brochure
                 </button>
-                */}
               </div>
             </div>
           </Reveal>

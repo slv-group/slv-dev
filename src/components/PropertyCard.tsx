@@ -111,13 +111,16 @@ export function PropertyCard({ project }: { project: Project }) {
           }}
         />
 
-        <div className="flex-1">
-          <h3 className="font-display text-xl font-semibold text-foreground group-hover:text-gradient-gold transition-all duration-300">
+        <div className="flex-1 flex flex-col">
+          <h3
+            title={project.name}
+            className="font-display text-lg sm:text-xl font-semibold text-foreground group-hover:text-gradient-gold transition-all duration-300 line-clamp-1 min-h-[1.75rem]"
+          >
             {project.name}
           </h3>
-          <p className="mt-1.5 flex items-center gap-1.5 text-sm text-muted-foreground">
-            <MapPin className="h-3.5 w-3.5 shrink-0" style={{ color: "var(--color-gold)" }} />
-            {project.location}, {project.city}
+          <p className="mt-1.5 flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground min-h-[1.25rem]">
+            <MapPin className="h-3.5 w-3.5 shrink-0 text-gold" />
+            <span className="truncate">{project.location}, {project.city}</span>
           </p>
 
           {/* Specs */}
@@ -128,8 +131,7 @@ export function PropertyCard({ project }: { project: Project }) {
                 title={project.bedrooms}
               >
                 <BedDouble
-                  className="h-3.5 w-3.5 shrink-0"
-                  style={{ color: "var(--color-gold)" }}
+                  className="h-3.5 w-3.5 shrink-0 text-gold"
                 />
                 <span className="font-medium truncate whitespace-nowrap">{project.bedrooms}</span>
               </div>
@@ -137,7 +139,7 @@ export function PropertyCard({ project }: { project: Project }) {
                 className="flex h-10 items-center gap-1.5 rounded-xl bg-secondary/50 px-2.5 text-xs text-muted-foreground min-w-0"
                 title={`${project.sqftFrom.toLocaleString()}+ ${project.areaUnit || (project.category === "Plots" ? "sq yd" : "sqft")}`}
               >
-                <Maximize className="h-3.5 w-3.5 shrink-0" style={{ color: "var(--color-gold)" }} />
+                <Maximize className="h-3.5 w-3.5 shrink-0 text-gold" />
                 <span className="font-medium truncate whitespace-nowrap">
                   {project.sqftFrom.toLocaleString()}+{" "}
                   {project.areaUnit || (project.category === "Plots" ? "sq yd" : "sqft")}
@@ -148,11 +150,11 @@ export function PropertyCard({ project }: { project: Project }) {
         </div>
 
         {/* Actions */}
-        <div className="mt-4 flex gap-2">
+        <div className="mt-5 pt-2 flex gap-2">
           <Link
             to="/projects/$slug"
             params={{ slug: project.slug }}
-            className="group/btn relative overflow-hidden flex flex-1 items-center justify-center gap-2 rounded-2xl py-3 text-sm font-bold text-gold-foreground shadow-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-md"
+            className="group/btn relative overflow-hidden flex flex-1 items-center justify-center gap-2 rounded-2xl py-3 text-sm font-bold text-gold-foreground shadow-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-md cursor-pointer"
             style={{ background: "var(--gradient-gold)" }}
           >
             <span className="absolute inset-0 opacity-0 group-hover/btn:opacity-100 animate-shimmer" />
