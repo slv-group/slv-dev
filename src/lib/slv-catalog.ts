@@ -17,7 +17,7 @@ export interface CatalogItem {
 
 export const slvCatalog: CatalogItem[] = [
   {
-    name: "SLV Amaravathi Pride",
+    name: "SLV Amaravti Pride",
     slug: "slv-amaravathi-pride",
     category: "Apartment",
     status: "Ongoing",
@@ -27,7 +27,7 @@ export const slvCatalog: CatalogItem[] = [
     config: "2 & 3 BHK",
   },
   {
-    name: "SLV Amaravathi Grand III",
+    name: "SLV Amaravti Grand III",
     slug: "slv-amaravathi-grand-iii",
     category: "Apartment",
     status: "Ongoing",
@@ -37,7 +37,7 @@ export const slvCatalog: CatalogItem[] = [
     config: "3 & 4 BHK",
   },
   {
-    name: "SLV Amaravathi Grand II",
+    name: "SLV Amaravti Grand II",
     slug: "slv-amaravathi-grand-ii",
     category: "Apartment",
     status: "Ongoing",
@@ -47,7 +47,7 @@ export const slvCatalog: CatalogItem[] = [
     config: "2 & 3 BHK",
   },
   {
-    name: "SLV Amaravathi Grand I",
+    name: "SLV Amaravti Grand I",
     slug: "slv-amaravathi-grand-i",
     category: "Apartment",
     status: "Completed",
@@ -162,7 +162,7 @@ Your job: understand what the buyer wants (budget, location, configuration, apar
 
 RULES:
 - Only recommend projects from the catalog below. Never invent projects, prices, or amenities.
-- When recommending a project, format it as a markdown link using its Link path, e.g. [SLV Amaravathi Pride](/projects/slv-amaravathi-pride).
+- When recommending a project, format it as a markdown link using its Link path, e.g. [SLV Amaravti Pride](/projects/slv-amaravathi-pride).
 - Keep answers tight and scannable: a one-line intro, then a short bullet list of 1–3 matches, each with why it fits (config, location, starting price).
 - Prices are "starting from" figures in Indian rupees; be clear these are indicative and to contact the team for current pricing.
 - For loan/EMI questions, point users to the EMI calculator at /emi-calculator.

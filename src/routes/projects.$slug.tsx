@@ -20,10 +20,11 @@ import {
   projects as staticProjects,
   type Project,
   formatFloorPlanArea,
+  mapSupabaseToProject,
+  getRecommendedProjects,
 } from "@/data/projects";
 import { formatLocationCity } from "@/lib/country-codes";
 import { supabase } from "@/integrations/supabase/client";
-import { mapSupabaseToProject } from "@/data/projects";
 import { SiteVisitModal } from "@/components/SiteVisitModal";
 import { useStore } from "@/store/useStore";
 import { cn } from "@/lib/utils";
@@ -32,10 +33,17 @@ export const Route = createFileRoute("/projects/$slug")({
   loader: async ({ params }) => {
     // First try Supabase with both current slug and possible legacy/variant slug
     const dbSlug = params.slug === "slv-green-horizon-2" ? "slv-greenhorizon-2" : params.slug;
+    let altSlug = params.slug;
+    if (params.slug.startsWith("slv-amaravti-")) {
+      altSlug = params.slug.replace("slv-amaravti-", "slv-amaravathi-");
+    } else if (params.slug.startsWith("slv-amaravathi-")) {
+      altSlug = params.slug.replace("slv-amaravathi-", "slv-amaravti-");
+    }
+
     const { data, error } = await supabase
       .from("projects")
       .select("*")
-      .or(`slug.eq.${params.slug},slug.eq.${dbSlug}`)
+      .or(`slug.eq.${params.slug},slug.eq.${dbSlug},slug.eq.${altSlug}`)
       .maybeSingle();
     if (error) {
       console.warn(
@@ -44,29 +52,29 @@ export const Route = createFileRoute("/projects/$slug")({
       );
     }
 
-    let project;
+    let project: Project | undefined;
     if (data) {
       project = mapSupabaseToProject(data);
     } else {
       // Fallback to static data only if not in database
-      project = staticProjects.find((p) => p.slug === params.slug || p.slug === dbSlug);
+      project = staticProjects.find(
+        (p) => p.slug === params.slug || p.slug === dbSlug || p.slug === altSlug,
+      );
     }
 
     if (!project) throw notFound();
 
-    // Get related projects: try DB first
-    const { data: moreData } = await supabase
-      .from("projects")
-      .select("*")
-      .eq("is_published", true)
-      .neq("slug", params.slug)
-      .neq("slug", dbSlug)
-      .limit(3);
+    // Get recommended projects: query published DB projects first, fallback to static
+    const { data: moreData } = await supabase.from("projects").select("*").eq("is_published", true);
 
-    let moreProjects: Project[] = [];
+    let candidates: Project[] = [];
     if (moreData && moreData.length > 0) {
-      moreProjects = moreData.map(mapSupabaseToProject);
+      candidates = moreData.map(mapSupabaseToProject);
+    } else {
+      candidates = staticProjects;
     }
+
+    const moreProjects = getRecommendedProjects(project, candidates, 3);
 
     return { project, moreProjects };
   },
@@ -495,12 +503,12 @@ function ProjectDetails() {
         {/* Quick stats */}
         <div className="mt-6 grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 sm:mt-8 sm:gap-4 lg:grid-cols-4">
           {[
-            ["Configurations", displayBedrooms],
+            ["Project Type", displayBedrooms],
             [
               "Saleable Area",
               `${project.sqftFrom.toLocaleString()} - ${project.sqftTo.toLocaleString()} ${project.areaUnit || (project.category === "Plots" ? "sq yd" : "sqft")}`,
             ],
-            ["Launch", project.launchDate],
+            ["Status", project.status],
             ["Category", project.category],
           ].map(([l, v]) => (
             <div key={l} className="min-w-0 rounded-2xl bg-card p-4 neu-sm sm:p-5">
@@ -733,31 +741,43 @@ function ProjectDetails() {
       </div>
 
       {/* ═══════ Related ═══════ */}
-      <section className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8">
-        <h2 className="font-display text-2xl font-semibold text-foreground">More Residences</h2>
-        <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
-          {moreProjects.map((p) => (
-            <Link
-              key={p.id}
-              to="/projects/$slug"
-              params={{ slug: p.slug }}
-              className="group overflow-hidden rounded-2xl bg-card neu-sm"
-            >
-              <div className="aspect-[16/10] overflow-hidden">
-                <img
-                  src={p.image}
-                  alt={p.name}
-                  className="h-full w-full object-cover transition-transform group-hover:scale-105"
-                />
-              </div>
-              <div className="p-4">
-                <p className="font-display text-lg font-semibold text-foreground">{p.name}</p>
-                <p className="text-sm text-muted-foreground">{p.location}</p>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
+      {moreProjects.length > 0 && (
+        <section className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8">
+          <h2 className="font-display text-2xl font-semibold text-foreground">More Projects</h2>
+          <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+            {moreProjects.map((p) => (
+              <Link
+                key={p.id}
+                to="/projects/$slug"
+                params={{ slug: p.slug }}
+                className="group overflow-hidden rounded-2xl bg-card neu-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+              >
+                <div className="aspect-[16/10] overflow-hidden bg-black/20">
+                  <img
+                    src={p.image}
+                    alt={p.name}
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                </div>
+                <div className="p-4">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="font-display text-lg font-semibold text-foreground group-hover:text-gold transition-colors truncate">
+                      {p.name}
+                    </p>
+                    <span className="shrink-0 rounded-full bg-gold/15 px-2.5 py-0.5 text-[10px] font-semibold text-gold-foreground">
+                      {p.status}
+                    </span>
+                  </div>
+                  <p className="mt-1 flex items-center gap-1 text-sm text-muted-foreground truncate">
+                    <MapPin className="h-3.5 w-3.5 shrink-0 text-gold" />
+                    <span className="truncate">{formatLocationCity(p.location, p.city)}</span>
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* ═══════ Lightbox ═══════ */}
       {lightbox && (

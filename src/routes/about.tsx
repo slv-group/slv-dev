@@ -21,16 +21,6 @@ import {
   HardHat,
   ArrowDown,
 } from "lucide-react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
 import { Reveal } from "@/components/Reveal";
 import { cn } from "@/lib/utils";
 import heroImage from "@/assets/about_slv.jpg";
@@ -218,15 +208,6 @@ const workWithUs = [
     desc: "Unlock the value of your land through joint developments with a builder trusted by 5,000+ families.",
     cta: "Propose a Site",
   },
-];
-
-const growthData = [
-  { year: "2021", clients: 40, projects: 20, completed: 10 },
-  { year: "2022", clients: 60, projects: 30, completed: 18 },
-  { year: "2023", clients: 80, projects: 45, completed: 25 },
-  { year: "2024", clients: 100, projects: 55, completed: 35 },
-  { year: "2025", clients: 110, projects: 65, completed: 42 },
-  { year: "2026", clients: 120, projects: 75, completed: 50 },
 ];
 
 /** Thin gold registration marks at the corners of a media frame — an
@@ -1224,55 +1205,6 @@ function AboutPage() {
             );
           })}
         </div>
-      </section>
-
-      {/* ---------- Growth Chart ---------- */}
-      <section className="mx-auto mt-20 max-w-5xl px-6">
-        <Reveal>
-          <div className="rounded-[2rem] bg-card p-8 neu">
-            <div className="text-center mb-8">
-              <p className="text-sm uppercase tracking-[0.3em] text-gold">Our Journey</p>
-              <h3 className="mt-4 font-display text-5xl font-bold text-foreground">Growth</h3>
-              <p className="mt-2 text-muted-foreground">
-                Building digital experiences that create impact.
-              </p>
-            </div>
-
-            <ResponsiveContainer width="100%" height={350}>
-              <LineChart data={growthData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="year" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="clients"
-                  stroke="#d4af37"
-                  strokeWidth={3}
-                  dot={{ r: 5 }}
-                  name="Clients"
-                />
-                <Line
-                  type="monotone"
-                  dataKey="projects"
-                  stroke="#8884d8"
-                  strokeWidth={3}
-                  dot={{ r: 5 }}
-                  name="Projects"
-                />
-                <Line
-                  type="monotone"
-                  dataKey="completed"
-                  stroke="#82ca9d"
-                  strokeWidth={3}
-                  dot={{ r: 5 }}
-                  name="Completed Projects"
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </Reveal>
       </section>
 
       {/* ---------- CTA ---------- */}

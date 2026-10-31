@@ -151,7 +151,7 @@ const leadershipTeam = [
     verified: true,
   },
   {
-    name: "Vegesna Appala Narasiamha Raju (NANI)",
+    name: "V A N Raju (Nani)",
     designation: "Director",
     role: "Executive Leadership",
     image: executiveImage,
@@ -166,7 +166,7 @@ const leadershipTeam = [
     verified: true,
   },
   {
-    name: "Uppalapati Chaitanya Kumar Varma",
+    name: "U Chaitanya K Varma",
     designation: "Director",
     role: "Management Leadership",
     image: managementImage,

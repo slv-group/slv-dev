@@ -131,7 +131,8 @@ function getLocationFromSearch(searchLocation?: string): LocationFilter {
   const normalized = searchLocation.toLowerCase().trim();
   const match = locationFilters.find((loc) => loc.toLowerCase() === normalized);
   if (match) return match;
-  if (normalized === "amaravathi" || normalized === "amaravati") return "Amaravati";
+  if (normalized === "amaravathi" || normalized === "amaravati" || normalized === "amaravti")
+    return "Amaravati";
   if (normalized === "gunthapalli" || normalized === "guntupalli") return "Guntupalli";
   return "All";
 }

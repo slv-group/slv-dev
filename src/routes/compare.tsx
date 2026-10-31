@@ -65,7 +65,7 @@ function ComparePage() {
 
   const rows: { label: string; render: (p: (typeof selected)[number]) => React.ReactNode }[] = [
     { label: "Price From", render: (p) => formatPrice(p.priceFrom) },
-    { label: "Configurations", render: (p) => p.bedrooms },
+    { label: "Project Type", render: (p) => p.bedrooms },
     {
       label: "Area",
       render: (p) =>

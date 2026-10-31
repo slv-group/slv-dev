@@ -13,9 +13,7 @@ const socialLinks: SocialLinkInfo[] = [
 const ourStory = [
   { label: "About Us", to: "/about" },
   { label: "Leadership & Management", to: "/management" },
-  { label: "Awards", to: "/awards" },
   { label: "CSR", to: "/csr" },
-  { label: "Gallery", to: "/gallery" },
 ];
 
 const projectLinks = [

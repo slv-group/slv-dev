@@ -638,30 +638,102 @@ function Index() {
         </div>
       </section>
 
+      {/* ── The SLV Philosophy — dark royal ── */}
+      <section
+        className="relative overflow-hidden py-32 text-white"
+        style={{ background: "var(--gradient-royal)" }}
+      >
+        {/* Background glow orbs */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute right-0 top-0 h-[500px] w-[500px] rounded-full opacity-20 blur-[120px]"
+          style={{ background: "var(--color-gold)" }}
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -left-32 bottom-0 h-[400px] w-[400px] rounded-full opacity-10 blur-[100px]"
+          style={{ background: "var(--color-gold)" }}
+        />
+
+        <div className="relative mx-auto max-w-7xl px-6">
+          <Reveal className="mb-20 text-center">
+            <p className="section-label text-gold tracking-[0.35em]">Our Principles</p>
+            <h2 className="mt-5 font-display text-5xl font-bold sm:text-6xl">The SLV Philosophy</h2>
+            <div className="mx-auto mt-8 flex items-center justify-center gap-4">
+              <div
+                className="h-px w-12 opacity-50"
+                style={{ background: "var(--gradient-gold)" }}
+              />
+              <div className="h-1.5 w-1.5 rotate-45 bg-gold opacity-70" />
+              <div
+                className="h-px w-12 opacity-50"
+                style={{ background: "var(--gradient-gold)" }}
+              />
+            </div>
+          </Reveal>
+
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+            {philosophy.map((f, i) => (
+              <Reveal key={f.title} delay={i * 100}>
+                <div
+                  className="group relative h-full rounded-3xl p-8 transition-all duration-500 hover:-translate-y-1"
+                  style={{
+                    background: "rgba(255,255,255,0.04)",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                  }}
+                >
+                  {/* Hover gold glow */}
+                  <div
+                    className="pointer-events-none absolute inset-0 rounded-3xl opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                    style={{
+                      background: "linear-gradient(135deg, rgba(212,175,55,0.06), transparent)",
+                    }}
+                  />
+
+                  <div className="relative">
+                    {/* Icon */}
+                    <div
+                      className="flex h-14 w-14 items-center justify-center rounded-2xl"
+                      style={{
+                        background: "rgba(212,175,55,0.12)",
+                        border: "1px solid rgba(212,175,55,0.2)",
+                      }}
+                    >
+                      <f.icon className="h-6 w-6 text-gold" />
+                    </div>
+                    <div className="mt-6 font-display text-6xl italic font-bold text-gold/15">
+                      {f.no}
+                    </div>
+                    <h3 className="mt-2 text-xl font-bold tracking-wide uppercase whitespace-pre-line">
+                      {f.title}
+                    </h3>
+                    <div
+                      className="mt-4 h-px w-12 opacity-40"
+                      style={{ background: "var(--gradient-gold)" }}
+                    />
+                    <p className="mt-4 font-light leading-relaxed text-white/60">{f.desc}</p>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── Genuine SLV Project Photographs Showcase ── */}
       {featuredPhotos.length > 0 && (
         <section className="relative overflow-hidden py-24 sm:py-28 bg-card/30 border-t border-border/40">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <Reveal>
-              <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-                <div>
-                  <p className="section-label text-gold tracking-[0.28em]">Visual Showcase</p>
-                  <h2 className="mt-3 font-display text-3xl font-bold sm:text-4xl lg:text-5xl text-foreground">
-                    Project Gallery
-                  </h2>
-                  <p className="mt-2 max-w-xl text-sm sm:text-base text-muted-foreground">
-                    Authentic site captures, elevations, and completed architectures from our
-                    developments across Andhra Pradesh.
-                  </p>
-                </div>
-
-                <Link
-                  to="/gallery"
-                  className="group inline-flex w-fit items-center gap-2 rounded-full border border-gold/30 px-5 py-2.5 text-sm font-bold text-foreground transition-all duration-300 hover:border-gold hover:bg-gradient-gold hover:text-gold-foreground cursor-pointer"
-                >
-                  <span>View Full Gallery</span>
-                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                </Link>
+              <div>
+                <p className="section-label text-gold tracking-[0.28em]">Visual Showcase</p>
+                <h2 className="mt-3 font-display text-3xl font-bold sm:text-4xl lg:text-5xl text-foreground">
+                  Project Gallery
+                </h2>
+                <p className="mt-2 max-w-xl text-sm sm:text-base text-muted-foreground">
+                  Authentic site captures, elevations, and completed architectures from our
+                  developments across Andhra Pradesh.
+                </p>
               </div>
             </Reveal>
 
@@ -744,88 +816,6 @@ function Index() {
           )}
         </section>
       )}
-
-      {/* ── The SLV Philosophy — dark royal ── */}
-      <section
-        className="relative overflow-hidden py-32 text-white"
-        style={{ background: "var(--gradient-royal)" }}
-      >
-        {/* Background glow orbs */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute right-0 top-0 h-[500px] w-[500px] rounded-full opacity-20 blur-[120px]"
-          style={{ background: "var(--color-gold)" }}
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -left-32 bottom-0 h-[400px] w-[400px] rounded-full opacity-10 blur-[100px]"
-          style={{ background: "var(--color-gold)" }}
-        />
-
-        <div className="relative mx-auto max-w-7xl px-6">
-          <Reveal className="mb-20 text-center">
-            <p className="section-label text-gold tracking-[0.35em]">Our Principles</p>
-            <h2 className="mt-5 font-display text-5xl font-bold sm:text-6xl">The SLV Philosophy</h2>
-            <div className="mx-auto mt-8 flex items-center justify-center gap-4">
-              <div
-                className="h-px w-12 opacity-50"
-                style={{ background: "var(--gradient-gold)" }}
-              />
-              <div className="h-1.5 w-1.5 rotate-45 bg-gold opacity-70" />
-              <div
-                className="h-px w-12 opacity-50"
-                style={{ background: "var(--gradient-gold)" }}
-              />
-            </div>
-          </Reveal>
-
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-            {philosophy.map((f, i) => (
-              <Reveal key={f.title} delay={i * 100}>
-                <div
-                  className="group relative h-full rounded-3xl p-8 transition-all duration-500 hover:-translate-y-1"
-                  style={{
-                    background: "rgba(255,255,255,0.04)",
-                    border: "1px solid rgba(255,255,255,0.08)",
-                  }}
-                >
-                  {/* Hover gold glow */}
-                  <div
-                    className="pointer-events-none absolute inset-0 rounded-3xl opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-                    style={{
-                      background: "linear-gradient(135deg, rgba(212,175,55,0.06), transparent)",
-                    }}
-                  />
-
-                  <div className="relative">
-                    {/* Icon */}
-                    <div
-                      className="flex h-14 w-14 items-center justify-center rounded-2xl"
-                      style={{
-                        background: "rgba(212,175,55,0.12)",
-                        border: "1px solid rgba(212,175,55,0.2)",
-                      }}
-                    >
-                      <f.icon className="h-6 w-6 text-gold" />
-                    </div>
-                    <div className="mt-6 font-display text-6xl italic font-bold text-gold/15">
-                      {f.no}
-                    </div>
-                    <h3 className="mt-2 text-xl font-bold tracking-wide uppercase whitespace-pre-line">
-                      {f.title}
-                    </h3>
-                    <div
-                      className="mt-4 h-px w-12 opacity-40"
-                      style={{ background: "var(--gradient-gold)" }}
-                    />
-                    <p className="mt-4 font-light leading-relaxed text-white/60">{f.desc}</p>
-                  </div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* ── Testimonial — editorial ── */}
       <section className="relative overflow-hidden mx-auto max-w-5xl px-6 py-32 text-center">

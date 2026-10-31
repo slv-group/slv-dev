@@ -7,9 +7,7 @@ import slvLogo from "@/assets/SLV_Group_Logo.png";
 const ourStoryLinks = [
   { label: "About Us", to: "/about" },
   { label: "Leadership & Management", to: "/management" },
-  { label: "Awards", to: "/awards" },
   { label: "CSR", to: "/csr" },
-  { label: "Gallery", to: "/gallery" },
 ];
 
 const buyersGuideLinks = [

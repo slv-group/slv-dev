@@ -1279,7 +1279,7 @@ function ProjectsManagement() {
               <TabsContent value="details" className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <Label htmlFor="bedrooms">Configurations</Label>
+                    <Label htmlFor="bedrooms">Project Type</Label>
                     <Input
                       id="bedrooms"
                       value={form.bedrooms}

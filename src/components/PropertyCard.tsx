@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Heart, MapPin, Maximize, BedDouble, ArrowRight, Building2 } from "lucide-react";
+import { Heart, MapPin, Maximize, BedDouble, ArrowRight, Building2, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useStore } from "@/store/useStore";
 import { formatPrice, type Project } from "@/data/projects";
 import { formatLocationCity } from "@/lib/country-codes";
+import { ComingSoonModal } from "@/components/ComingSoonModal";
 
 const statusStyles: Record<string, string> = {
   Ongoing: "bg-gold/20 text-gold-foreground border-gold/40",
@@ -15,8 +16,10 @@ const statusStyles: Record<string, string> = {
 export function PropertyCard({ project }: { project: Project }) {
   const { isWishlisted, toggleWishlist } = useStore();
   const [imgError, setImgError] = useState(false);
+  const [showComingSoon, setShowComingSoon] = useState(false);
   const wished = isWishlisted(project.id);
   const hasValidImage = Boolean(project.image && !imgError);
+  const isUpcoming = project.status === "Upcoming";
 
   const displayBedrooms =
     (project.name?.toLowerCase().includes("green grandeur") ||
@@ -26,151 +29,199 @@ export function PropertyCard({ project }: { project: Project }) {
       : project.bedrooms;
 
   return (
-    <article
-      className="group relative flex h-full flex-col overflow-hidden rounded-3xl bg-card transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_60px_-15px_rgba(212,175,55,0.18),0_8px_24px_-8px_rgba(0,0,0,0.15)]"
-      style={{
-        border: "1px solid color-mix(in oklab, var(--color-gold) 12%, var(--color-border))",
-      }}
-    >
-      {/* Image area */}
-      <div className="relative aspect-[4/3] w-full shrink-0 overflow-hidden">
-        {hasValidImage ? (
-          <img
-            src={project.image}
-            alt={project.name}
-            loading="lazy"
-            width={1024}
-            height={768}
-            onError={() => setImgError(true)}
-            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-108"
-          />
-        ) : (
-          <div className="h-full w-full bg-gradient-to-br from-card via-obsidian to-card flex flex-col items-center justify-center p-6 text-center border-b border-border/40">
-            <Building2 className="h-10 w-10 text-gold/40 mb-2" />
-            <span className="text-xs font-semibold uppercase tracking-wider text-white/60">
-              {project.category}
-            </span>
-            <span className="font-display text-sm font-semibold text-white/90 line-clamp-1 mt-0.5">
-              {project.name}
-            </span>
-          </div>
-        )}
-        {/* Multi-layer gradient */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
+    <>
+      <article
+        className="group relative flex h-full flex-col overflow-hidden rounded-3xl bg-card transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_60px_-15px_rgba(212,175,55,0.18),0_8px_24px_-8px_rgba(0,0,0,0.15)]"
+        style={{
+          border: "1px solid color-mix(in oklab, var(--color-gold) 12%, var(--color-border))",
+        }}
+      >
+        {/* Image area */}
         <div
-          className="absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-          style={{
-            background:
-              "linear-gradient(to top, rgba(0,0,0,0.6), rgba(180,130,30,0.04), transparent)",
+          className="relative aspect-[4/3] w-full shrink-0 overflow-hidden cursor-pointer"
+          onClick={() => {
+            if (isUpcoming) {
+              setShowComingSoon(true);
+            }
           }}
-        />
-        {/* Gold accent bar slides up on hover */}
-        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-gold transform translate-y-full transition-transform duration-500 group-hover:translate-y-0" />
-
-        {/* Status badge */}
-        <span
-          className={cn(
-            "absolute left-4 top-4 rounded-full border px-3 py-1 text-xs font-bold uppercase tracking-widest backdrop-blur-md",
-            statusStyles[project.status],
-          )}
         >
-          {project.status}
-        </span>
-
-        {/* Wishlist */}
-        <button
-          onClick={() => toggleWishlist(project.id)}
-          aria-label="Toggle wishlist"
-          className={cn(
-            "absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full transition-all duration-300",
-            wished
-              ? "bg-rose-500 text-white shadow-lg shadow-rose-500/30"
-              : "glass border-white/30 text-white hover:bg-rose-500/20 hover:text-rose-300",
+          {hasValidImage ? (
+            <img
+              src={project.image}
+              alt={project.name}
+              loading="lazy"
+              width={1024}
+              height={768}
+              onError={() => setImgError(true)}
+              className={cn(
+                "h-full w-full object-cover transition-transform duration-700",
+                isUpcoming ? "blur-md scale-105" : "group-hover:scale-108",
+              )}
+            />
+          ) : (
+            <div className="h-full w-full bg-gradient-to-br from-card via-obsidian to-card flex flex-col items-center justify-center p-6 text-center border-b border-border/40">
+              <Building2 className="h-10 w-10 text-gold/40 mb-2" />
+              <span className="text-xs font-semibold uppercase tracking-wider text-white/60">
+                {project.category}
+              </span>
+              <span className="font-display text-sm font-semibold text-white/90 line-clamp-1 mt-0.5">
+                {project.name}
+              </span>
+            </div>
           )}
-        >
-          <Heart
+          {/* Multi-layer gradient */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
+          <div
+            className="absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+            style={{
+              background:
+                "linear-gradient(to top, rgba(0,0,0,0.6), rgba(180,130,30,0.04), transparent)",
+            }}
+          />
+          {/* Gold accent bar slides up on hover */}
+          <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-gold transform translate-y-full transition-transform duration-500 group-hover:translate-y-0" />
+
+          {/* Status badge */}
+          <span
             className={cn(
-              "h-4 w-4 transition-transform duration-200",
-              wished && "fill-white scale-110",
+              "absolute left-4 top-4 rounded-full border px-3 py-1 text-xs font-bold uppercase tracking-widest backdrop-blur-md z-10",
+              statusStyles[project.status],
             )}
-          />
-        </button>
-
-        {/* Price overlay */}
-        <div className="absolute bottom-0 left-0 right-0 px-4 pb-4 pt-8">
-          <p className="text-[0.6rem] uppercase tracking-[0.25em] text-white/60">
-            {project.category}
-          </p>
-          {/* <p className="font-display text-2xl font-semibold text-white">
-            {formatPrice(project.priceFrom)}
-            <span className="text-base font-light text-white/60">+</span>
-          </p> */}
-        </div>
-      </div>
-
-      {/* Card body */}
-      <div className="relative flex flex-1 flex-col justify-between p-5">
-        {/* Inner gold hairline at top */}
-        <div
-          className="absolute inset-x-5 top-0 h-px"
-          style={{
-            background:
-              "linear-gradient(90deg, transparent, color-mix(in oklab, var(--color-gold) 30%, transparent), transparent)",
-          }}
-        />
-
-        <div className="flex-1 flex flex-col">
-          <h3
-            title={project.name}
-            className="font-display text-lg sm:text-xl font-semibold text-foreground group-hover:text-gradient-gold transition-all duration-300 line-clamp-1 min-h-[1.75rem]"
           >
-            {project.name}
-          </h3>
-          <p className="mt-1.5 flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground min-h-[1.25rem]">
-            <MapPin className="h-3.5 w-3.5 shrink-0 text-gold" />
-            <span className="truncate">{formatLocationCity(project.location, project.city)}</span>
-          </p>
+            {project.status}
+          </span>
 
-          {/* Specs */}
-          {project.status === "Ongoing" && (
-            <div className="mt-4 grid grid-cols-2 gap-2 sm:gap-2.5">
-              <div
-                className="flex h-10 items-center gap-1.5 rounded-xl bg-secondary/50 px-2.5 text-xs text-muted-foreground min-w-0"
-                title={displayBedrooms}
-              >
-                <BedDouble className="h-3.5 w-3.5 shrink-0 text-gold" />
-                <span className="font-medium truncate whitespace-nowrap">{displayBedrooms}</span>
-              </div>
-              <div
-                className="flex h-10 items-center gap-1.5 rounded-xl bg-secondary/50 px-2.5 text-xs text-muted-foreground min-w-0"
-                title={`${project.sqftFrom.toLocaleString()}+ ${project.areaUnit || (project.category === "Plots" ? "sq yd" : "sqft")}`}
-              >
-                <Maximize className="h-3.5 w-3.5 shrink-0 text-gold" />
-                <span className="font-medium truncate whitespace-nowrap">
-                  {project.sqftFrom.toLocaleString()}+{" "}
-                  {project.areaUnit || (project.category === "Plots" ? "sq yd" : "sqft")}
+          {/* Upcoming Overlay */}
+          {isUpcoming && (
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black/40 backdrop-blur-[1px] p-4 text-center">
+              <div className="flex items-center gap-2 rounded-full border border-gold/50 bg-black/80 px-4 py-2 shadow-xl backdrop-blur-md">
+                <Sparkles className="h-4 w-4 text-gold animate-pulse" />
+                <span className="font-display text-xs font-bold uppercase tracking-[0.2em] text-gold">
+                  Coming Soon
                 </span>
               </div>
             </div>
           )}
+
+          {/* Wishlist */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleWishlist(project.id);
+            }}
+            aria-label="Toggle wishlist"
+            className={cn(
+              "absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full transition-all duration-300",
+              wished
+                ? "bg-rose-500 text-white shadow-lg shadow-rose-500/30"
+                : "glass border-white/30 text-white hover:bg-rose-500/20 hover:text-rose-300",
+            )}
+          >
+            <Heart
+              className={cn(
+                "h-4 w-4 transition-transform duration-200",
+                wished && "fill-white scale-110",
+              )}
+            />
+          </button>
+
+          {/* Price overlay */}
+          <div className="absolute bottom-0 left-0 right-0 px-4 pb-4 pt-8 z-10">
+            <p className="text-[0.6rem] uppercase tracking-[0.25em] text-white/60">
+              {project.category}
+            </p>
+          </div>
         </div>
 
-        {/* Actions */}
-        <div className="mt-5 pt-2 flex gap-2">
-          <Link
-            to="/projects/$slug"
-            params={{ slug: project.slug }}
-            className="group/btn relative overflow-hidden flex flex-1 items-center justify-center gap-2 rounded-2xl py-3 text-sm font-bold text-gold-foreground shadow-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-md cursor-pointer"
-            style={{ background: "var(--gradient-gold)" }}
-          >
-            <span className="absolute inset-0 opacity-0 group-hover/btn:opacity-100 animate-shimmer" />
-            <span className="relative flex items-center justify-center gap-2">
-              View Details
-              <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover/btn:translate-x-1" />
-            </span>
-          </Link>
+        {/* Card body */}
+        <div className="relative flex flex-1 flex-col justify-between p-5">
+          {/* Inner gold hairline at top */}
+          <div
+            className="absolute inset-x-5 top-0 h-px"
+            style={{
+              background:
+                "linear-gradient(90deg, transparent, color-mix(in oklab, var(--color-gold) 30%, transparent), transparent)",
+            }}
+          />
+
+          <div className="flex-1 flex flex-col">
+            <h3
+              title={project.name}
+              className="font-display text-lg sm:text-xl font-semibold text-foreground group-hover:text-gradient-gold transition-all duration-300 line-clamp-1 min-h-[1.75rem]"
+            >
+              {project.name}
+            </h3>
+            <p className="mt-1.5 flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground min-h-[1.25rem]">
+              <MapPin className="h-3.5 w-3.5 shrink-0 text-gold" />
+              <span className="truncate">{formatLocationCity(project.location, project.city)}</span>
+            </p>
+
+            {/* Specs */}
+            {project.status === "Ongoing" && (
+              <div className="mt-4 grid grid-cols-2 gap-2 sm:gap-2.5">
+                <div
+                  className="flex h-10 items-center gap-1.5 rounded-xl bg-secondary/50 px-2.5 text-xs text-muted-foreground min-w-0"
+                  title={displayBedrooms}
+                >
+                  <BedDouble className="h-3.5 w-3.5 shrink-0 text-gold" />
+                  <span className="font-medium truncate whitespace-nowrap">{displayBedrooms}</span>
+                </div>
+                <div
+                  className="flex h-10 items-center gap-1.5 rounded-xl bg-secondary/50 px-2.5 text-xs text-muted-foreground min-w-0"
+                  title={`${project.sqftFrom.toLocaleString()}+ ${project.areaUnit || (project.category === "Plots" ? "sq yd" : "sqft")}`}
+                >
+                  <Maximize className="h-3.5 w-3.5 shrink-0 text-gold" />
+                  <span className="font-medium truncate whitespace-nowrap">
+                    {project.sqftFrom.toLocaleString()}+{" "}
+                    {project.areaUnit || (project.category === "Plots" ? "sq yd" : "sqft")}
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Actions */}
+          <div className="mt-5 pt-2 flex gap-2">
+            {isUpcoming ? (
+              <button
+                type="button"
+                onClick={() => setShowComingSoon(true)}
+                className="group/btn relative overflow-hidden flex flex-1 items-center justify-center gap-2 rounded-2xl py-3 text-sm font-bold text-gold-foreground shadow-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-md cursor-pointer"
+                style={{ background: "var(--gradient-gold)" }}
+                aria-label={`View coming soon information for ${project.name}`}
+              >
+                <span className="absolute inset-0 opacity-0 group-hover/btn:opacity-100 animate-shimmer" />
+                <span className="relative flex items-center justify-center gap-2">
+                  Coming Soon
+                  <Sparkles className="h-3.5 w-3.5" />
+                </span>
+              </button>
+            ) : (
+              <Link
+                to="/projects/$slug"
+                params={{ slug: project.slug }}
+                className="group/btn relative overflow-hidden flex flex-1 items-center justify-center gap-2 rounded-2xl py-3 text-sm font-bold text-gold-foreground shadow-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-md cursor-pointer"
+                style={{ background: "var(--gradient-gold)" }}
+              >
+                <span className="absolute inset-0 opacity-0 group-hover/btn:opacity-100 animate-shimmer" />
+                <span className="relative flex items-center justify-center gap-2">
+                  View Details
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover/btn:translate-x-1" />
+                </span>
+              </Link>
+            )}
+          </div>
         </div>
-      </div>
-    </article>
+      </article>
+
+      {/* Coming Soon Modal */}
+      {isUpcoming && (
+        <ComingSoonModal
+          project={project}
+          isOpen={showComingSoon}
+          onClose={() => setShowComingSoon(false)}
+        />
+      )}
+    </>
   );
 }
