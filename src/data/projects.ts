@@ -98,13 +98,46 @@ export interface Project {
   amenities: (string | AmenityItem)[];
   specifications: SpecificationItem[];
   proximity: { label: string; distance: string }[];
-  floorPlans: { type: string; sqft: number; image: string }[];
+  floorPlans: FloorPlan[];
   brochureUrl?: string; // Brochure PDF URL for full-screen view
   imageFit?: "cover" | "contain";
 }
 
+export interface FloorPlan {
+  type: string;
+  sqft: number | string;
+  image: string;
+}
+
 export type AmenityItem = { name: string; icon_url?: string };
 export type SpecificationItem = { label: string; value: string; icon_url?: string };
+
+/**
+ * Format floor plan area display cleanly.
+ * Displays explicit range (e.g. "2325 – 3250 sq ft") or single numeric value (e.g. "2,850 sq ft").
+ * If area is zero, missing, or unverified, suppresses "0 sq ft" and displays "Area on Request".
+ */
+export function formatFloorPlanArea(
+  sqft: number | string | undefined | null,
+  areaUnit: string = "sq ft",
+): string {
+  if (sqft === undefined || sqft === null || sqft === 0 || sqft === "0" || sqft === "") {
+    return "Area on Request";
+  }
+  const str = String(sqft).trim();
+  if (/sq\s*ft|sqft|sq\s*yd/i.test(str)) {
+    return str;
+  }
+  const unit = areaUnit.toLowerCase() === "sqft" ? "sq ft" : areaUnit;
+  if (/^[\d,]+\s*[–\-]\s*[\d,]+$/.test(str)) {
+    return `${str} ${unit}`;
+  }
+  const num = Number(str.replace(/,/g, ""));
+  if (!isNaN(num) && num > 0) {
+    return `${num.toLocaleString()} ${unit}`;
+  }
+  return `${str} ${unit}`;
+}
 
 /** Normalize amenities from DB — handles old string[] and new object[] formats */
 export function normalizeAmenities(raw: unknown): AmenityItem[] {
@@ -127,8 +160,8 @@ export function normalizeSpecs(raw: unknown): SpecificationItem[] {
 export const LOCATIONS = [
   "Vijayawada",
   "Gannavaram",
-  "Gunthapalli",
-  "Amaravathi",
+  "Guntupalli",
+  "Amaravati",
   "Bhimavaram",
 ] as const;
 
@@ -207,6 +240,18 @@ export function mapSupabaseToProject(row: Tables<"projects">): Project {
   const areaUnit =
     (row as any).area_unit || unitFromSpecs || (row.category === "Plots" ? "sq yd" : "sqft");
 
+  let bedrooms = row.bedrooms || "";
+  if (row.name?.toLowerCase().includes("green grandeur") || row.slug === "slv-green-grandeur") {
+    if (bedrooms.trim() === "G+2" || bedrooms.trim() === "G+2 ") {
+      bedrooms = "G+2 Villa";
+    }
+  }
+  if (row.name?.toLowerCase().includes("green meadows") || row.slug === "slv-green-meadows") {
+    if (!bedrooms.trim()) {
+      bedrooms = "3 & 4 BHK";
+    }
+  }
+
   return {
     id: row.id,
     slug: row.slug === "slv-greenhorizon-2" ? "slv-green-horizon-2" : row.slug,
@@ -217,18 +262,34 @@ export function mapSupabaseToProject(row: Tables<"projects">): Project {
     location: row.location || "",
     city: row.city || "",
     priceFrom: row.price_from || 0,
-    bedrooms: row.bedrooms || "",
+    bedrooms: bedrooms.trim(),
     sqftFrom: row.sqft_from || 0,
     sqftTo: (row as any).sqft_to || 0,
     areaUnit,
     launchDate: (row as any).launch_date || "",
-    image: row.cover_image || "",
+    image: row.cover_image || "/placeholder.svg",
     gallery: Array.isArray(row.gallery) ? (row.gallery as string[]) : [],
     description: row.description || "",
     amenities: normalizeAmenities(row.amenities),
     specifications: normalizeSpecs(row.specifications),
     proximity: Array.isArray(row.nearby) ? (row.nearby as any) : [],
-    floorPlans: Array.isArray(row.floor_plans) ? (row.floor_plans as any) : [],
+    floorPlans: (Array.isArray(row.floor_plans) ? (row.floor_plans as any[]) : []).map(
+      (fp: any) => {
+        // For SLV Amaravathi Grand-3, ensure Block B displays the verified 2325 – 3250 sq ft
+        if (
+          (row.slug === "slv-amaravathi-grand-3" ||
+            row.name?.toLowerCase().includes("amaravathi grand-3") ||
+            row.name?.toLowerCase().includes("amaravathi grand iii")) &&
+          fp.type?.toLowerCase().includes("block b")
+        ) {
+          return {
+            ...fp,
+            sqft: "2325 – 3250",
+          };
+        }
+        return fp;
+      },
+    ),
     brochureUrl: row.brochure_url || undefined,
   };
 }
@@ -405,8 +466,8 @@ export const projects: Project[] = [
     sqftFrom: 950,
     sqftTo: 1400,
     launchDate: "Delivered Mar 2012",
-    image: img(2),
-    gallery: gallery(2),
+    image: "/placeholder.svg",
+    gallery: [],
     description:
       "SLV Raghavendra Towers marked the group's expansion beyond Andhra Pradesh into Karnataka. The 30-unit project in Siriguppa was delivered in 2012, bringing SLV's trusted construction quality to a new region.",
     amenities: ["Gated Security", "Power Backup", "Car Parking", "Common Garden"],
@@ -1025,7 +1086,7 @@ export const projects: Project[] = [
     tagline: "Premium gated apartments at the gateway to Amaravati",
     category: "Apartment",
     status: "Ongoing",
-    location: "Mangalagiri, Amaravathi",
+    location: "Mangalagiri, Amaravati",
     city: "Vijayawada",
     priceFrom: 6800000,
     bedrooms: "2 & 3 BHK",
@@ -1103,7 +1164,7 @@ export const projects: Project[] = [
     ],
     proximity: [
       { label: "Chennai-Kolkata Highway (NH-16)", distance: "100 meters (2 min)" },
-      { label: "Amaravathi Capital Region", distance: "3 km" },
+      { label: "Amaravati Capital Region", distance: "3 km" },
       { label: "DGP Office & AIIMS Mangalagiri", distance: "3 km" },
       { label: "NRI Hospital", distance: "2 km" },
       { label: "Delhi Public School", distance: "6 km" },
@@ -1217,12 +1278,12 @@ export const projects: Project[] = [
     slug: "slv-green-meadows",
     name: "SLV Green Meadows",
     tagline: "Vijayawada's most expansive gated residential community",
-    category: "Apartment",
+    category: "Villa",
     status: "Completed",
     location: "Ramavarappadu",
     city: "Vijayawada",
     priceFrom: 7000000,
-    bedrooms: "2 & 3 BHK",
+    bedrooms: "3 & 4 BHK",
     sqftFrom: 1200,
     sqftTo: 1800,
     launchDate: "Delivered Dec 2022",
@@ -1460,8 +1521,9 @@ export const projects: Project[] = [
       { label: "Government Hospital", distance: "2 km" },
     ],
     floorPlans: [
+      { type: "Block A", sqft: 2850, image: ag3plan4bhk1 },
+      { type: "Block B", sqft: "2325 – 3250", image: ag3plan3bhk },
       { type: "3 BHK", sqft: 2325, image: ag3plan3bhk },
-      { type: "4 BHK", sqft: 2850, image: ag3plan4bhk1 },
       { type: "4 BHK", sqft: 3250, image: ag3plan4bhk2 },
     ],
     brochureUrl: amaravathiGrand3Brochure,
@@ -1517,7 +1579,7 @@ export const projects: Project[] = [
     tagline: "Nature Inspired Living: A smart Investment",
     category: "Plots",
     status: "Completed",
-    location: "Gunthapalli",
+    location: "Guntupalli",
     city: "Vijayawada",
     priceFrom: 3500000,
     bedrooms: "Premium Plots",
@@ -1608,19 +1670,19 @@ export const projects: Project[] = [
     slug: "slv-green-grandeur",
     name: "SLV Green Grandeur",
     tagline: "Grand green living redefined at Nidamanuru",
-    category: "Apartment",
+    category: "Villa",
     status: "Ongoing",
     location: "Nidamanuru",
     city: "Vijayawada",
     priceFrom: 8500000,
-    bedrooms: "3 & 4 BHK",
+    bedrooms: "G+2 Villa",
     sqftFrom: 1800,
     sqftTo: 3200,
     launchDate: "Ongoing",
     image: img(3),
     gallery: gallery(3),
     description:
-      "SLV Green Grandeur — 44 ultra-premium residences at Nidamanuru across 2,64,000 sq ft. Currently under construction, this flagship project sets a new standard for luxury apartment living in Vijayawada with expansive floor plans and resort-class amenities.",
+      "SLV Green Grandeur — 44 ultra-premium residences at Nidamanuru across 2,64,000 sq ft. Currently under construction, this flagship project sets a new standard for luxury villa living in Vijayawada with expansive floor plans and resort-class amenities.",
     amenities: [
       "Resort-style Clubhouse",
       "Infinity Pool",

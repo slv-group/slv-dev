@@ -25,10 +25,15 @@ function SeedPage() {
       // Fetch existing projects to protect them
       const { data: existing } = await supabase.from("projects").select("slug, name");
       const existingSlugs = new Set((existing || []).map((e) => e.slug));
-      const existingNames = new Set((existing || []).map((e) => (e.name || "").toLowerCase().trim()));
+      const existingNames = new Set(
+        (existing || []).map((e) => (e.name || "").toLowerCase().trim()),
+      );
 
       for (const project of projects) {
-        if (existingSlugs.has(project.slug) || existingNames.has(project.name.toLowerCase().trim())) {
+        if (
+          existingSlugs.has(project.slug) ||
+          existingNames.has(project.name.toLowerCase().trim())
+        ) {
           skippedCount++;
           continue; // Never overwrite an existing project or its uploaded images!
         }
@@ -52,7 +57,7 @@ function SeedPage() {
           amenities: project.amenities,
           specifications: project.specifications,
           nearby: project.proximity,
-          floor_plans: project.floorPlans,
+          floor_plans: project.floorPlans as any,
           brochure_url: project.brochureUrl,
           is_published: true, // Auto publish so they appear on UI
           sort_order: parseInt(project.id) || 0,
@@ -67,7 +72,9 @@ function SeedPage() {
         }
       }
 
-      setResult(`Done! Added ${successCount} missing projects. ${skippedCount} existing projects & their images were safely preserved.`);
+      setResult(
+        `Done! Added ${successCount} missing projects. ${skippedCount} existing projects & their images were safely preserved.`,
+      );
     } catch (err: any) {
       setResult("Error: " + err.message);
     } finally {

@@ -742,8 +742,8 @@ ${formData.message}
               seamlessly.
             </p>
 
-            <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-6 w-full">
-              {/* Premium Call Button */}
+            <div className="mt-12 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4 w-full">
+              {/* Premium Call Button - Line 1 */}
               <a
                 href="tel:+919859595939"
                 className="group relative flex w-full sm:w-auto items-center gap-4 rounded-full bg-transparent border border-gold/30 px-6 py-3 transition-all duration-300 hover:bg-gold/10 hover:border-gold/60 hover:shadow-[0_0_30px_rgba(212,175,55,0.15)]"
@@ -753,10 +753,28 @@ ${formData.message}
                 </div>
                 <div className="text-left">
                   <p className="text-[0.65rem] font-bold uppercase tracking-widest text-gold">
-                    Call Us Directly
+                    Call Us
                   </p>
-                  <p className="font-display text-lg font-semibold text-background tracking-wide">
-                    +91 9859 595 939
+                  <p className="font-display text-base sm:text-lg font-semibold text-background tracking-wide">
+                    +91 98595 95939
+                  </p>
+                </div>
+              </a>
+
+              {/* Premium Call Button - Line 2 */}
+              <a
+                href="tel:+919459823444"
+                className="group relative flex w-full sm:w-auto items-center gap-4 rounded-full bg-transparent border border-gold/30 px-6 py-3 transition-all duration-300 hover:bg-gold/10 hover:border-gold/60 hover:shadow-[0_0_30px_rgba(212,175,55,0.15)]"
+              >
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-gold text-gold-foreground shadow-lg transition-transform duration-500 group-hover:scale-110 group-hover:rotate-12">
+                  <PhoneCall className="h-5 w-5" />
+                </div>
+                <div className="text-left">
+                  <p className="text-[0.65rem] font-bold uppercase tracking-widest text-gold">
+                    Call Us
+                  </p>
+                  <p className="font-display text-base sm:text-lg font-semibold text-background tracking-wide">
+                    +91 94598 23444
                   </p>
                 </div>
               </a>

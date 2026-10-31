@@ -4,6 +4,7 @@
  */
 
 import { slvCatalog, type CatalogItem } from "./slv-catalog";
+import { formatLocationCity } from "./country-codes";
 
 /* ─── helpers ─── */
 
@@ -203,7 +204,7 @@ export function generateResponse(userMessage: string): string {
       `| Detail | Info |\n|---|---|\n` +
       `| **Type** | ${specificProject.category} |\n` +
       `| **Configuration** | ${specificProject.config} |\n` +
-      `| **Location** | ${specificProject.location}, ${specificProject.city} |\n` +
+      `| **Location** | ${formatLocationCity(specificProject.location, specificProject.city)} |\n` +
       `| **Status** | ${specificProject.status} |\n` +
       `| **Starting Price** | ₹${specificProject.priceFromLakh} Lakh onwards |\n\n` +
       `👉 [View full project details](/projects/${specificProject.slug})\n\n` +

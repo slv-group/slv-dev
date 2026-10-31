@@ -15,7 +15,13 @@ import {
   Home,
   Eye,
 } from "lucide-react";
-import { formatPrice, projects as staticProjects, type Project } from "@/data/projects";
+import {
+  formatPrice,
+  projects as staticProjects,
+  type Project,
+  formatFloorPlanArea,
+} from "@/data/projects";
+import { formatLocationCity } from "@/lib/country-codes";
 import { supabase } from "@/integrations/supabase/client";
 import { mapSupabaseToProject } from "@/data/projects";
 import { SiteVisitModal } from "@/components/SiteVisitModal";
@@ -126,6 +132,12 @@ function ProjectDetails() {
   const [showBrochure, setShowBrochure] = useState(false);
 
   const wished = isWishlisted(project.id);
+  const displayBedrooms =
+    (project.name?.toLowerCase().includes("green grandeur") ||
+      project.slug === "slv-green-grandeur") &&
+    (project.bedrooms.trim() === "G+2" || project.bedrooms.trim() === "G+2 ")
+      ? "G+2 Villa"
+      : project.bedrooms;
   const displayGallery =
     project.gallery && project.gallery.length > 0
       ? project.gallery
@@ -230,7 +242,7 @@ function ProjectDetails() {
                 <Building2 className="w-16 h-16 text-gold/30 mb-3" />
                 <p className="font-display text-xl text-white font-semibold">{project.name}</p>
                 <p className="text-sm text-white/50 mt-1">
-                  {project.location}, {project.city}
+                  {formatLocationCity(project.location, project.city)}
                 </p>
               </div>
             )}
@@ -453,9 +465,7 @@ function ProjectDetails() {
             </h1>
             <p className="mt-2 flex items-start gap-1.5 text-sm text-muted-foreground sm:items-center sm:text-base">
               <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-gold sm:mt-0" />
-              <span>
-                {project.location}, {project.city}
-              </span>
+              <span>{formatLocationCity(project.location, project.city)}</span>
             </p>
           </div>
           <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
@@ -485,7 +495,7 @@ function ProjectDetails() {
         {/* Quick stats */}
         <div className="mt-6 grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 sm:mt-8 sm:gap-4 lg:grid-cols-4">
           {[
-            ["Configurations", project.bedrooms],
+            ["Configurations", displayBedrooms],
             [
               "Saleable Area",
               `${project.sqftFrom.toLocaleString()} - ${project.sqftTo.toLocaleString()} ${project.areaUnit || (project.category === "Plots" ? "sq yd" : "sqft")}`,
@@ -670,9 +680,9 @@ function ProjectDetails() {
               <div className="max-w-full overflow-x-auto pb-2">
                 <div className="inline-flex min-w-max gap-2 rounded-2xl bg-background p-2 neu-pressed">
                   {project.floorPlans.map(
-                    (fp: { type: string; sqft: number; image: string }, i: number) => (
+                    (fp: { type: string; sqft: number | string; image: string }, i: number) => (
                       <button
-                        key={fp.type}
+                        key={`${fp.type}-${i}`}
                         onClick={() => setPlan(i)}
                         className={cn(
                           "whitespace-nowrap rounded-xl px-4 py-2.5 text-xs font-medium transition-all cursor-pointer sm:px-5 sm:text-sm",
@@ -710,8 +720,10 @@ function ProjectDetails() {
                     Saleable Area
                   </p>
                   <p className="font-display text-2xl font-semibold text-gold-foreground">
-                    {project.floorPlans[plan].sqft.toLocaleString()}{" "}
-                    {project.areaUnit || (project.category === "Plots" ? "sq yd" : "sqft")}
+                    {formatFloorPlanArea(
+                      project.floorPlans[plan].sqft,
+                      project.areaUnit || (project.category === "Plots" ? "sq yd" : "sq ft"),
+                    )}
                   </p>
                 </div>
               </div>

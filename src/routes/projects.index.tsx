@@ -111,7 +111,10 @@ const sortOptions = [
 type SortOption = (typeof sortOptions)[number]["value"];
 
 function getStatusFromSearch(searchStatus?: string): (typeof statusFilters)[number] {
-  switch (searchStatus?.toLowerCase()) {
+  if (!searchStatus) return "Ongoing"; // Default showcase to Ongoing Projects
+  switch (searchStatus.toLowerCase()) {
+    case "all":
+      return "All";
     case "ongoing":
       return "Ongoing";
     case "completed":
@@ -119,7 +122,7 @@ function getStatusFromSearch(searchStatus?: string): (typeof statusFilters)[numb
     case "upcoming":
       return "Upcoming";
     default:
-      return "All";
+      return "Ongoing";
   }
 }
 
@@ -128,8 +131,8 @@ function getLocationFromSearch(searchLocation?: string): LocationFilter {
   const normalized = searchLocation.toLowerCase().trim();
   const match = locationFilters.find((loc) => loc.toLowerCase() === normalized);
   if (match) return match;
-  if (normalized === "amaravati") return "Amaravathi";
-  if (normalized === "guntupalli") return "Gunthapalli";
+  if (normalized === "amaravathi" || normalized === "amaravati") return "Amaravati";
+  if (normalized === "gunthapalli" || normalized === "guntupalli") return "Guntupalli";
   return "All";
 }
 
@@ -177,12 +180,8 @@ function ProjectsPage() {
   const [location, setLocation] = useState<LocationFilter>(() =>
     getLocationFromSearch(search.location),
   );
-  const [spec, setSpec] = useState<SpecFilter>(() =>
-    getSpecFromSearch(search.spec),
-  );
-  const [sortBy, setSortBy] = useState<SortOption>(() =>
-    (search.sort as SortOption) || "default",
-  );
+  const [spec, setSpec] = useState<SpecFilter>(() => getSpecFromSearch(search.spec));
+  const [sortBy, setSortBy] = useState<SortOption>(() => (search.sort as SortOption) || "default");
   const [category, setCategory] = useState<(typeof categoryFilters)[number]>("All");
   const [query, setQuery] = useState("");
 
@@ -208,7 +207,7 @@ function ProjectsPage() {
     setStatus(s);
     navigate({
       search: {
-        status: s === "All" ? undefined : s.toLowerCase(),
+        status: s === "Ongoing" ? undefined : s.toLowerCase(),
         location: location === "All" ? undefined : location.toLowerCase(),
         spec: spec === "All" ? undefined : spec.toLowerCase(),
         sort: sortBy === "default" ? undefined : sortBy,
@@ -220,7 +219,7 @@ function ProjectsPage() {
     setLocation(l);
     navigate({
       search: {
-        status: status === "All" ? undefined : status.toLowerCase(),
+        status: status === "Ongoing" ? undefined : status.toLowerCase(),
         location: l === "All" ? undefined : l.toLowerCase(),
         spec: spec === "All" ? undefined : spec.toLowerCase(),
         sort: sortBy === "default" ? undefined : sortBy,
@@ -232,7 +231,7 @@ function ProjectsPage() {
     setSpec(sp);
     navigate({
       search: {
-        status: status === "All" ? undefined : status.toLowerCase(),
+        status: status === "Ongoing" ? undefined : status.toLowerCase(),
         location: location === "All" ? undefined : location.toLowerCase(),
         spec: sp === "All" ? undefined : sp.toLowerCase(),
         sort: sortBy === "default" ? undefined : sortBy,
@@ -244,7 +243,7 @@ function ProjectsPage() {
     setSortBy(so);
     navigate({
       search: {
-        status: status === "All" ? undefined : status.toLowerCase(),
+        status: status === "Ongoing" ? undefined : status.toLowerCase(),
         location: location === "All" ? undefined : location.toLowerCase(),
         spec: spec === "All" ? undefined : spec.toLowerCase(),
         sort: so === "default" ? undefined : so,
@@ -253,7 +252,7 @@ function ProjectsPage() {
   };
 
   const hasActiveFilters =
-    status !== "All" ||
+    status !== "Ongoing" ||
     location !== "All" ||
     category !== "All" ||
     spec !== "All" ||
@@ -261,7 +260,7 @@ function ProjectsPage() {
     query.trim() !== "";
 
   const resetFilters = () => {
-    setStatus("All");
+    setStatus("Ongoing");
     setLocation("All");
     setCategory("All");
     setSpec("All");
@@ -285,9 +284,7 @@ function ProjectsPage() {
     );
 
     if (sortBy === "location-asc") {
-      result.sort((a, b) =>
-        (a.location || a.city || "").localeCompare(b.location || b.city || ""),
-      );
+      result.sort((a, b) => (a.location || a.city || "").localeCompare(b.location || b.city || ""));
     } else if (sortBy === "area-asc") {
       result.sort((a, b) => (a.sqftFrom || 0) - (b.sqftFrom || 0));
     } else if (sortBy === "area-desc") {
@@ -369,11 +366,7 @@ function ProjectsPage() {
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {specFilters.map((sp) => (
-                    <FilterPill
-                      key={sp}
-                      active={spec === sp}
-                      onClick={() => handleSpecChange(sp)}
-                    >
+                    <FilterPill key={sp} active={spec === sp} onClick={() => handleSpecChange(sp)}>
                       {sp}
                     </FilterPill>
                   ))}
@@ -426,9 +419,7 @@ function ProjectsPage() {
             {location !== "All" && (
               <span className="ml-1 text-gold font-medium">in {location}</span>
             )}
-            {spec !== "All" && (
-              <span className="ml-1 text-gold font-medium">• {spec}</span>
-            )}
+            {spec !== "All" && <span className="ml-1 text-gold font-medium">• {spec}</span>}
             {status !== "All" && <span className="ml-1 text-muted-foreground">({status})</span>}
             {category !== "All" && <span className="ml-1 text-muted-foreground">• {category}</span>}
           </p>

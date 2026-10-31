@@ -34,9 +34,9 @@ import {
 import { Reveal } from "@/components/Reveal";
 import { cn } from "@/lib/utils";
 import heroImage from "@/assets/about_slv.jpg";
-import amaravathi from "@/assets/about/where-it-began.jpg";
-import journey2 from "@/assets/about/slv-anjani-heights.jpg";
-import journey3 from "@/assets/slv-image.png";
+import about1 from "@/assets/about1.jpg";
+import about2 from "@/assets/about2.jpg";
+import about3 from "@/assets/about3.jpg";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -123,7 +123,7 @@ const journey: {
     year: "2007",
     title: "Where It All Began",
     tag: "Bhimavaram, Andhra Pradesh",
-    img: amaravathi,
+    img: about1,
     icon: MapPin,
     desc: "SLV Group was founded in Bhimavaram with a single intent — providing affordable housing and lands to families who dreamed of a home of their own.",
   },
@@ -131,7 +131,7 @@ const journey: {
     year: "2015",
     title: "Into the Capital City",
     tag: "Vijayawada, Andhra Pradesh",
-    img: journey2,
+    img: about2,
     icon: Building2,
     desc: (
       <>
@@ -148,7 +148,7 @@ const journey: {
     year: "Today",
     title: "A Name People Trust",
     tag: "Across Andhra Pradesh",
-    img: journey3,
+    img: about3,
     icon: Award,
     desc: "With 20 residential projects, 2 commercial projects, and an educational institute, SLV is a proud member of CREDAI–Vijayawada, IGBC, and NAREDCO — every project RERA approved.",
   },
@@ -1061,18 +1061,29 @@ function AboutPage() {
                     {/* Image */}
                     <div
                       className={cn(
-                        "relative overflow-hidden rounded-[2rem] shadow-[var(--glass-shadow)]",
+                        "group relative overflow-hidden rounded-[2rem] border border-white/10 shadow-[var(--glass-shadow)]",
                         isReversed ? "lg:order-3" : "lg:order-1",
                       )}
                     >
                       <img
                         src={j.img}
                         alt={j.title}
-                        className="aspect-[16/10] w-full object-cover transition-transform duration-700 hover:scale-105"
+                        className="aspect-[16/10] w-full object-cover transition-transform duration-700 group-hover:scale-105"
                         loading="lazy"
                         decoding="async"
                         fetchPriority="low"
                       />
+
+                      {/* Bottom vignette */}
+                      <div
+                        aria-hidden
+                        className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/50 to-transparent"
+                      />
+
+                      {/* Image year badge */}
+                      <span className="absolute bottom-4 left-4 rounded-full border border-white/15 bg-black/40 px-3.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white backdrop-blur-md">
+                        {j.year}
+                      </span>
 
                       <CornerMarks />
                     </div>

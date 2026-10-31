@@ -244,7 +244,14 @@ function PrivacyPage() {
                 </a>
               </p>
               <p>
-                <strong>Phone:</strong> +91 98595 95939
+                <strong>Phone:</strong>{" "}
+                <a href="tel:+919859595939" className="text-gold hover:underline">
+                  +91 98595 95939
+                </a>{" "}
+                /{" "}
+                <a href="tel:+919459823444" className="text-gold hover:underline">
+                  +91 94598 23444
+                </a>
               </p>
               <p>
                 <strong>Office Address:</strong> Ground Floor, SLV Tummala Complex, Opp. SLV PNB

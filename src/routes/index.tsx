@@ -23,8 +23,9 @@ import { Reveal } from "@/components/Reveal";
 import { testimonials, mapSupabaseToProject } from "@/data/projects";
 import { supabase } from "@/integrations/supabase/client";
 import { SOCIAL_LINKS } from "@/lib/social";
-import aboutImage from "@/assets/projects/slv-anjani-heights/anjani-elevation-1.jpg";
-import aboutImage2 from "@/assets/projects/slv-amaravati-pride/pride-elevation-1.jpg";
+import { formatLocationCity } from "@/lib/country-codes";
+import aboutImage from "@/assets/homepage1.jpg";
+import aboutImage2 from "@/assets/homepage2.jpg";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
@@ -116,7 +117,7 @@ export const Route = createFileRoute("/")({
                 projectName: p.name,
                 projectSlug: p.slug,
                 category: p.category || "Residential",
-                location: p.location || p.city || "Vijayawada",
+                location: formatLocationCity(p.location, p.city) || "Vijayawada",
               });
             }
           });
@@ -132,7 +133,7 @@ export const Route = createFileRoute("/")({
             projectName: p.name,
             projectSlug: p.slug,
             category: p.category || "Residential",
-            location: p.location || p.city || "Vijayawada",
+            location: formatLocationCity(p.location, p.city) || "Vijayawada",
           });
         }
       }
@@ -151,25 +152,25 @@ const philosophy = [
   {
     no: "01",
     icon: Award,
-    title: "Unrivaled Quality",
+    title: "Unrivaled\nQuality",
     desc: "Premium-grade materials and industry-leading techniques ensure durability that spans generations.",
   },
   {
     no: "02",
     icon: TrendingUp,
-    title: "Strategic Locations",
+    title: "Strategic\nLocations",
     desc: "Projects sit on the fastest-growing corridors of Vijayawada and Amaravati for maximum value appreciation.",
   },
   {
     no: "03",
     icon: Shield,
-    title: "Absolute Transparency",
+    title: "Absolute\nTransparency",
     desc: "RERA-approved projects, clear titles, and honest pricing have been our hallmark since 2007.",
   },
   {
     no: "04",
     icon: Crown,
-    title: "20 Years of Trusted Legacy",
+    title: "20 Years of\nTrusted Legacy",
     desc: "For over two decades, SLV Group has delivered premium communities built on trust, quality, and customer satisfaction.",
   },
 ];
@@ -248,11 +249,12 @@ function Index() {
             logo: "https://www.slvgroup.co.in/slv-logo.png",
             description:
               "Premier real estate developer in Andhra Pradesh, delivering residential gated communities, open plots, and commercial landmarks across Vijayawada, Guntur, and Amaravati.",
-            telephone: "+91-98595-95939",
+            telephone: ["+91-98595-95939", "+91-94598-23444"],
             email: "info@slvgroup.co.in",
             address: {
               "@type": "PostalAddress",
-              streetAddress: "Ground Floor, SLV Tummala Complex, Opp. SLV PNB Commercial, Gunadala, Inner Ring Road",
+              streetAddress:
+                "Ground Floor, SLV Tummala Complex, Opp. SLV PNB Commercial, Gunadala, Inner Ring Road",
               addressLocality: "Vijayawada",
               addressRegion: "Andhra Pradesh",
               postalCode: "520004",
@@ -331,7 +333,7 @@ function Index() {
 
           {/* Locations */}
           <div className="flex flex-wrap items-center justify-center gap-2.5">
-            {["Vijayawada", "Gannavaram", "Guntupalli", "Amaravathi", "Bhimavaram"].map(
+            {["Vijayawada", "Gannavaram", "Guntupalli", "Amaravati", "Bhimavaram"].map(
               (location) => (
                 <Link
                   key={location}
@@ -369,25 +371,25 @@ function Index() {
               style={{ borderColor: "var(--color-gold)" }}
             />
 
-            <div className="flex gap-5 items-end">
+            <div className="flex gap-4 sm:gap-5 items-end">
               <div className="w-2/3 overflow-hidden rounded-md md:rounded-2xl shadow-2xl">
                 <img
                   src={aboutImage}
-                  alt="SLV Anjani Heights — Landmark residential project in Vijayawada"
+                  alt="SLV Group — Building Legacies Since 2007"
                   loading="lazy"
                   decoding="async"
                   fetchPriority="low"
                   className="aspect-[3/4] w-full object-cover transition-transform duration-700 hover:scale-105"
                 />
               </div>
-              <div className="mt-20 w-1/3 overflow-hidden rounded-md md:rounded-2xl shadow-xl">
+              <div className="w-[50%] sm:w-[55%] shrink-0 -mr-5 sm:-mr-12 overflow-hidden rounded-md md:rounded-2xl shadow-xl">
                 <img
                   src={aboutImage2}
-                  alt="SLV Amaravati Pride — Premium residential community"
+                  alt="SLV Group — Landmark residential and plotted developments"
                   loading="lazy"
                   decoding="async"
                   fetchPriority="low"
-                  className="aspect-[3/5] w-full object-cover transition-transform duration-700 hover:scale-105"
+                  className="aspect-[2560/1423] w-full object-cover object-center transition-transform duration-700 hover:scale-105"
                 />
               </div>
             </div>
@@ -648,8 +650,8 @@ function Index() {
                     Project Gallery
                   </h2>
                   <p className="mt-2 max-w-xl text-sm sm:text-base text-muted-foreground">
-                    Authentic site captures, elevations, and completed architectures
-                    from our developments across Andhra Pradesh.
+                    Authentic site captures, elevations, and completed architectures from our
+                    developments across Andhra Pradesh.
                   </p>
                 </div>
 
@@ -809,7 +811,9 @@ function Index() {
                     <div className="mt-6 font-display text-6xl italic font-bold text-gold/15">
                       {f.no}
                     </div>
-                    <h3 className="mt-2 text-xl font-bold tracking-wide uppercase">{f.title}</h3>
+                    <h3 className="mt-2 text-xl font-bold tracking-wide uppercase whitespace-pre-line">
+                      {f.title}
+                    </h3>
                     <div
                       className="mt-4 h-px w-12 opacity-40"
                       style={{ background: "var(--gradient-gold)" }}

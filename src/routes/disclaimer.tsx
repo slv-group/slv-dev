@@ -125,7 +125,15 @@ function DisclaimerPage() {
               <a href="mailto:info@slvgroup.co.in" className="text-gold underline">
                 info@slvgroup.co.in
               </a>{" "}
-              or +91 98595 95939.
+              or{" "}
+              <a href="tel:+919859595939" className="text-gold underline">
+                +91 98595 95939
+              </a>{" "}
+              /{" "}
+              <a href="tel:+919459823444" className="text-gold underline">
+                +91 94598 23444
+              </a>
+              .
             </p>
           </section>
         </div>

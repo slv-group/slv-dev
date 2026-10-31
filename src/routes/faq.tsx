@@ -355,17 +355,26 @@ function FaqPage() {
               </p>
             </div>
 
-            <div className="relative flex shrink-0 flex-col gap-3 w-full md:w-auto md:items-end">
-              <a
-                href="tel:+919859595939"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-gold px-6 py-3.5 text-sm font-semibold text-gold-foreground shadow-md transition-all duration-250 hover:opacity-90 hover:scale-[1.02]"
-              >
-                <Phone className="h-4 w-4" />
-                <span>+91 98595 95939</span>
-              </a>
+            <div className="relative flex shrink-0 flex-col gap-2.5 w-full md:w-auto md:items-end">
+              <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+                <a
+                  href="tel:+919859595939"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-gold px-4 py-3 text-xs sm:text-sm font-semibold text-gold-foreground shadow-md transition-all duration-250 hover:opacity-90 hover:scale-[1.02]"
+                >
+                  <Phone className="h-4 w-4" />
+                  <span>+91 98595 95939</span>
+                </a>
+                <a
+                  href="tel:+919459823444"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-gold px-4 py-3 text-xs sm:text-sm font-semibold text-gold-foreground shadow-md transition-all duration-250 hover:opacity-90 hover:scale-[1.02]"
+                >
+                  <Phone className="h-4 w-4" />
+                  <span>+91 94598 23444</span>
+                </a>
+              </div>
               <a
                 href="mailto:info@slvgroup.co.in"
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-gold/30 px-6 py-3.5 text-sm font-medium text-foreground transition-all duration-250 hover:border-gold/60 hover:bg-gold/5"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-gold/30 px-5 py-3 text-xs sm:text-sm font-medium text-foreground transition-all duration-250 hover:border-gold/60 hover:bg-gold/5"
               >
                 <Mail className="h-4 w-4" />
                 <span>info@slvgroup.co.in</span>

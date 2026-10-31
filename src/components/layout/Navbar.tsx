@@ -481,13 +481,22 @@ export function Navbar() {
             >
               <MapPin className="h-4 w-4" /> Book a Site Visit
             </Link>
-            <a
-              href="tel:+919859595939"
-              className="mt-1 flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold text-gold-foreground"
-              style={{ background: "var(--gradient-gold)" }}
-            >
-              <Phone className="h-4 w-4" /> Call Us: +91 98595 95939
-            </a>
+            <div className="mt-1 grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+              <a
+                href="tel:+919859595939"
+                className="flex items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs sm:text-sm font-semibold text-gold-foreground"
+                style={{ background: "var(--gradient-gold)" }}
+              >
+                <Phone className="h-4 w-4 shrink-0" /> Call: +91 98595 95939
+              </a>
+              <a
+                href="tel:+919459823444"
+                className="flex items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs sm:text-sm font-semibold text-gold-foreground"
+                style={{ background: "var(--gradient-gold)" }}
+              >
+                <Phone className="h-4 w-4 shrink-0" /> Call: +91 94598 23444
+              </a>
+            </div>
           </div>
         </div>
       )}

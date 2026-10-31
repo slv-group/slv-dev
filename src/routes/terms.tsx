@@ -154,10 +154,19 @@ function TermsPage() {
                   info@slvgroup.co.in
                 </a>
               </p>
-              <p>Phone: +91 98595 95939</p>
               <p>
-                Address: Ground Floor, SLV Tummala Complex, Opp. SLV PNB Commercial, Gunadala,
-                Inner Ring Road, Vijayawada, NTR District, Andhra Pradesh – 520004.
+                Phone:{" "}
+                <a href="tel:+919859595939" className="text-gold hover:underline">
+                  +91 98595 95939
+                </a>{" "}
+                /{" "}
+                <a href="tel:+919459823444" className="text-gold hover:underline">
+                  +91 94598 23444
+                </a>
+              </p>
+              <p>
+                Address: Ground Floor, SLV Tummala Complex, Opp. SLV PNB Commercial, Gunadala, Inner
+                Ring Road, Vijayawada, NTR District, Andhra Pradesh – 520004.
               </p>
             </div>
           </section>

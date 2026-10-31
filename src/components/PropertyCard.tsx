@@ -4,6 +4,7 @@ import { Heart, MapPin, Maximize, BedDouble, ArrowRight, Building2 } from "lucid
 import { cn } from "@/lib/utils";
 import { useStore } from "@/store/useStore";
 import { formatPrice, type Project } from "@/data/projects";
+import { formatLocationCity } from "@/lib/country-codes";
 
 const statusStyles: Record<string, string> = {
   Ongoing: "bg-gold/20 text-gold-foreground border-gold/40",
@@ -16,6 +17,13 @@ export function PropertyCard({ project }: { project: Project }) {
   const [imgError, setImgError] = useState(false);
   const wished = isWishlisted(project.id);
   const hasValidImage = Boolean(project.image && !imgError);
+
+  const displayBedrooms =
+    (project.name?.toLowerCase().includes("green grandeur") ||
+      project.slug === "slv-green-grandeur") &&
+    (project.bedrooms.trim() === "G+2" || project.bedrooms.trim() === "G+2 ")
+      ? "G+2 Villa"
+      : project.bedrooms;
 
   return (
     <article
@@ -120,7 +128,7 @@ export function PropertyCard({ project }: { project: Project }) {
           </h3>
           <p className="mt-1.5 flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground min-h-[1.25rem]">
             <MapPin className="h-3.5 w-3.5 shrink-0 text-gold" />
-            <span className="truncate">{project.location}, {project.city}</span>
+            <span className="truncate">{formatLocationCity(project.location, project.city)}</span>
           </p>
 
           {/* Specs */}
@@ -128,12 +136,10 @@ export function PropertyCard({ project }: { project: Project }) {
             <div className="mt-4 grid grid-cols-2 gap-2 sm:gap-2.5">
               <div
                 className="flex h-10 items-center gap-1.5 rounded-xl bg-secondary/50 px-2.5 text-xs text-muted-foreground min-w-0"
-                title={project.bedrooms}
+                title={displayBedrooms}
               >
-                <BedDouble
-                  className="h-3.5 w-3.5 shrink-0 text-gold"
-                />
-                <span className="font-medium truncate whitespace-nowrap">{project.bedrooms}</span>
+                <BedDouble className="h-3.5 w-3.5 shrink-0 text-gold" />
+                <span className="font-medium truncate whitespace-nowrap">{displayBedrooms}</span>
               </div>
               <div
                 className="flex h-10 items-center gap-1.5 rounded-xl bg-secondary/50 px-2.5 text-xs text-muted-foreground min-w-0"

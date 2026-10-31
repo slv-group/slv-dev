@@ -1,12 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import {
-  MapPin,
-  Phone,
-  Mail,
-  MessageCircle,
-  ArrowUpRight,
-  Crown,
-} from "lucide-react";
+import { MapPin, Phone, Mail, MessageCircle, ArrowUpRight, Crown } from "lucide-react";
 import slvLogo from "@/assets/SLV_Group_Logo.png";
 
 import { SOCIAL_LINKS, type SocialLinkInfo } from "@/lib/social";
@@ -244,21 +237,29 @@ export function Footer() {
           />
           <ul className="mt-6 space-y-4 text-sm text-white/55">
             <li>
-              <a
-                href="tel:+919859595939"
-                className="group flex items-center gap-3 transition-all duration-300 hover:text-gold"
-              >
-                <span
-                  className="flex h-8 w-8 items-center justify-center rounded-lg transition-all duration-300 group-hover:scale-110"
-                  style={{
-                    background: "rgba(212,175,55,0.12)",
-                    border: "1px solid rgba(212,175,55,0.2)",
-                  }}
+              <div className="space-y-2">
+                <a
+                  href="tel:+919859595939"
+                  className="group flex items-center gap-3 transition-all duration-300 hover:text-gold"
                 >
-                  <Phone className="h-3.5 w-3.5 text-gold" />
-                </span>
-                +91 98595 95939
-              </a>
+                  <span
+                    className="flex h-8 w-8 items-center justify-center rounded-lg transition-all duration-300 group-hover:scale-110 shrink-0"
+                    style={{
+                      background: "rgba(212,175,55,0.12)",
+                      border: "1px solid rgba(212,175,55,0.2)",
+                    }}
+                  >
+                    <Phone className="h-3.5 w-3.5 text-gold" />
+                  </span>
+                  <span>+91 98595 95939</span>
+                </a>
+                <a
+                  href="tel:+919459823444"
+                  className="group flex items-center gap-3 transition-all duration-300 hover:text-gold pl-11"
+                >
+                  <span>+91 94598 23444</span>
+                </a>
+              </div>
             </li>
             <li>
               <a

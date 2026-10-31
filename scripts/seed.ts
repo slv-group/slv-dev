@@ -50,7 +50,9 @@ async function seed() {
     }
   }
 
-  console.log(`Successfully seeded ${successCount} projects into Supabase! (${skippedCount} existing preserved)`);
+  console.log(
+    `Successfully seeded ${successCount} projects into Supabase! (${skippedCount} existing preserved)`,
+  );
 }
 
 seed();

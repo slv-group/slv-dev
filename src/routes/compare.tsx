@@ -7,6 +7,7 @@ import {
   mapSupabaseToProject,
   type Project,
 } from "@/data/projects";
+import { formatLocationCity } from "@/lib/country-codes";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/compare")({
@@ -71,7 +72,7 @@ function ComparePage() {
         `${p.sqftFrom.toLocaleString()} - ${p.sqftTo.toLocaleString()} ${p.areaUnit || (p.category === "Plots" ? "sq yd" : "sqft")}`,
     },
     { label: "Status", render: (p) => p.status },
-    { label: "Location", render: (p) => `${p.location}, ${p.city}` },
+    { label: "Location", render: (p) => formatLocationCity(p.location, p.city) },
     { label: "Launch", render: (p) => p.launchDate },
     {
       label: "Key Amenities",

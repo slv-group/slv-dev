@@ -324,18 +324,27 @@ function BuyersGuide() {
                 buying journey.
               </p>
             </div>
-            <div className="relative flex shrink-0 flex-col gap-3 sm:items-end">
-              <a
-                href="tel:+919859595939"
-                id="cta-call-experts"
-                className="inline-flex items-center gap-2 rounded-xl bg-gradient-gold px-6 py-3 text-sm font-semibold text-gold-foreground shadow-md transition-all duration-200 hover:opacity-90 hover:shadow-lg hover:-translate-y-0.5"
-              >
-                📞 +91 98595 95939
-              </a>
+            <div className="relative flex shrink-0 flex-col gap-2.5 sm:items-end">
+              <div className="flex flex-col sm:flex-row gap-2">
+                <a
+                  href="tel:+919859595939"
+                  id="cta-call-experts"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-gold px-4 py-2.5 text-xs sm:text-sm font-semibold text-gold-foreground shadow-md transition-all duration-200 hover:opacity-90 hover:shadow-lg hover:-translate-y-0.5"
+                >
+                  📞 +91 98595 95939
+                </a>
+                <a
+                  href="tel:+919459823444"
+                  id="cta-call-experts-2"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-gold px-4 py-2.5 text-xs sm:text-sm font-semibold text-gold-foreground shadow-md transition-all duration-200 hover:opacity-90 hover:shadow-lg hover:-translate-y-0.5"
+                >
+                  📞 +91 94598 23444
+                </a>
+              </div>
               <a
                 href="mailto:info@slvgroup.co.in"
                 id="cta-email-experts"
-                className="inline-flex items-center gap-2 rounded-xl border border-gold/30 px-6 py-3 text-sm font-medium text-foreground transition-all duration-200 hover:border-gold/60 hover:bg-gold/5"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-gold/30 px-6 py-2.5 text-xs sm:text-sm font-medium text-foreground transition-all duration-200 hover:border-gold/60 hover:bg-gold/5"
               >
                 ✉ info@slvgroup.co.in
               </a>

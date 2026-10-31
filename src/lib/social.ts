@@ -15,6 +15,32 @@ export interface SocialLinkInfo {
   ariaLabel: string;
 }
 
+export interface ContactPhoneInfo {
+  label: string;
+  value: string;
+  href: string;
+  digits: string;
+}
+
+export const PRIMARY_PHONE: ContactPhoneInfo = {
+  label: "Primary Phone",
+  value: "+91 98595 95939",
+  href: "tel:+919859595939",
+  digits: "919859595939",
+};
+
+export const SECONDARY_PHONE: ContactPhoneInfo = {
+  label: "Secondary Phone",
+  value: "+91 94598 23444",
+  href: "tel:+919459823444",
+  digits: "919459823444",
+};
+
+export const CONTACT_PHONES: readonly ContactPhoneInfo[] = [
+  PRIMARY_PHONE,
+  SECONDARY_PHONE,
+] as const;
+
 /**
  * Official SLV Group Social Media & Contact Links
  *
@@ -53,8 +79,14 @@ export const SOCIAL_LINKS = {
   },
   phone: {
     label: "Phone",
-    value: "+91 98595 95939",
-    href: "tel:+919859595939",
+    value: PRIMARY_PHONE.value,
+    href: PRIMARY_PHONE.href,
+    icon: Phone,
+  },
+  phoneSecondary: {
+    label: "Secondary Phone",
+    value: SECONDARY_PHONE.value,
+    href: SECONDARY_PHONE.href,
     icon: Phone,
   },
   email: {
