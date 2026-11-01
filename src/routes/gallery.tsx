@@ -127,7 +127,7 @@ function GalleryPage() {
               </h1>
               <p className="mx-auto mt-4 max-w-2xl text-base text-muted-foreground sm:text-lg">
                 Explore our master layouts, elevations, landscaped communities, and landmark
-                developments across the Vijayawada and Amaravti region.
+                developments across the Vijayawada and Amaravati region.
               </p>
             </div>
           </Reveal>

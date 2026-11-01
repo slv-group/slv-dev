@@ -1,30 +1,30 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect, useRef, useCallback } from "react";
-import { ArrowRight, Compass, ShieldCheck, Sparkles, Volume2, VolumeX, Award } from "lucide-react";
+import { ArrowRight, Compass, ShieldCheck, Volume2, VolumeX, Award } from "lucide-react";
 import slvHeroDesktop from "@/assets/videos/slv_green_4k_desktop.mp4";
 import slvHeroMobile from "@/assets/videos/slv_green_4k_mobile.mp4";
 import slvPoster from "@/assets/slv-poster.png";
 
 const REDIRECT_URL = "https://www.slvgroup.co.in/";
-const COUNT_INTERVAL_MS = 110; // ~110ms per number -> ~2.2s for 1 to 20
-const ANNIVERSARY_HOLD_MS = 1300; // 1.3s showcase of "20 YEARS OF EXCELLENCE" before fireworks
-const FIREWORKS_DURATION_MS = 5200; // ~5.2s fireworks celebration
-const FADE_OUT_DURATION_MS = 600; // Smooth final exit fade
+const COUNT_INTERVAL_MS = 1000; // ~1 second per number (approx. 20s total countdown)
+const ANNIVERSARY_HOLD_MS = 1800; // 1.8s showcase of "20 YEARS OF EXCELLENCE" before fireworks
+const FIREWORKS_DURATION_MS = 21000; // 21 seconds of continuous celebratory fireworks (meets 18-20s requirement)
+const FADE_OUT_DURATION_MS = 800; // Smooth final exit fade
 
 export const Route = createFileRoute("/launch")({
   head: () => ({
     meta: [
-      { title: "SLV Group — 20 Years of Excellence Launch Experience" },
+      { title: "SLV Group — New Website Launch" },
       {
         name: "description",
         content:
-          "Experience the cinematic unveiling of SLV Group's 20 Years of Excellence. Curated luxury residences, architectural mastery, and timeless living across Andhra Pradesh.",
+          "Official Launch of the new SLV Group website. Celebrating 20 Years of Excellence in real estate developments across Andhra Pradesh.",
       },
-      { property: "og:title", content: "SLV Group — 20 Years of Excellence Launch Experience" },
+      { property: "og:title", content: "SLV Group — New Website Launch" },
       {
         property: "og:description",
         content:
-          "Celebrating 20 Years of Excellence. Enter the world of SLV Group — architectural refinement and luxury residences.",
+          "01 NOV 2026 — Celebrating 20 Years of Excellence. Explore SLV Group's landmark residential gated communities and plotted developments.",
       },
       { property: "og:image", content: "/slv-logo.png" },
     ],
@@ -61,47 +61,21 @@ function createCinematicAudio(
       return buffer;
     };
 
-    // 1. Rocket Launch Ascending Whistle & Whoosh
-    const whistleOsc = ctx.createOscillator();
-    const whistleGain = ctx.createGain();
-    whistleOsc.type = "sawtooth";
-    whistleOsc.frequency.setValueAtTime(600, now);
-    whistleOsc.frequency.exponentialRampToValueAtTime(3200, now + 0.45);
-    whistleGain.gain.setValueAtTime(0.001, now);
-    whistleGain.gain.linearRampToValueAtTime(0.18, now + 0.15);
-    whistleGain.gain.exponentialRampToValueAtTime(0.001, now + 0.48);
-
-    const whistleFilter = ctx.createBiquadFilter();
-    whistleFilter.type = "bandpass";
-    whistleFilter.frequency.setValueAtTime(1100, now);
-    whistleFilter.frequency.exponentialRampToValueAtTime(3400, now + 0.45);
-    whistleFilter.Q.value = 5;
-
-    whistleOsc.connect(whistleFilter);
-    whistleFilter.connect(whistleGain);
-    whistleGain.connect(ctx.destination);
-    whistleOsc.start(now);
-    whistleOsc.stop(now + 0.5);
-
-    // 2. Heavy Aerial Explosion Bangs (Deep Bass Thuds & Resonant Cracks)
-    const burstTimings = [0.45, 0.95, 1.45, 2.1, 2.8, 3.6];
-    burstTimings.forEach((t) => {
-      const burstTime = now + t;
-
-      // Sub-bass resonant thump
+    // Helper: Schedule an aerial burst boom & crack at time `t`
+    const scheduleBoom = (t: number, subFreq = 145, gainLevel = 0.45) => {
+      const boomTime = now + t;
       const boomOsc = ctx.createOscillator();
       const boomGain = ctx.createGain();
       boomOsc.type = "sine";
-      boomOsc.frequency.setValueAtTime(150, burstTime);
-      boomOsc.frequency.exponentialRampToValueAtTime(32, burstTime + 0.4);
-      boomGain.gain.setValueAtTime(0.5, burstTime);
-      boomGain.gain.exponentialRampToValueAtTime(0.001, burstTime + 0.45);
+      boomOsc.frequency.setValueAtTime(subFreq, boomTime);
+      boomOsc.frequency.exponentialRampToValueAtTime(30, boomTime + 0.45);
+      boomGain.gain.setValueAtTime(gainLevel, boomTime);
+      boomGain.gain.exponentialRampToValueAtTime(0.001, boomTime + 0.5);
       boomOsc.connect(boomGain);
       boomGain.connect(ctx.destination);
-      boomOsc.start(burstTime);
-      boomOsc.stop(burstTime + 0.5);
+      boomOsc.start(boomTime);
+      boomOsc.stop(boomTime + 0.55);
 
-      // Explosive initial air crack noise
       const crackBuffer = createNoiseBuffer(0.2);
       const crackSource = ctx.createBufferSource();
       crackSource.buffer = crackBuffer;
@@ -109,17 +83,55 @@ function createCinematicAudio(
       crackFilter.type = "lowpass";
       crackFilter.frequency.value = 1300;
       const crackGain = ctx.createGain();
-      crackGain.gain.setValueAtTime(0.4, burstTime);
-      crackGain.gain.exponentialRampToValueAtTime(0.001, burstTime + 0.25);
+      crackGain.gain.setValueAtTime(gainLevel * 0.75, boomTime);
+      crackGain.gain.exponentialRampToValueAtTime(0.001, boomTime + 0.25);
       crackSource.connect(crackFilter);
       crackFilter.connect(crackGain);
       crackGain.connect(ctx.destination);
-      crackSource.start(burstTime);
+      crackSource.start(boomTime);
+    };
+
+    // Helper: Schedule ascending rocket whistle
+    const scheduleWhistle = (t: number) => {
+      const whistleTime = now + t;
+      const whistleOsc = ctx.createOscillator();
+      const whistleGain = ctx.createGain();
+      whistleOsc.type = "sawtooth";
+      whistleOsc.frequency.setValueAtTime(550, whistleTime);
+      whistleOsc.frequency.exponentialRampToValueAtTime(3000, whistleTime + 0.45);
+      whistleGain.gain.setValueAtTime(0.001, whistleTime);
+      whistleGain.gain.linearRampToValueAtTime(0.15, whistleTime + 0.15);
+      whistleGain.gain.exponentialRampToValueAtTime(0.001, whistleTime + 0.48);
+
+      const whistleFilter = ctx.createBiquadFilter();
+      whistleFilter.type = "bandpass";
+      whistleFilter.frequency.setValueAtTime(1100, whistleTime);
+      whistleFilter.frequency.exponentialRampToValueAtTime(3200, whistleTime + 0.45);
+      whistleFilter.Q.value = 4.5;
+
+      whistleOsc.connect(whistleFilter);
+      whistleFilter.connect(whistleGain);
+      whistleGain.connect(ctx.destination);
+      whistleOsc.start(whistleTime);
+      whistleOsc.stop(whistleTime + 0.5);
+    };
+
+    // 1. Initial rocket launches and bursts
+    scheduleWhistle(0);
+    scheduleBoom(0.45, 155, 0.5);
+    scheduleBoom(0.85, 135, 0.45);
+    scheduleBoom(1.8, 140, 0.42);
+
+    // 2. Continuous periodic celebratory booms throughout 20s
+    const boomMoments = [3.0, 4.2, 5.6, 7.0, 8.5, 10.0, 11.5, 13.0, 14.5, 16.0, 17.5, 19.0, 19.5];
+    boomMoments.forEach((t) => {
+      if (Math.random() > 0.4) scheduleWhistle(t - 0.4);
+      scheduleBoom(t, 130 + Math.random() * 30, 0.38 + Math.random() * 0.15);
     });
 
-    // 3. Dense Festive Sparkle & Crackle Chain
-    for (let i = 0; i < 40; i++) {
-      const popDelay = 0.5 + Math.random() * 3.4;
+    // 3. Dense Festive Sparkle & Crackle Chain across duration
+    for (let i = 0; i < 70; i++) {
+      const popDelay = 0.5 + Math.random() * 19.5;
       const popDuration = 0.015 + Math.random() * 0.025;
       const popBuffer = createNoiseBuffer(popDuration);
       const popSource = ctx.createBufferSource();
@@ -131,7 +143,7 @@ function createCinematicAudio(
       popFilter.Q.value = 2.5 + Math.random() * 2.5;
 
       const popGain = ctx.createGain();
-      popGain.gain.setValueAtTime(0.18 + Math.random() * 0.15, now + popDelay);
+      popGain.gain.setValueAtTime(0.12 + Math.random() * 0.12, now + popDelay);
       popGain.gain.exponentialRampToValueAtTime(0.001, now + popDelay + popDuration);
 
       popSource.connect(popFilter);
@@ -139,24 +151,6 @@ function createCinematicAudio(
       popGain.connect(ctx.destination);
       popSource.start(now + popDelay);
     }
-
-    // 4. Sparkler Sizzle / Sizzling Embers
-    const sizzleDuration = 3.6;
-    const sizzleBuffer = createNoiseBuffer(sizzleDuration);
-    const sizzleSource = ctx.createBufferSource();
-    sizzleSource.buffer = sizzleBuffer;
-    const sizzleFilter = ctx.createBiquadFilter();
-    sizzleFilter.type = "highpass";
-    sizzleFilter.frequency.value = 4200;
-    const sizzleGain = ctx.createGain();
-    sizzleGain.gain.setValueAtTime(0.001, now + 0.45);
-    sizzleGain.gain.linearRampToValueAtTime(0.07, now + 0.85);
-    sizzleGain.gain.exponentialRampToValueAtTime(0.001, now + sizzleDuration + 0.45);
-
-    sizzleSource.connect(sizzleFilter);
-    sizzleFilter.connect(sizzleGain);
-    sizzleGain.connect(ctx.destination);
-    sizzleSource.start(now + 0.45);
   } catch {
     // Audio fallback
   }
@@ -165,9 +159,9 @@ function createCinematicAudio(
 export type LaunchExperienceState =
   | "idle" // Normal landing screen
   | "fading_intro" // Smooth fade-out of intro content & button
-  | "counting" // Sequential 1 to 20 counter
+  | "counting" // Sequential 1 to 20 counter (approx. 20s)
   | "anniversary" // 20 YEARS OF EXCELLENCE grand reveal
-  | "fireworks" // Celebratory golden fireworks display
+  | "fireworks" // Celebratory golden fireworks display (20+ seconds)
   | "completed"; // Exit fade & redirect
 
 export function LaunchPage() {
@@ -234,7 +228,7 @@ export function LaunchPage() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // ── Step 4: Golden Fireworks Canvas Particle Engine ──
+  // ── Step 5: Continuous 20-Second Fireworks Canvas Particle Engine ──
   const startFireworks = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -281,52 +275,106 @@ export function LaunchPage() {
           alpha: 1,
           color: colors[Math.floor(Math.random() * colors.length)],
           size: Math.random() * 2.8 + 1.4,
-          decay: Math.random() * 0.013 + 0.007,
-          gravity: 0.09,
+          decay: Math.random() * 0.012 + 0.006,
+          gravity: 0.085,
           sparkle: Math.random() > 0.35,
           trail: [],
         });
       }
     };
 
-    // Staggered cinematic firework bursts framing the "20 YEARS OF EXCELLENCE" title
     const addTimeout = (fn: () => void, delayMs: number) => {
       const id = setTimeout(fn, delayMs);
       timeoutsRef.current.push(id);
     };
 
-    // 1. Initial flanking bursts (left and right of central title)
+    // Staggered sequence across the full 20+ second celebration
+    // 0s – Initial flanking bursts
     createBurst(canvas.width * 0.22, canvas.height * 0.35, 110, 1.05);
     createBurst(canvas.width * 0.78, canvas.height * 0.35, 110, 1.05);
 
-    // 2. High central burst above the "20"
+    // 0.8s – High central burst
     addTimeout(() => {
       createBurst(canvas.width * 0.5, canvas.height * 0.18, 140, 1.2);
-    }, 450);
+    }, 800);
 
-    // 3. Wide champagne cascade bursts
+    // 1.8s – Champagne cascade bursts
     addTimeout(() => {
       createBurst(canvas.width * 0.35, canvas.height * 0.26, 95, 0.95);
       createBurst(canvas.width * 0.65, canvas.height * 0.26, 95, 0.95);
-    }, 1100);
-
-    // 4. Dramatic outer festive bursts
-    addTimeout(() => {
-      createBurst(canvas.width * 0.14, canvas.height * 0.42, 90, 1.0);
-      createBurst(canvas.width * 0.86, canvas.height * 0.42, 90, 1.0);
     }, 1800);
 
-    // 5. Crown canopy burst directly overhead
+    // 3.0s – Outer festive bursts
+    addTimeout(() => {
+      createBurst(canvas.width * 0.14, canvas.height * 0.4, 90, 1.0);
+      createBurst(canvas.width * 0.86, canvas.height * 0.4, 90, 1.0);
+    }, 3000);
+
+    // 4.2s – Golden canopy burst
     addTimeout(() => {
       createBurst(canvas.width * 0.5, canvas.height * 0.22, 130, 1.15);
-    }, 2500);
+    }, 4200);
 
-    // 6. Grand celebratory crescendo finale
+    // 5.6s – Mid-stage dual bursts
     addTimeout(() => {
-      createBurst(canvas.width * 0.28, canvas.height * 0.3, 110, 1.1);
-      createBurst(canvas.width * 0.5, canvas.height * 0.15, 150, 1.25);
-      createBurst(canvas.width * 0.72, canvas.height * 0.3, 110, 1.1);
-    }, 3200);
+      createBurst(canvas.width * 0.28, canvas.height * 0.32, 105, 1.05);
+      createBurst(canvas.width * 0.72, canvas.height * 0.32, 105, 1.05);
+    }, 5600);
+
+    // 7.0s – Triple crescendo burst
+    addTimeout(() => {
+      createBurst(canvas.width * 0.25, canvas.height * 0.28, 100, 1.0);
+      createBurst(canvas.width * 0.5, canvas.height * 0.16, 140, 1.2);
+      createBurst(canvas.width * 0.75, canvas.height * 0.28, 100, 1.0);
+    }, 7000);
+
+    // 8.5s – Diamond sparkling burst
+    addTimeout(() => {
+      createBurst(canvas.width * 0.38, canvas.height * 0.24, 110, 1.1);
+      createBurst(canvas.width * 0.62, canvas.height * 0.24, 110, 1.1);
+    }, 8500);
+
+    // 10.0s – Mid-show grand starburst
+    addTimeout(() => {
+      createBurst(canvas.width * 0.5, canvas.height * 0.2, 150, 1.25);
+    }, 10000);
+
+    // 11.5s – Wide outer celebratory bursts
+    addTimeout(() => {
+      createBurst(canvas.width * 0.18, canvas.height * 0.38, 95, 1.0);
+      createBurst(canvas.width * 0.82, canvas.height * 0.38, 95, 1.0);
+    }, 11500);
+
+    // 13.0s – Cascading amber & gold bursts
+    addTimeout(() => {
+      createBurst(canvas.width * 0.32, canvas.height * 0.3, 105, 1.05);
+      createBurst(canvas.width * 0.68, canvas.height * 0.3, 105, 1.05);
+    }, 13000);
+
+    // 14.5s – High apex canopy burst
+    addTimeout(() => {
+      createBurst(canvas.width * 0.5, canvas.height * 0.18, 135, 1.15);
+    }, 14500);
+
+    // 16.0s – Twin golden bursts
+    addTimeout(() => {
+      createBurst(canvas.width * 0.24, canvas.height * 0.34, 100, 1.05);
+      createBurst(canvas.width * 0.76, canvas.height * 0.34, 100, 1.05);
+    }, 16000);
+
+    // 17.5s – Pre-finale escalation bursts
+    addTimeout(() => {
+      createBurst(canvas.width * 0.35, canvas.height * 0.25, 110, 1.1);
+      createBurst(canvas.width * 0.65, canvas.height * 0.25, 110, 1.1);
+    }, 17500);
+
+    // 19.0s – GRAND JUBILEE FINALE (Coordinated 4-burst sky celebration)
+    addTimeout(() => {
+      createBurst(canvas.width * 0.2, canvas.height * 0.28, 120, 1.15);
+      createBurst(canvas.width * 0.4, canvas.height * 0.16, 150, 1.25);
+      createBurst(canvas.width * 0.6, canvas.height * 0.16, 150, 1.25);
+      createBurst(canvas.width * 0.8, canvas.height * 0.28, 120, 1.15);
+    }, 19000);
 
     const render = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -385,11 +433,11 @@ export function LaunchPage() {
   const handleEnterExperience = () => {
     if (animState !== "idle") return;
 
-    // Step 1: Smooth button interaction & fade out intro content (300ms)
+    // Step 1: Smooth button interaction & fade out intro content (350ms)
     setAnimState("fading_intro");
 
     const introTimeout = setTimeout(() => {
-      // Step 2: Start counting from 1 to 20
+      // Step 2: Natural countdown from 1 to 20 (~1s per number, ~20s total)
       setAnimState("counting");
       setCounter(1);
 
@@ -406,13 +454,13 @@ export function LaunchPage() {
           // Step 3: Reveal "20 YEARS OF EXCELLENCE"
           setAnimState("anniversary");
 
-          // Step 4: After anniversary showcase, start celebratory fireworks!
+          // Step 4: After anniversary showcase, start celebratory fireworks (at least 20 seconds)!
           const fireworksDelayTimeout = setTimeout(() => {
             setAnimState("fireworks");
             startFireworks();
             createCinematicAudio(muted, audioCtxRef);
 
-            // Step 5: After fireworks celebration finishes, smoothly redirect to main site
+            // Step 5: After 21s fireworks celebration finishes, smoothly redirect to main site
             const completionTimeout = setTimeout(() => {
               setAnimState("completed");
               const redirectTimeout = setTimeout(() => {
@@ -433,15 +481,6 @@ export function LaunchPage() {
     }, 350);
 
     timeoutsRef.current.push(introTimeout);
-  };
-
-  // ── Skip Intro Navigation ──
-  const handleSkipIntro = (e?: React.MouseEvent) => {
-    if (e) e.preventDefault();
-    if (hasNavigatedRef.current) return;
-    hasNavigatedRef.current = true;
-    cleanupAll();
-    window.location.href = REDIRECT_URL;
   };
 
   const videoSrc = isMobile ? slvHeroMobile : slvHeroDesktop;
@@ -493,7 +532,7 @@ export function LaunchPage() {
         <div className="slv-line slv-line-right" />
       </div>
 
-      {/* ── 4. HEADER NAVIGATION ── */}
+      {/* ── 4. HEADER NAVIGATION (Skip Intro completely removed) ── */}
       <header className="relative z-40 flex items-center justify-between px-6 py-6 md:px-12 md:py-8 w-full">
         <div className="flex items-center gap-3">
           <span className="h-2 w-2 rounded-full bg-[#c9a84c] animate-pulse" />
@@ -502,41 +541,31 @@ export function LaunchPage() {
           </span>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center">
           {/* Sound Toggle */}
           <button
             onClick={() => setMuted(!muted)}
-            className="p-2 rounded-full border border-white/10 bg-black/40 hover:bg-black/60 text-[#c9a84c] transition-all cursor-pointer"
+            className="p-2.5 rounded-full border border-white/10 bg-black/40 hover:bg-black/60 text-[#c9a84c] transition-all cursor-pointer"
             title={muted ? "Unmute audio" : "Mute audio"}
             aria-label={muted ? "Unmute audio" : "Mute audio"}
           >
             {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-          </button>
-
-          {/* Skip Intro */}
-          <button
-            onClick={handleSkipIntro}
-            className="group inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-[#e8d5a3] hover:text-[#fff] transition-colors px-3.5 py-1.5 rounded-full border border-white/15 bg-black/40 hover:bg-black/70 hover:border-[#c9a84c]/50 cursor-pointer"
-            aria-label="Skip intro and go to main website"
-          >
-            <span>Skip Intro</span>
-            <ArrowRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1 text-[#c9a84c]" />
           </button>
         </div>
       </header>
 
       {/* ── 5. MAIN STAGE ── */}
       <main className="relative z-40 flex flex-col items-center justify-center min-h-[calc(100vh-160px)] px-6 text-center max-w-5xl mx-auto">
-        {/* SLV Logo with Breathing Gold Halo (Visible in idle, gently scales during celebration) */}
+        {/* 1. SLV Group Logo with Breathing Gold Halo */}
         <div
-          className={`slv-logo-container relative mb-6 transition-all duration-700 ${
+          className={`slv-logo-container relative mb-6 sm:mb-8 transition-all duration-700 ${
             animState === "counting" || animState === "anniversary" || animState === "fireworks"
               ? "opacity-90 scale-90 -translate-y-2"
               : ""
           }`}
         >
           <div className="slv-logo-halo absolute inset-0 rounded-full blur-2xl" />
-          <div className="relative p-3 rounded-2xl bg-gradient-to-b from-white/10 to-transparent border border-white/15 shadow-[0_20px_60px_rgba(0,0,0,0.85)] backdrop-blur-md">
+          <div className="relative p-3.5 sm:p-4 rounded-2xl bg-gradient-to-b from-white/10 to-transparent border border-white/15 shadow-[0_20px_60px_rgba(0,0,0,0.85)] backdrop-blur-md">
             <img
               src="/slv-logo.png"
               alt="SLV Group Emblem"
@@ -546,47 +575,46 @@ export function LaunchPage() {
           </div>
         </div>
 
-        {/* ── PHASE A: INTRODUCTORY CONTENT (Visible when idle) ── */}
+        {/* ── PHASE A: SIMPLIFIED LAUNCH HERO (Visible when idle) ── */}
         <div
-          className={`slv-idle-content transition-all duration-500 ease-out ${
+          className={`slv-idle-content flex flex-col items-center justify-center transition-all duration-500 ease-out ${
             isExperienceActive
               ? "opacity-0 -translate-y-6 pointer-events-none absolute"
               : "opacity-100"
           }`}
         >
-          <div className="inline-flex items-center gap-2 mb-4 px-4 py-1 rounded-full border border-[#c9a84c]/30 bg-black/50 backdrop-blur-sm text-[#e8d5a3] text-[11px] uppercase tracking-[0.3em]">
-            <Sparkles className="w-3 h-3 text-[#c9a84c]" />
-            <span>Architecture &bull; Refinement &bull; Legacy</span>
-          </div>
-
-          <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-[#f9f7f2] leading-[1.15] mb-5 drop-shadow-[0_4px_24px_rgba(0,0,0,0.8)]">
-            The Art of{" "}
-            <span className="italic font-normal bg-gradient-to-r from-[#eddab3] via-[#c9a84c] to-[#eddab3] bg-clip-text text-transparent">
-              Elevated Living
+          {/* 2. Primary Heading: NEW WEBSITE LAUNCH (Strict Single Line) */}
+          <h1 className="font-serif text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold uppercase tracking-[0.12em] sm:tracking-[0.18em] md:tracking-[0.22em] text-[#fffdfa] leading-tight drop-shadow-[0_4px_30px_rgba(0,0,0,0.95)] whitespace-nowrap select-none">
+            New Website{" "}
+            <span className="bg-gradient-to-r from-[#ffe49e] via-[#c9a84c] to-[#fff3d1] bg-clip-text text-transparent">
+              Launch
             </span>
           </h1>
 
-          <p className="max-w-xl mx-auto text-sm md:text-base text-[#d1cbc0] font-light leading-relaxed mb-9 tracking-wide drop-shadow-md">
-            Welcome to SLV Group. Rooted in nearly two decades of trust across Andhra Pradesh, we
-            sculpt landmark communities and visionary spaces where architectural elegance meets
-            uncompromising craftsmanship.
-          </p>
+          {/* 3. Launch Date: 01 NOV 2026 */}
+          <div className="mt-4 sm:mt-5 mb-8 sm:mb-11 inline-flex items-center gap-3 px-6 py-2.5 rounded-full border border-[#c9a84c]/40 bg-black/60 backdrop-blur-md shadow-[0_4px_25px_rgba(201,168,76,0.2)]">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#c9a84c] animate-pulse" />
+            <p className="font-serif text-sm sm:text-base md:text-lg tracking-[0.3em] sm:tracking-[0.35em] text-[#f4e2b8] font-medium uppercase whitespace-nowrap">
+              01 NOV 2026
+            </p>
+            <span className="h-1.5 w-1.5 rounded-full bg-[#c9a84c] animate-pulse" />
+          </div>
 
-          {/* Primary CTA Button */}
+          {/* 4. Prominent Enter the Experience Button (Enlarged & High-Impact) */}
           <div className="flex items-center justify-center">
             <button
               onClick={handleEnterExperience}
               disabled={isExperienceActive}
-              className="slv-cta-btn group relative inline-flex items-center justify-center gap-3 px-9 py-4 rounded-full text-xs uppercase tracking-[0.25em] font-semibold text-[#0a0a0a] bg-gradient-to-r from-[#d4b55a] via-[#f3e7c4] to-[#c49f42] hover:shadow-[0_0_40px_rgba(201,168,76,0.6)] transition-all duration-300 transform hover:scale-[1.03] active:scale-[0.96] cursor-pointer disabled:cursor-wait"
+              className="slv-cta-btn group relative inline-flex items-center justify-center gap-4 px-12 py-5 sm:px-16 sm:py-6 md:px-20 md:py-6.5 rounded-full text-sm sm:text-base md:text-lg uppercase tracking-[0.26em] sm:tracking-[0.28em] font-bold text-[#0a0a0a] bg-gradient-to-r from-[#d4b55a] via-[#f8eed1] to-[#c49f42] hover:shadow-[0_0_65px_rgba(201,168,76,0.8)] transition-all duration-300 transform hover:scale-[1.04] active:scale-[0.96] cursor-pointer disabled:cursor-wait whitespace-nowrap"
             >
-              <Compass className="w-4 h-4 text-[#1a1405] transition-transform duration-700 group-hover:rotate-90" />
+              <Compass className="w-5 h-5 sm:w-6 sm:h-6 text-[#1a1405] transition-transform duration-700 group-hover:rotate-90 shrink-0" />
               <span>Enter The Experience</span>
               <span className="slv-btn-shimmer" />
             </button>
           </div>
         </div>
 
-        {/* ── PHASE B: STEP 2 SEQUENTIAL COUNT (1 to 20) ── */}
+        {/* ── PHASE B: STEP 3 NATURAL COUNTDOWN (1 to 20, ~1s per number) ── */}
         {animState === "counting" && (
           <div
             className="slv-counter-stage relative flex flex-col items-center justify-center pointer-events-none"
@@ -614,7 +642,7 @@ export function LaunchPage() {
           </div>
         )}
 
-        {/* ── PHASE C & D: STEP 3 & 4 "20 YEARS OF EXCELLENCE" CELEBRATION & FIREWORKS ── */}
+        {/* ── PHASE C & D: STEP 4 & 5 "20 YEARS OF EXCELLENCE" CELEBRATION & 20-SECOND FIREWORKS ── */}
         {(animState === "anniversary" || animState === "fireworks") && (
           <div
             className="slv-anniversary-stage relative flex flex-col items-center justify-center text-center px-4 pointer-events-none select-none z-30"
@@ -777,13 +805,13 @@ export function LaunchPage() {
 
         /* Counter Stage Animations */
         .slv-count-num {
-          animation: slv-num-tick 0.11s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          animation: slv-num-tick 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         @keyframes slv-num-tick {
           0% {
-            transform: scale(0.92);
-            opacity: 0.6;
+            transform: scale(0.9);
+            opacity: 0.4;
           }
           100% {
             transform: scale(1);
@@ -797,7 +825,7 @@ export function LaunchPage() {
 
         /* Anniversary Reveal Animations */
         .slv-hero-20 {
-          animation: slv-reveal-20 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          animation: slv-reveal-20 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         @keyframes slv-reveal-20 {
@@ -848,7 +876,7 @@ export function LaunchPage() {
         /* Final Fade Out before Redirection */
         [data-state="completed"] {
           opacity: 0;
-          transition: opacity 0.6s ease-out;
+          transition: opacity 0.8s ease-out;
         }
 
         /* Reduced Motion Accessibility */

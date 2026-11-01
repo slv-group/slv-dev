@@ -19,7 +19,7 @@ export const Route = createFileRoute("/faq")({
       {
         name: "description",
         content:
-          "Find answers to frequently asked questions about SLV Group properties, RERA compliance, payment plans, site visits, and amenities in Vijayawada & Amaravti.",
+          "Find answers to frequently asked questions about SLV Group properties, RERA compliance, payment plans, site visits, and amenities in Vijayawada & Amaravati.",
       },
       { property: "og:site_name", content: "SLV Group" },
       { property: "og:title", content: "Frequently Asked Questions — SLV Group" },

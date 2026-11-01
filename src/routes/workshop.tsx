@@ -92,7 +92,7 @@ const sessions = [
   {
     title: "On-Site Quality Control",
     date: "Sat, 08 Mar",
-    location: "SLV Amaravti Grand Site",
+    location: "SLV Amaravati Grand Site",
     audience: "Contractors & Site Engineers",
   },
   {

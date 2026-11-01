@@ -25,24 +25,23 @@ import { supabase } from "@/integrations/supabase/client";
 import { SOCIAL_LINKS } from "@/lib/social";
 import { formatLocationCity } from "@/lib/country-codes";
 import aboutImage from "@/assets/homepage1.jpg";
-import aboutImage2 from "@/assets/homepage2.jpg";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "SLV Group — Premium Homes & Plotted Layouts in Vijayawada & Amaravti" },
+      { title: "SLV Group — Premium Homes & Plotted Layouts in Vijayawada & Amaravati" },
       {
         name: "description",
         content:
-          "Discover premier residential gated communities, open plots, and luxury developments across Vijayawada, Guntur, and the Amaravti capital region by SLV Group.",
+          "Discover premier residential gated communities, open plots, and luxury developments across Vijayawada, Guntur, and the Amaravati capital region by SLV Group.",
       },
       { property: "og:site_name", content: "SLV Group" },
       { property: "og:title", content: "SLV Group — Leading Real Estate Developers" },
       {
         property: "og:description",
         content:
-          "Premier plotted layouts, luxury villas, and residential developments across the Vijayawada and Amaravti capital region.",
+          "Premier plotted layouts, luxury villas, and residential developments across the Vijayawada and Amaravati capital region.",
       },
       { property: "og:url", content: "https://www.slvgroup.co.in" },
       { property: "og:image", content: "https://www.slvgroup.co.in/slv-logo.png" },
@@ -51,7 +50,7 @@ export const Route = createFileRoute("/")({
       {
         name: "twitter:description",
         content:
-          "Premier plotted layouts, luxury villas, and residential developments across the Vijayawada and Amaravti capital region.",
+          "Premier plotted layouts, luxury villas, and residential developments across the Vijayawada and Amaravati capital region.",
       },
       { name: "twitter:image", content: "https://www.slvgroup.co.in/slv-logo.png" },
     ],
@@ -159,7 +158,7 @@ const philosophy = [
     no: "02",
     icon: TrendingUp,
     title: "Strategic\nLocations",
-    desc: "Projects sit on the fastest-growing corridors of Vijayawada and Amaravti for maximum value appreciation.",
+    desc: "Projects sit on the fastest-growing corridors of Vijayawada and Amaravati for maximum value appreciation.",
   },
   {
     no: "03",
@@ -248,7 +247,7 @@ function Index() {
             url: "https://www.slvgroup.co.in",
             logo: "https://www.slvgroup.co.in/slv-logo.png",
             description:
-              "Premier real estate developer in Andhra Pradesh, delivering residential gated communities, open plots, and commercial landmarks across Vijayawada, Guntur, and Amaravti.",
+              "Premier real estate developer in Andhra Pradesh, delivering residential gated communities, open plots, and commercial landmarks across Vijayawada, Guntur, and Amaravati.",
             telephone: ["+91-98595-95939", "+91-94598-23444"],
             email: "info@slvgroup.co.in",
             address: {
@@ -333,7 +332,7 @@ function Index() {
 
           {/* Locations */}
           <div className="flex flex-wrap items-center justify-center gap-2.5">
-            {["Vijayawada", "Gannavaram", "Guntupalli", "Amaravti", "Bhimavaram"].map(
+            {["Vijayawada", "Gannavaram", "Guntupalli", "Amaravati", "Bhimavaram"].map(
               (location) => (
                 <Link
                   key={location}
@@ -357,60 +356,45 @@ function Index() {
         />
       </section>
 
-      {/* ── About SLV — staggered images ── */}
-      <section className="mx-auto grid max-w-7xl items-center gap-12 sm:gap-16 px-6 py-12 sm:py-16 lg:grid-cols-2 lg:gap-20 xl:gap-24">
+      {/* ── About SLV — refined medium image showcase ── */}
+      <section className="mx-auto grid max-w-7xl items-center gap-12 sm:gap-16 px-6 py-12 sm:py-16 lg:grid-cols-2 lg:gap-14 xl:gap-20">
         <Reveal>
-          <div className="relative mx-auto w-full max-w-lg lg:max-w-none">
+          <div className="relative mx-auto w-full max-w-sm sm:max-w-md lg:max-w-[430px]">
             {/* Ornamental frame lines */}
             <div
-              className="absolute -left-3 -top-3 sm:-left-5 sm:-top-5 -z-10 h-28 w-28 sm:h-36 sm:w-36 border-l-2 border-t-2 opacity-40 transition-opacity duration-500 hover:opacity-70"
+              className="absolute -left-3 -top-3 sm:-left-5 sm:-top-5 -z-10 h-24 w-24 sm:h-32 sm:w-32 border-l-2 border-t-2 opacity-40 transition-opacity duration-500 hover:opacity-75"
               style={{ borderColor: "var(--color-gold)" }}
             />
             <div
-              className="absolute -bottom-3 -right-3 sm:-bottom-5 sm:-right-5 -z-10 h-24 w-24 sm:h-28 sm:w-28 border-r-2 border-b-2 opacity-30 transition-opacity duration-500 hover:opacity-60"
+              className="absolute -bottom-3 -right-3 sm:-bottom-5 sm:-right-5 -z-10 h-20 w-20 sm:h-28 sm:w-28 border-r-2 border-b-2 opacity-30 transition-opacity duration-500 hover:opacity-65"
               style={{ borderColor: "var(--color-gold)" }}
             />
 
-            {/* Staggered composition: side-by-side with median vertical alignment */}
-            <div className="relative flex items-center gap-3.5 sm:gap-5">
-              {/* Main image */}
-              <div className="relative z-0 w-[61%] sm:w-[62%] shrink-0 overflow-hidden rounded-2xl sm:rounded-3xl shadow-2xl transition-all duration-500 hover:shadow-[0_25px_60px_-15px_rgba(212,175,55,0.22)] border border-border/50">
-                <img
-                  src={aboutImage}
-                  alt="SLV Group — Building Legacies Since 2007"
-                  loading="lazy"
-                  decoding="async"
-                  fetchPriority="low"
-                  className="aspect-[3/4] w-full object-cover object-center transition-transform duration-700 hover:scale-105"
-                />
-              </div>
+            {/* Medium refined image frame */}
+            <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl shadow-2xl transition-all duration-500 hover:shadow-[0_20px_50px_-12px_rgba(212,175,55,0.25)] border border-border/50">
+              <img
+                src={aboutImage}
+                alt="SLV Group — Building Legacies Since 2007"
+                loading="lazy"
+                decoding="async"
+                fetchPriority="low"
+                className="aspect-[4/4.8] w-full object-cover object-center transition-transform duration-700 hover:scale-105"
+              />
+            </div>
 
-              {/* Secondary image — moved to the side in the vertical median */}
-              <div className="relative z-10 w-[39%] sm:w-[38%] shrink-0 overflow-hidden rounded-2xl sm:rounded-3xl shadow-xl transition-all duration-500 hover:shadow-[0_25px_60px_-15px_rgba(212,175,55,0.28)] border border-border/50">
-                <img
-                  src={aboutImage2}
-                  alt="SLV Group — Landmark residential and plotted developments"
-                  loading="lazy"
-                  decoding="async"
-                  fetchPriority="low"
-                  className="aspect-[4/5] w-full object-cover object-center transition-transform duration-700 hover:scale-105"
-                />
-              </div>
-
-              {/* Floating badge */}
-              <div
-                className="absolute -bottom-5 sm:-bottom-6 left-4 sm:left-8 z-20 rounded-2xl px-4 py-3 sm:px-5 sm:py-3.5 shadow-2xl backdrop-blur-xl border border-white/10"
-                style={{
-                  background: "var(--gradient-royal)",
-                }}
-              >
-                <p className="font-display text-xl sm:text-2xl font-bold text-white leading-none">
-                  20+
-                </p>
-                <p className="mt-1 text-[0.6rem] sm:text-[0.65rem] uppercase tracking-widest text-white/70 whitespace-nowrap">
-                  Years of Trust
-                </p>
-              </div>
+            {/* Floating badge */}
+            <div
+              className="absolute -bottom-5 left-4 sm:left-6 z-20 rounded-2xl px-4 py-2.5 sm:px-5 sm:py-3 shadow-2xl backdrop-blur-xl border border-white/10"
+              style={{
+                background: "var(--gradient-royal)",
+              }}
+            >
+              <p className="font-display text-xl sm:text-2xl font-bold text-white leading-none">
+                20+
+              </p>
+              <p className="mt-1 text-[0.6rem] sm:text-[0.65rem] uppercase tracking-widest text-white/70 whitespace-nowrap">
+                Years of Trust
+              </p>
             </div>
           </div>
         </Reveal>
@@ -436,7 +420,7 @@ function Index() {
           <p className="mt-6 text-lg font-light leading-relaxed text-muted-foreground">
             At SLV Group, we don't just build structures — we curate lifestyles. Beginning in
             Bhimavaram in 2007 and entering Vijayawada in 2015 with SLV Anjani Heights, we have
-            redefined the skyline of the Amaravti capital region with architectural brilliance and
+            redefined the skyline of the Amaravati capital region with architectural brilliance and
             structural integrity.
           </p>
           <p className="mt-4 leading-relaxed text-muted-foreground">
@@ -502,7 +486,7 @@ function Index() {
                 </h2>
 
                 <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-                  Explore our current developments across Vijayawada and the Amaravti region.
+                  Explore our current developments across Vijayawada and the Amaravati region.
                 </p>
               </div>
 

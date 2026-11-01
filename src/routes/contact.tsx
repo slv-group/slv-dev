@@ -22,7 +22,7 @@ Thank you.`);
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact Us — SLV Group | Vijayawada & Amaravti" },
+      { title: "Contact Us — SLV Group | Vijayawada & Amaravati" },
       {
         name: "description",
         content:
@@ -248,19 +248,23 @@ function ContactPage() {
                   </p>
                   {"phones" in i && Array.isArray((i as any).phones) ? (
                     <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">
-                      {(i as any).phones.map((phone: { value: string; href: string }, idx: number) => (
-                        <span key={phone.href} className="inline-flex items-center">
-                          <a
-                            href={phone.href}
-                            className="font-medium text-foreground hover:text-gold transition-colors"
-                          >
-                            {phone.value}
-                          </a>
-                          {idx < (i as any).phones.length - 1 && (
-                            <span className="hidden sm:inline mx-1.5 text-muted-foreground">•</span>
-                          )}
-                        </span>
-                      ))}
+                      {(i as any).phones.map(
+                        (phone: { value: string; href: string }, idx: number) => (
+                          <span key={phone.href} className="inline-flex items-center">
+                            <a
+                              href={phone.href}
+                              className="font-medium text-foreground hover:text-gold transition-colors"
+                            >
+                              {phone.value}
+                            </a>
+                            {idx < (i as any).phones.length - 1 && (
+                              <span className="hidden sm:inline mx-1.5 text-muted-foreground">
+                                •
+                              </span>
+                            )}
+                          </span>
+                        ),
+                      )}
                     </div>
                   ) : i.href ? (
                     <a

@@ -102,7 +102,7 @@ export const Route = createFileRoute("/projects/$slug")({
           content:
             p?.tagline ||
             p?.description ||
-            "Residential development by SLV Group in Vijayawada & Amaravti region.",
+            "Residential development by SLV Group in Vijayawada & Amaravati region.",
         },
         { property: "og:title", content: p ? `${p.name} — SLV Group` : "Project — SLV Group" },
         { property: "og:description", content: p?.tagline || "" },

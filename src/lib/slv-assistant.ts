@@ -249,7 +249,7 @@ export function generateResponse(userMessage: string): string {
         "🏗️ **20+ years** of experience\n" +
         "🏢 **35+ residential projects** delivered\n" +
         "👨‍👩‍👧‍👦 **5,000+ happy families**\n" +
-        "📍 Operating across **Vijayawada & Amaravti capital region**\n\n" +
+        "📍 Operating across **Vijayawada & Amaravati capital region**\n\n" +
         "From premium apartments and luxurious villas to investment-ready plots, we craft quality homes with modern amenities.\n\n" +
         "👉 [Learn more about us](/about)"
       );
@@ -265,7 +265,7 @@ export function generateResponse(userMessage: string): string {
       resp += "**🏢 Ongoing Apartments** (buy at pre-completion prices):\n";
       if (ongoingApts.length > 0) resp += formatProjectList(ongoingApts.slice(0, 2)) + "\n\n";
       resp +=
-        "💡 *Vijayawada & Amaravti region is seeing strong growth due to capital region development.*\n\n";
+        "💡 *Vijayawada & Amaravati region is seeing strong growth due to capital region development.*\n\n";
       resp += "For investment guidance, [talk to our consultants](/contact).";
       return resp;
     }

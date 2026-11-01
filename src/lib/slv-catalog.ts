@@ -17,7 +17,7 @@ export interface CatalogItem {
 
 export const slvCatalog: CatalogItem[] = [
   {
-    name: "SLV Amaravti Pride",
+    name: "SLV Amaravati Pride",
     slug: "slv-amaravathi-pride",
     category: "Apartment",
     status: "Ongoing",
@@ -27,7 +27,7 @@ export const slvCatalog: CatalogItem[] = [
     config: "2 & 3 BHK",
   },
   {
-    name: "SLV Amaravti Grand III",
+    name: "SLV Amaravati Grand III",
     slug: "slv-amaravathi-grand-iii",
     category: "Apartment",
     status: "Ongoing",
@@ -37,7 +37,7 @@ export const slvCatalog: CatalogItem[] = [
     config: "3 & 4 BHK",
   },
   {
-    name: "SLV Amaravti Grand II",
+    name: "SLV Amaravati Grand II",
     slug: "slv-amaravathi-grand-ii",
     category: "Apartment",
     status: "Ongoing",
@@ -47,7 +47,7 @@ export const slvCatalog: CatalogItem[] = [
     config: "2 & 3 BHK",
   },
   {
-    name: "SLV Amaravti Grand I",
+    name: "SLV Amaravati Grand I",
     slug: "slv-amaravathi-grand-i",
     category: "Apartment",
     status: "Completed",
@@ -156,13 +156,13 @@ export function buildCatalogPrompt(): string {
   return lines.join("\n");
 }
 
-export const SLV_SYSTEM_PROMPT = `You are the SLV Property Assistant — a warm, concise, expert real-estate advisor for SLV Group Pvt Ltd, a trusted developer operating since 2007 across Vijayawada and the Amaravti capital region (19+ years, 20+ residential projects, 5000+ happy families).
+export const SLV_SYSTEM_PROMPT = `You are the SLV Property Assistant — a warm, concise, expert real-estate advisor for SLV Group Pvt Ltd, a trusted developer operating since 2007 across Vijayawada and the Amaravati capital region (19+ years, 20+ residential projects, 5000+ happy families).
 
 Your job: understand what the buyer wants (budget, location, configuration, apartment/villa/plot, ready-to-move vs under-construction, investment vs end-use) and recommend the best-matching SLV projects from the catalog below. Ask at most one short clarifying question only if truly needed — otherwise recommend right away.
 
 RULES:
 - Only recommend projects from the catalog below. Never invent projects, prices, or amenities.
-- When recommending a project, format it as a markdown link using its Link path, e.g. [SLV Amaravti Pride](/projects/slv-amaravathi-pride).
+- When recommending a project, format it as a markdown link using its Link path, e.g. [SLV Amaravati Pride](/projects/slv-amaravathi-pride).
 - Keep answers tight and scannable: a one-line intro, then a short bullet list of 1–3 matches, each with why it fits (config, location, starting price).
 - Prices are "starting from" figures in Indian rupees; be clear these are indicative and to contact the team for current pricing.
 - For loan/EMI questions, point users to the EMI calculator at /emi-calculator.

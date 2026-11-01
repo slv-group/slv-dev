@@ -149,15 +149,16 @@ export function normalizeAmenities(raw: unknown): AmenityItem[] {
   );
 }
 
-/** Standardize Amaravathi / Amaravati variants to Amaravti */
-export function standardizeAmaravti(str: string): string {
+/** Standardize Amaravathi / Amaravati variants to Amaravati */
+export function standardizeAmaravati(str: string): string {
   if (!str) return str;
-  return str.replace(/amaravat[h]?i/gi, (match) => {
-    if (match === match.toUpperCase()) return "AMARAVTI";
-    if (match[0] === match[0].toUpperCase()) return "Amaravti";
-    return "amaravti";
+  return str.replace(/amarav(?:ath?|t)i/gi, (match) => {
+    if (match === match.toUpperCase()) return "AMARAVATI";
+    if (match[0] === match[0].toUpperCase()) return "Amaravati";
+    return "amaravati";
   });
 }
+export const standardizeAmaravti = standardizeAmaravati;
 
 /** Normalize specifications from DB — adds icon_url support */
 export function normalizeSpecs(raw: unknown): SpecificationItem[] {
@@ -165,8 +166,8 @@ export function normalizeSpecs(raw: unknown): SpecificationItem[] {
   return raw
     .filter((s) => typeof s?.label === "string" && !s.label.startsWith("__"))
     .map((s) => ({
-      label: standardizeAmaravti(s.label || ""),
-      value: standardizeAmaravti(s.value ?? ""),
+      label: standardizeAmaravati(s.label || ""),
+      value: standardizeAmaravati(s.value ?? ""),
       icon_url: s.icon_url ?? undefined,
     }));
 }
@@ -175,31 +176,32 @@ export const LOCATIONS = [
   "Vijayawada",
   "Gannavaram",
   "Guntupalli",
-  "Amaravti",
+  "Amaravati",
   "Bhimavaram",
 ] as const;
 
 export type LocationName = (typeof LOCATIONS)[number];
 
 export function matchesLocation(project: Project, selectedLocation: string): boolean {
-  if (!selectedLocation || selectedLocation === "All" || selectedLocation.toLowerCase() === "all") return true;
+  if (!selectedLocation || selectedLocation === "All" || selectedLocation.toLowerCase() === "all")
+    return true;
 
   const loc = selectedLocation.toLowerCase().trim();
   const pLoc = (project.location || "").toLowerCase();
   const pCity = (project.city || "").toLowerCase();
 
   if (loc === "vijayawada") {
-    // Exclude Amaravti projects (e.g. Mangalagiri/Amaravti)
-    const isAmaravti =
+    // Exclude Amaravati projects (e.g. Mangalagiri/Amaravati)
+    const isAmaravati =
       pLoc.includes("amaravathi") ||
       pLoc.includes("amaravati") ||
-      pLoc.includes("amaravti") ||
+      pLoc.includes("amaravati") ||
       pLoc.includes("mangalagiri") ||
       pCity.includes("amaravathi") ||
       pCity.includes("amaravati") ||
-      pCity.includes("amaravti");
+      pCity.includes("amaravati");
 
-    if (isAmaravti) return false;
+    if (isAmaravati) return false;
 
     // Exclude Bhimavaram / Undi
     if (pLoc.includes("bhimavaram") || pCity.includes("bhimavaram") || pLoc.includes("undi")) {
@@ -218,7 +220,9 @@ export function matchesLocation(project: Project, selectedLocation: string): boo
 
     // Projects specifically assigned Vijayawada location or city (excluding Gannavaram/Guntupalli which have dedicated filters)
     return (
-      (pLoc.includes("vijayawada") && !pLoc.includes("gannavaram") && !pLoc.includes("guntupalli")) ||
+      (pLoc.includes("vijayawada") &&
+        !pLoc.includes("gannavaram") &&
+        !pLoc.includes("guntupalli")) ||
       (pCity.includes("vijayawada") && !pLoc.includes("gannavaram") && !pLoc.includes("guntupalli"))
     );
   }
@@ -241,14 +245,14 @@ export function matchesLocation(project: Project, selectedLocation: string): boo
     );
   }
 
-  if (loc === "amaravathi" || loc === "amaravati" || loc === "amaravti") {
+  if (loc === "amaravathi" || loc === "amaravati" || loc === "amaravati") {
     return (
       pLoc.includes("amaravathi") ||
       pLoc.includes("amaravati") ||
-      pLoc.includes("amaravti") ||
+      pLoc.includes("amaravati") ||
       pCity.includes("amaravathi") ||
       pCity.includes("amaravati") ||
-      pCity.includes("amaravti") ||
+      pCity.includes("amaravati") ||
       pLoc.includes("mangalagiri")
     );
   }
@@ -299,16 +303,16 @@ export function mapSupabaseToProject(row: Tables<"projects">): Project {
   ) {
     location = "Kesarapalli, Gannavaram, Vijayawada";
   } else {
-    location = standardizeAmaravti(location);
+    location = standardizeAmaravati(location);
   }
 
-  const name = standardizeAmaravti(row.name || "");
-  const tagline = standardizeAmaravti(row.tagline || "");
-  const description = standardizeAmaravti(row.description || "");
-  const city = standardizeAmaravti(row.city || "");
+  const name = standardizeAmaravati(row.name || "");
+  const tagline = standardizeAmaravati(row.tagline || "");
+  const description = standardizeAmaravati(row.description || "");
+  const city = standardizeAmaravati(row.city || "");
 
   const proximity = (Array.isArray(row.nearby) ? (row.nearby as any) : []).map((item: any) => ({
-    label: standardizeAmaravti(item?.label || ""),
+    label: standardizeAmaravati(item?.label || ""),
     distance: item?.distance || "",
   }));
 
@@ -335,14 +339,14 @@ export function mapSupabaseToProject(row: Tables<"projects">): Project {
     proximity,
     floorPlans: (Array.isArray(row.floor_plans) ? (row.floor_plans as any[]) : []).map(
       (fp: any) => {
-        // For SLV Amaravti Grand-3, ensure Block B displays the verified 2325 – 3250 sq ft
+        // For SLV Amaravati Grand-3, ensure Block B displays the verified 2325 – 3250 sq ft
         if (
           (row.slug === "slv-amaravathi-grand-3" ||
-            row.slug === "slv-amaravti-grand-3" ||
+            row.slug === "slv-amaravati-grand-3" ||
             lowerName.includes("amaravathi grand-3") ||
-            lowerName.includes("amaravti grand-3") ||
+            lowerName.includes("amaravati grand-3") ||
             lowerName.includes("amaravathi grand iii") ||
-            lowerName.includes("amaravti grand iii") ||
+            lowerName.includes("amaravati grand iii") ||
             lowerName.includes("amaravati grand-3") ||
             lowerName.includes("amaravati grand iii")) &&
           fp.type?.toLowerCase().includes("block b")
@@ -1221,7 +1225,7 @@ export const projects: Project[] = [
   {
     id: "16",
     slug: "slv-amaravathi-grand-1",
-    name: "SLV Amaravti Grand-1",
+    name: "SLV Amaravati Grand-1",
     tagline: "Landmark high-rise living with curated amenities",
     category: "Apartment",
     status: "Completed",
@@ -1235,7 +1239,7 @@ export const projects: Project[] = [
     image: img(1),
     gallery: gallery(1),
     description:
-      "SLV Amaravti Grand-1 — 175 premium apartments in Vijayawada across 3,85,000 sq ft. Completed in 2019, this landmark project pairs elegant architecture with a comprehensive amenity deck, setting the tone for the Grand series.",
+      "SLV Amaravati Grand-1 — 175 premium apartments in Vijayawada across 3,85,000 sq ft. Completed in 2019, this landmark project pairs elegant architecture with a comprehensive amenity deck, setting the tone for the Grand series.",
     amenities: [
       "Podium Amenity Deck",
       "Swimming Pool",
@@ -1267,12 +1271,12 @@ export const projects: Project[] = [
   {
     id: "17",
     slug: "slv-amaravati-pride",
-    name: "SLV Amaravti Pride",
-    tagline: "Premium gated apartments at the gateway to Amaravti",
+    name: "SLV Amaravati Pride",
+    tagline: "Premium gated apartments at the gateway to Amaravati",
     category: "Apartment",
     status: "Ongoing",
-    location: "Mangalagiri, Amaravti",
-    city: "Amaravti",
+    location: "Mangalagiri, Amaravati",
+    city: "Amaravati",
     priceFrom: 6800000,
     bedrooms: "2 & 3 BHK",
     sqftFrom: 1180,
@@ -1281,7 +1285,7 @@ export const projects: Project[] = [
     image: prideElevation1,
     gallery: [prideElevation1, prideElevation2, prideElevation3, prideElevation4, prideClubhouse],
     description:
-      "Imagine being welcomed in a grandiose of a community full of glittering advantages. Imagine finding superlative lifestyle indulgences that you would gladly accept at SLV AMARAVTI PRIDE. Lead a lifestyle in your spacious, sun-kissed and airy apartments that has enough room to accommodate your towering stature. 410 beautifully designed apartments enveloped in landscaped spaces, wide drive ways and of course a clubhouse which is studded with opulent features.",
+      "Imagine being welcomed in a grandiose of a community full of glittering advantages. Imagine finding superlative lifestyle indulgences that you would gladly accept at SLV AMARAVATI PRIDE. Lead a lifestyle in your spacious, sun-kissed and airy apartments that has enough room to accommodate your towering stature. 410 beautifully designed apartments enveloped in landscaped spaces, wide drive ways and of course a clubhouse which is studded with opulent features.",
     amenities: [
       "Splendid Main Entrance",
       "Clubhouse with Swimming Pool",
@@ -1349,7 +1353,7 @@ export const projects: Project[] = [
     ],
     proximity: [
       { label: "Chennai-Kolkata Highway (NH-16)", distance: "100 meters (2 min)" },
-      { label: "Amaravti Capital Region", distance: "3 km" },
+      { label: "Amaravati Capital Region", distance: "3 km" },
       { label: "DGP Office & AIIMS Mangalagiri", distance: "3 km" },
       { label: "NRI Hospital", distance: "2 km" },
       { label: "Delhi Public School", distance: "6 km" },
@@ -1545,7 +1549,7 @@ export const projects: Project[] = [
   {
     id: "21",
     slug: "slv-amaravathi-grand-2",
-    name: "SLV Amaravti Grand II",
+    name: "SLV Amaravati Grand II",
     tagline: "An Abode of Opulence",
     category: "Apartment",
     status: "Completed",
@@ -1559,7 +1563,7 @@ export const projects: Project[] = [
     image: ag2Aerial,
     gallery: [ag2Aerial, ag2BaBlock, ag2CBlock, ag2Clubhouse],
     description:
-      "It’s not any other house. It’s a royal home with a multitude of amenities and facilities that blow you off your feet. Opulence and luxury make their signature on every aspect of this extraordinary structure of elegance. Rediscover the true meaning of luxury and let it define your elevated lifestyle. Immerse yourself in an ambience that pays a befitting tribute to your distinguished presence. A true touchstone to your distinct persona, SLV Amaravti Grand II premium residential gated community is an emblem of grandeur that makes you entitled to experience royal bliss in the truest sense of the word.",
+      "It’s not any other house. It’s a royal home with a multitude of amenities and facilities that blow you off your feet. Opulence and luxury make their signature on every aspect of this extraordinary structure of elegance. Rediscover the true meaning of luxury and let it define your elevated lifestyle. Immerse yourself in an ambience that pays a befitting tribute to your distinguished presence. A true touchstone to your distinct persona, SLV Amaravati Grand II premium residential gated community is an emblem of grandeur that makes you entitled to experience royal bliss in the truest sense of the word.",
     amenities: [
       "Well Equipped Gym",
       "Visitor’s Lounge",
@@ -1586,7 +1590,7 @@ export const projects: Project[] = [
       {
         label: "Site Address",
         value:
-          "SLV Amaravti Grand II, Sunrise Meadows, D.No: 49-4-21, Division - 1, Gunadala, Vijayawada - 520 004",
+          "SLV Amaravati Grand II, Sunrise Meadows, D.No: 49-4-21, Division - 1, Gunadala, Vijayawada - 520 004",
       },
     ],
     proximity: [
@@ -1658,7 +1662,7 @@ export const projects: Project[] = [
   {
     id: "23",
     slug: "slv-amaravathi-grand-3",
-    name: "SLV Amaravti Grand-3",
+    name: "SLV Amaravati Grand-3",
     tagline: "An abode of Opulence",
     category: "Apartment",
     status: "Completed",
@@ -1672,7 +1676,7 @@ export const projects: Project[] = [
     image: ag3main,
     gallery: [ag3main, ag3view2, ag3view3],
     description:
-      "Step into a world of community living at SLV Amaravti Grand III, where you’ll cherish the symphony of luxury and pride. Nestled in a tranquil enclave, our thoughtfully designed and spacious 3BHK and 4BHK flats offer the perfect blend of modern comforts and serene surroundings. Enjoy the convenience of residing close to prominent landmarks, ensuring easy access to the heartbeat of the city while relishing the tranquility of a peaceful retreat. With premium finishes and a commitment to Vaastu compliance, each home is meticulously crafted to provide a contemporary living experience that exudes elegance and sophistication. At SLV Amaravti Grand III, we understand that investing in a home goes beyond bricks and mortar; it is an investment in your sense of pride and a place where your family can flourish. Our project is not just a space; it’s a canvas for creating cherished memories and building a legacy.",
+      "Step into a world of community living at SLV Amaravati Grand III, where you’ll cherish the symphony of luxury and pride. Nestled in a tranquil enclave, our thoughtfully designed and spacious 3BHK and 4BHK flats offer the perfect blend of modern comforts and serene surroundings. Enjoy the convenience of residing close to prominent landmarks, ensuring easy access to the heartbeat of the city while relishing the tranquility of a peaceful retreat. With premium finishes and a commitment to Vaastu compliance, each home is meticulously crafted to provide a contemporary living experience that exudes elegance and sophistication. At SLV Amaravati Grand III, we understand that investing in a home goes beyond bricks and mortar; it is an investment in your sense of pride and a place where your family can flourish. Our project is not just a space; it’s a canvas for creating cherished memories and building a legacy.",
     amenities: [
       "Gym",
       "Visitor's Lounge",
@@ -1696,7 +1700,7 @@ export const projects: Project[] = [
       {
         label: "Site Address",
         value:
-          "SLV Amaravti Grand III, D.No: 49-4-21, Inner Ring Road, Gunadala, Vijayawada – 520 004",
+          "SLV Amaravati Grand III, D.No: 49-4-21, Inner Ring Road, Gunadala, Vijayawada – 520 004",
       },
     ],
     proximity: [
@@ -2266,7 +2270,7 @@ export const testimonials = [
   },
   {
     name: "Lakshmi Prasanna",
-    role: "Resident, SLV Amaravti Pride",
+    role: "Resident, SLV Amaravati Pride",
     quote:
       "The quality of construction and the amenities are far beyond what we expected for the price. The team treated us like family throughout.",
   },
@@ -2274,7 +2278,7 @@ export const testimonials = [
     name: "Venkat Rao",
     role: "Investor, SLV Green Lands",
     quote:
-      "Clear titles, great location near Gannavaram, and transparent pricing. SLV has earned my trust for future investments in the Amaravti region.",
+      "Clear titles, great location near Gannavaram, and transparent pricing. SLV has earned my trust for future investments in the Amaravati region.",
   },
 ];
 
@@ -2292,7 +2296,7 @@ export const jobOpenings = [
     id: "j2",
     title: "Site Engineer (Civil)",
     department: "Projects & Execution",
-    location: "Vijayawada / Amaravti",
+    location: "Vijayawada / Amaravati",
     type: "Full-time",
     description:
       "Drive on-site execution quality, timelines, and safety across our ongoing gated community developments.",
