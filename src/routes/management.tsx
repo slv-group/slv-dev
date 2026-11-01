@@ -16,7 +16,7 @@ import { Reveal } from "@/components/Reveal";
 import { cn } from "@/lib/utils";
 
 import heroImage from "@/assets/about_slv.jpg";
-import chairmanImage from "@/assets/penmetsa_srinivasa_raju.jpg";
+import chairmanImage from "@/assets/leader.jpg";
 import executiveImage from "@/assets/management/srinivasa-raju-office.png";
 import managementImage from "@/assets/management/srinivasa-raju-portrait.png";
 import visionImage from "@/assets/concept-to-completion.jpg";
@@ -140,7 +140,7 @@ const leadershipTeam = [
     designation: "Chairman & Managing Director",
     role: "Founder Leadership",
     image: chairmanImage,
-    imagePosition: "object-center",
+    imagePosition: "object-[center_35%]",
     description:
       "The driving force behind SLV Group, Sri Penmetsa Srinivasa Raju began his professional journey in the dairy industry in Bhimavaram before entering the construction industry in 2007. His leadership philosophy centres on customer trust, uncompromising quality, hard work, efficient time management and creating excellent living environments.",
     highlights: [
@@ -166,7 +166,7 @@ const leadershipTeam = [
     verified: true,
   },
   {
-    name: "U Chaitanya K Varma",
+    name: "U Chaitanya Varma",
     designation: "Director",
     role: "Management Leadership",
     image: managementImage,
@@ -228,9 +228,9 @@ function LeadershipProfile({
                   <img
                     src={member.image}
                     alt={member.name}
-                    loading="lazy"
+                    loading={member.role === "Founder Leadership" ? "eager" : "lazy"}
                     decoding="async"
-                    fetchPriority="low"
+                    fetchPriority={member.role === "Founder Leadership" ? "high" : "low"}
                     className={cn(
                       "h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.025]",
                       member.imagePosition,
@@ -239,7 +239,7 @@ function LeadershipProfile({
 
                   <div
                     aria-hidden
-                    className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"
+                    className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 via-20% to-transparent"
                   />
 
                   <CornerMarks />

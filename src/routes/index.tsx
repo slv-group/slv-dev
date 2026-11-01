@@ -358,54 +358,59 @@ function Index() {
       </section>
 
       {/* ── About SLV — staggered images ── */}
-      <section className="mx-auto grid max-w-7xl items-center gap-16 px-6 py-10 lg:grid-cols-2 lg:gap-24">
+      <section className="mx-auto grid max-w-7xl items-center gap-12 sm:gap-16 px-6 py-12 sm:py-16 lg:grid-cols-2 lg:gap-20 xl:gap-24">
         <Reveal>
-          <div className="relative flex gap-5">
+          <div className="relative mx-auto w-full max-w-lg lg:max-w-none">
             {/* Ornamental frame lines */}
             <div
-              className="absolute -left-6 -top-6 -z-10 h-36 w-36 border-l border-t opacity-40"
+              className="absolute -left-3 -top-3 sm:-left-5 sm:-top-5 -z-10 h-28 w-28 sm:h-36 sm:w-36 border-l-2 border-t-2 opacity-40 transition-opacity duration-500 hover:opacity-70"
               style={{ borderColor: "var(--color-gold)" }}
             />
             <div
-              className="absolute -bottom-6 -right-6 -z-10 h-24 w-24 border-r border-b opacity-30"
+              className="absolute -bottom-3 -right-3 sm:-bottom-5 sm:-right-5 -z-10 h-24 w-24 sm:h-28 sm:w-28 border-r-2 border-b-2 opacity-30 transition-opacity duration-500 hover:opacity-60"
               style={{ borderColor: "var(--color-gold)" }}
             />
 
-            <div className="flex gap-4 sm:gap-5 items-end">
-              <div className="w-2/3 overflow-hidden rounded-md md:rounded-2xl shadow-2xl">
+            {/* Staggered composition: side-by-side with median vertical alignment */}
+            <div className="relative flex items-center gap-3.5 sm:gap-5">
+              {/* Main image */}
+              <div className="relative z-0 w-[61%] sm:w-[62%] shrink-0 overflow-hidden rounded-2xl sm:rounded-3xl shadow-2xl transition-all duration-500 hover:shadow-[0_25px_60px_-15px_rgba(212,175,55,0.22)] border border-border/50">
                 <img
                   src={aboutImage}
                   alt="SLV Group — Building Legacies Since 2007"
                   loading="lazy"
                   decoding="async"
                   fetchPriority="low"
-                  className="aspect-[3/4] w-full object-cover transition-transform duration-700 hover:scale-105"
+                  className="aspect-[3/4] w-full object-cover object-center transition-transform duration-700 hover:scale-105"
                 />
               </div>
-              <div className="w-[50%] sm:w-[55%] shrink-0 -mr-5 sm:-mr-12 overflow-hidden rounded-md md:rounded-2xl shadow-xl">
+
+              {/* Secondary image — moved to the side in the vertical median */}
+              <div className="relative z-10 w-[39%] sm:w-[38%] shrink-0 overflow-hidden rounded-2xl sm:rounded-3xl shadow-xl transition-all duration-500 hover:shadow-[0_25px_60px_-15px_rgba(212,175,55,0.28)] border border-border/50">
                 <img
                   src={aboutImage2}
                   alt="SLV Group — Landmark residential and plotted developments"
                   loading="lazy"
                   decoding="async"
                   fetchPriority="low"
-                  className="aspect-[2560/1423] w-full object-cover object-center transition-transform duration-700 hover:scale-105"
+                  className="aspect-[4/5] w-full object-cover object-center transition-transform duration-700 hover:scale-105"
                 />
               </div>
-            </div>
 
-            {/* Floating badge */}
-            <div
-              className="absolute -bottom-6 left-8 z-10 rounded-2xl px-5 py-3.5 shadow-2xl backdrop-blur-xl"
-              style={{
-                background: "var(--gradient-royal)",
-                border: "1px solid rgba(255,255,255,0.08)",
-              }}
-            >
-              <p className="font-display text-2xl font-bold text-white">20+</p>
-              <p className="text-[0.65rem] uppercase tracking-widest text-white/60">
-                Years of Trust
-              </p>
+              {/* Floating badge */}
+              <div
+                className="absolute -bottom-5 sm:-bottom-6 left-4 sm:left-8 z-20 rounded-2xl px-4 py-3 sm:px-5 sm:py-3.5 shadow-2xl backdrop-blur-xl border border-white/10"
+                style={{
+                  background: "var(--gradient-royal)",
+                }}
+              >
+                <p className="font-display text-xl sm:text-2xl font-bold text-white leading-none">
+                  20+
+                </p>
+                <p className="mt-1 text-[0.6rem] sm:text-[0.65rem] uppercase tracking-widest text-white/70 whitespace-nowrap">
+                  Years of Trust
+                </p>
+              </div>
             </div>
           </div>
         </Reveal>
