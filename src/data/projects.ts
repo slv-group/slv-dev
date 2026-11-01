@@ -149,14 +149,24 @@ export function normalizeAmenities(raw: unknown): AmenityItem[] {
   );
 }
 
+/** Standardize Amaravathi / Amaravati variants to Amaravti */
+export function standardizeAmaravti(str: string): string {
+  if (!str) return str;
+  return str.replace(/amaravat[h]?i/gi, (match) => {
+    if (match === match.toUpperCase()) return "AMARAVTI";
+    if (match[0] === match[0].toUpperCase()) return "Amaravti";
+    return "amaravti";
+  });
+}
+
 /** Normalize specifications from DB — adds icon_url support */
 export function normalizeSpecs(raw: unknown): SpecificationItem[] {
   if (!Array.isArray(raw)) return [];
   return raw
     .filter((s) => typeof s?.label === "string" && !s.label.startsWith("__"))
     .map((s) => ({
-      label: (s.label || "").replace(/Amaravathi/g, "Amaravti").replace(/AMARAVATHI/g, "AMARAVTI"),
-      value: (s.value ?? "").replace(/Amaravathi/g, "Amaravti").replace(/AMARAVATHI/g, "AMARAVTI"),
+      label: standardizeAmaravti(s.label || ""),
+      value: standardizeAmaravti(s.value ?? ""),
       icon_url: s.icon_url ?? undefined,
     }));
 }
@@ -165,36 +175,60 @@ export const LOCATIONS = [
   "Vijayawada",
   "Gannavaram",
   "Guntupalli",
-  "Amaravati",
+  "Amaravti",
   "Bhimavaram",
 ] as const;
 
 export type LocationName = (typeof LOCATIONS)[number];
 
 export function matchesLocation(project: Project, selectedLocation: string): boolean {
-  if (!selectedLocation || selectedLocation === "All") return true;
+  if (!selectedLocation || selectedLocation === "All" || selectedLocation.toLowerCase() === "all") return true;
 
   const loc = selectedLocation.toLowerCase().trim();
   const pLoc = (project.location || "").toLowerCase();
   const pCity = (project.city || "").toLowerCase();
-  const pName = (project.name || "").toLowerCase();
-  const pTagline = (project.tagline || "").toLowerCase();
 
   if (loc === "vijayawada") {
-    return (
-      pCity.includes("vijayawada") ||
-      pLoc.includes("vijayawada") ||
-      pLoc.includes("ramavarappadu") ||
+    // Exclude Amaravti projects (e.g. Mangalagiri/Amaravti)
+    const isAmaravti =
+      pLoc.includes("amaravathi") ||
+      pLoc.includes("amaravati") ||
+      pLoc.includes("amaravti") ||
+      pLoc.includes("mangalagiri") ||
+      pCity.includes("amaravathi") ||
+      pCity.includes("amaravati") ||
+      pCity.includes("amaravti");
+
+    if (isAmaravti) return false;
+
+    // Exclude Bhimavaram / Undi
+    if (pLoc.includes("bhimavaram") || pCity.includes("bhimavaram") || pLoc.includes("undi")) {
+      return false;
+    }
+
+    // Specific Vijayawada neighborhoods & landmarks
+    if (
       pLoc.includes("gunadala") ||
+      pLoc.includes("ramavarappadu") ||
       pLoc.includes("nidamanuru") ||
-      pLoc.includes("bhavanipuram") ||
-      pLoc.includes("kesarapalli")
+      pLoc.includes("bhavanipuram")
+    ) {
+      return true;
+    }
+
+    // Projects specifically assigned Vijayawada location or city (excluding Gannavaram/Guntupalli which have dedicated filters)
+    return (
+      (pLoc.includes("vijayawada") && !pLoc.includes("gannavaram") && !pLoc.includes("guntupalli")) ||
+      (pCity.includes("vijayawada") && !pLoc.includes("gannavaram") && !pLoc.includes("guntupalli"))
     );
   }
 
   if (loc === "gannavaram") {
     return (
-      pLoc.includes("gannavaram") || pCity.includes("gannavaram") || pLoc.includes("vedurupavuluru")
+      pLoc.includes("gannavaram") ||
+      pCity.includes("gannavaram") ||
+      pLoc.includes("vedurupavuluru") ||
+      pLoc.includes("kesarapalli")
     );
   }
 
@@ -203,8 +237,7 @@ export function matchesLocation(project: Project, selectedLocation: string): boo
       pLoc.includes("gunthapalli") ||
       pLoc.includes("guntupalli") ||
       pCity.includes("gunthapalli") ||
-      pCity.includes("guntupalli") ||
-      pName.includes("green lands")
+      pCity.includes("guntupalli")
     );
   }
 
@@ -216,13 +249,7 @@ export function matchesLocation(project: Project, selectedLocation: string): boo
       pCity.includes("amaravathi") ||
       pCity.includes("amaravati") ||
       pCity.includes("amaravti") ||
-      pLoc.includes("mangalagiri") ||
-      pName.includes("amaravathi") ||
-      pName.includes("amaravati") ||
-      pName.includes("amaravti") ||
-      pTagline.includes("amaravathi") ||
-      pTagline.includes("amaravati") ||
-      pTagline.includes("amaravti")
+      pLoc.includes("mangalagiri")
     );
   }
 
@@ -235,7 +262,7 @@ export function matchesLocation(project: Project, selectedLocation: string): boo
     );
   }
 
-  return pLoc.includes(loc) || pCity.includes(loc) || pName.includes(loc);
+  return pLoc.includes(loc) || pCity.includes(loc);
 }
 
 import type { Tables } from "@/integrations/supabase/types";
@@ -272,23 +299,16 @@ export function mapSupabaseToProject(row: Tables<"projects">): Project {
   ) {
     location = "Kesarapalli, Gannavaram, Vijayawada";
   } else {
-    location = location.replace(/Amaravathi/g, "Amaravti").replace(/AMARAVATHI/g, "AMARAVTI");
+    location = standardizeAmaravti(location);
   }
 
-  const name = (row.name || "")
-    .replace(/Amaravathi/g, "Amaravti")
-    .replace(/AMARAVATHI/g, "AMARAVTI");
-  const tagline = (row.tagline || "")
-    .replace(/Amaravathi/g, "Amaravti")
-    .replace(/AMARAVATHI/g, "AMARAVTI");
-  const description = (row.description || "")
-    .replace(/Amaravathi/g, "Amaravti")
-    .replace(/AMARAVATHI/g, "AMARAVTI");
+  const name = standardizeAmaravti(row.name || "");
+  const tagline = standardizeAmaravti(row.tagline || "");
+  const description = standardizeAmaravti(row.description || "");
+  const city = standardizeAmaravti(row.city || "");
 
   const proximity = (Array.isArray(row.nearby) ? (row.nearby as any) : []).map((item: any) => ({
-    label: (item?.label || "")
-      .replace(/Amaravathi/g, "Amaravti")
-      .replace(/AMARAVATHI/g, "AMARAVTI"),
+    label: standardizeAmaravti(item?.label || ""),
     distance: item?.distance || "",
   }));
 
@@ -300,7 +320,7 @@ export function mapSupabaseToProject(row: Tables<"projects">): Project {
     category: (row.category as ProjectCategory) || "Apartment",
     status: (row.status as ProjectStatus) || "Ongoing",
     location,
-    city: row.city || "",
+    city,
     priceFrom: row.price_from || 0,
     bedrooms: bedrooms.trim(),
     sqftFrom: row.sqft_from || 0,
@@ -322,7 +342,9 @@ export function mapSupabaseToProject(row: Tables<"projects">): Project {
             lowerName.includes("amaravathi grand-3") ||
             lowerName.includes("amaravti grand-3") ||
             lowerName.includes("amaravathi grand iii") ||
-            lowerName.includes("amaravti grand iii")) &&
+            lowerName.includes("amaravti grand iii") ||
+            lowerName.includes("amaravati grand-3") ||
+            lowerName.includes("amaravati grand iii")) &&
           fp.type?.toLowerCase().includes("block b")
         ) {
           return {
@@ -1245,12 +1267,12 @@ export const projects: Project[] = [
   {
     id: "17",
     slug: "slv-amaravati-pride",
-    name: "SLV Amaravati Pride",
-    tagline: "Premium gated apartments at the gateway to Amaravati",
+    name: "SLV Amaravti Pride",
+    tagline: "Premium gated apartments at the gateway to Amaravti",
     category: "Apartment",
     status: "Ongoing",
-    location: "Mangalagiri, Amaravati",
-    city: "Vijayawada",
+    location: "Mangalagiri, Amaravti",
+    city: "Amaravti",
     priceFrom: 6800000,
     bedrooms: "2 & 3 BHK",
     sqftFrom: 1180,
@@ -1327,7 +1349,7 @@ export const projects: Project[] = [
     ],
     proximity: [
       { label: "Chennai-Kolkata Highway (NH-16)", distance: "100 meters (2 min)" },
-      { label: "Amaravati Capital Region", distance: "3 km" },
+      { label: "Amaravti Capital Region", distance: "3 km" },
       { label: "DGP Office & AIIMS Mangalagiri", distance: "3 km" },
       { label: "NRI Hospital", distance: "2 km" },
       { label: "Delhi Public School", distance: "6 km" },
@@ -2252,7 +2274,7 @@ export const testimonials = [
     name: "Venkat Rao",
     role: "Investor, SLV Green Lands",
     quote:
-      "Clear titles, great location near Gannavaram, and transparent pricing. SLV has earned my trust for future investments in the Amaravati region.",
+      "Clear titles, great location near Gannavaram, and transparent pricing. SLV has earned my trust for future investments in the Amaravti region.",
   },
 ];
 
@@ -2270,7 +2292,7 @@ export const jobOpenings = [
     id: "j2",
     title: "Site Engineer (Civil)",
     department: "Projects & Execution",
-    location: "Vijayawada / Amaravati",
+    location: "Vijayawada / Amaravti",
     type: "Full-time",
     description:
       "Drive on-site execution quality, timelines, and safety across our ongoing gated community developments.",

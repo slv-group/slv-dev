@@ -143,18 +143,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "SLV Group — Premium Real Estate in Vijayawada & Amaravati" },
+      { title: "SLV Group — Premium Real Estate in Vijayawada & Amaravti" },
       {
         name: "description",
         content:
-          "SLV Group — Leading real estate developers in Vijayawada, Guntur & Amaravati CRDA region. Delivering premium residential layouts, gated communities, and luxury living spaces.",
+          "SLV Group — Leading real estate developers in Vijayawada, Guntur & Amaravti CRDA region. Delivering premium residential layouts, gated communities, and luxury living spaces.",
       },
       { name: "author", content: "SLV Group" },
       { property: "og:title", content: "SLV Group — Premium Real Estate Developers" },
       {
         property: "og:description",
         content:
-          "Explore premium gated communities, open plots, and luxury residences across Vijayawada, Guntur, and Amaravati by SLV Group.",
+          "Explore premium gated communities, open plots, and luxury residences across Vijayawada, Guntur, and Amaravti by SLV Group.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://www.slvgroup.co.in" },
@@ -164,7 +164,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "twitter:description",
         content:
-          "Leading real estate developers in Vijayawada, Guntur & Amaravati CRDA region. Delivering premium layouts and residences.",
+          "Leading real estate developers in Vijayawada, Guntur & Amaravti CRDA region. Delivering premium layouts and residences.",
       },
       {
         property: "og:image",

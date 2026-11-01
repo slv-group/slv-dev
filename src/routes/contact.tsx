@@ -22,7 +22,7 @@ Thank you.`);
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact Us — SLV Group | Vijayawada & Amaravati" },
+      { title: "Contact Us — SLV Group | Vijayawada & Amaravti" },
       {
         name: "description",
         content:

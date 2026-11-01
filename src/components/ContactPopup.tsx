@@ -3,6 +3,7 @@ import { Loader2, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
+import { standardizeAmaravti } from "@/data/projects";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
   COUNTRY_CODES,
@@ -26,7 +27,7 @@ const FALLBACK_PROJECTS: ProjectOption[] = [
   { id: "slv-green-meadows", name: "SLV Green Meadows", bedrooms: "3 & 4 BHK", category: "Villa" },
   {
     id: "slv-amaravati-pride",
-    name: "SLV Amaravati Pride",
+    name: "SLV Amaravti Pride",
     bedrooms: "2 & 3 BHK",
     category: "Apartment",
   },
@@ -114,7 +115,12 @@ export function ContactPopup() {
           .order("sort_order", { ascending: true });
 
         if (!error && data && data.length > 0) {
-          setProjects(data as ProjectOption[]);
+          setProjects(
+            data.map((p) => ({
+              ...p,
+              name: standardizeAmaravti(p.name || ""),
+            })) as ProjectOption[],
+          );
         }
       } catch {
         // Retain fallback list

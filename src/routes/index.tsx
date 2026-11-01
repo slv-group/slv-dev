@@ -31,18 +31,18 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "SLV Group — Premium Homes & Plotted Layouts in Vijayawada & Amaravati" },
+      { title: "SLV Group — Premium Homes & Plotted Layouts in Vijayawada & Amaravti" },
       {
         name: "description",
         content:
-          "Discover premier residential gated communities, open plots, and luxury developments across Vijayawada, Guntur, and the Amaravati capital region by SLV Group.",
+          "Discover premier residential gated communities, open plots, and luxury developments across Vijayawada, Guntur, and the Amaravti capital region by SLV Group.",
       },
       { property: "og:site_name", content: "SLV Group" },
       { property: "og:title", content: "SLV Group — Leading Real Estate Developers" },
       {
         property: "og:description",
         content:
-          "Premier plotted layouts, luxury villas, and residential developments across the Vijayawada and Amaravati capital region.",
+          "Premier plotted layouts, luxury villas, and residential developments across the Vijayawada and Amaravti capital region.",
       },
       { property: "og:url", content: "https://www.slvgroup.co.in" },
       { property: "og:image", content: "https://www.slvgroup.co.in/slv-logo.png" },
@@ -51,7 +51,7 @@ export const Route = createFileRoute("/")({
       {
         name: "twitter:description",
         content:
-          "Premier plotted layouts, luxury villas, and residential developments across the Vijayawada and Amaravati capital region.",
+          "Premier plotted layouts, luxury villas, and residential developments across the Vijayawada and Amaravti capital region.",
       },
       { name: "twitter:image", content: "https://www.slvgroup.co.in/slv-logo.png" },
     ],
@@ -159,7 +159,7 @@ const philosophy = [
     no: "02",
     icon: TrendingUp,
     title: "Strategic\nLocations",
-    desc: "Projects sit on the fastest-growing corridors of Vijayawada and Amaravati for maximum value appreciation.",
+    desc: "Projects sit on the fastest-growing corridors of Vijayawada and Amaravti for maximum value appreciation.",
   },
   {
     no: "03",
@@ -248,7 +248,7 @@ function Index() {
             url: "https://www.slvgroup.co.in",
             logo: "https://www.slvgroup.co.in/slv-logo.png",
             description:
-              "Premier real estate developer in Andhra Pradesh, delivering residential gated communities, open plots, and commercial landmarks across Vijayawada, Guntur, and Amaravati.",
+              "Premier real estate developer in Andhra Pradesh, delivering residential gated communities, open plots, and commercial landmarks across Vijayawada, Guntur, and Amaravti.",
             telephone: ["+91-98595-95939", "+91-94598-23444"],
             email: "info@slvgroup.co.in",
             address: {
@@ -333,7 +333,7 @@ function Index() {
 
           {/* Locations */}
           <div className="flex flex-wrap items-center justify-center gap-2.5">
-            {["Vijayawada", "Gannavaram", "Guntupalli", "Amaravati", "Bhimavaram"].map(
+            {["Vijayawada", "Gannavaram", "Guntupalli", "Amaravti", "Bhimavaram"].map(
               (location) => (
                 <Link
                   key={location}
@@ -431,7 +431,7 @@ function Index() {
           <p className="mt-6 text-lg font-light leading-relaxed text-muted-foreground">
             At SLV Group, we don't just build structures — we curate lifestyles. Beginning in
             Bhimavaram in 2007 and entering Vijayawada in 2015 with SLV Anjani Heights, we have
-            redefined the skyline of the Amaravati capital region with architectural brilliance and
+            redefined the skyline of the Amaravti capital region with architectural brilliance and
             structural integrity.
           </p>
           <p className="mt-4 leading-relaxed text-muted-foreground">
@@ -497,7 +497,7 @@ function Index() {
                 </h2>
 
                 <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-                  Explore our current developments across Vijayawada and the Amaravati region.
+                  Explore our current developments across Vijayawada and the Amaravti region.
                 </p>
               </div>
 

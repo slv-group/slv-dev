@@ -12,7 +12,7 @@ export const Route = createFileRoute("/site-visit")({
       {
         name: "description",
         content:
-          "Schedule a private site visit to our premium plotted layouts, gated communities, and residential projects across Vijayawada and Amaravati.",
+          "Schedule a private site visit to our premium plotted layouts, gated communities, and residential projects across Vijayawada and Amaravti.",
       },
       { property: "og:site_name", content: "SLV Group" },
       { property: "og:title", content: "Book a Site Visit — SLV Group" },

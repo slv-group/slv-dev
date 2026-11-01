@@ -33,17 +33,28 @@ export const Route = createFileRoute("/projects/$slug")({
   loader: async ({ params }) => {
     // First try Supabase with both current slug and possible legacy/variant slug
     const dbSlug = params.slug === "slv-green-horizon-2" ? "slv-greenhorizon-2" : params.slug;
-    let altSlug = params.slug;
-    if (params.slug.startsWith("slv-amaravti-")) {
-      altSlug = params.slug.replace("slv-amaravti-", "slv-amaravathi-");
-    } else if (params.slug.startsWith("slv-amaravathi-")) {
-      altSlug = params.slug.replace("slv-amaravathi-", "slv-amaravti-");
+    const slugVariants = new Set<string>([params.slug, dbSlug]);
+    if (params.slug.includes("amaravti")) {
+      slugVariants.add(params.slug.replace(/amaravti/g, "amaravathi"));
+      slugVariants.add(params.slug.replace(/amaravti/g, "amaravati"));
     }
+    if (params.slug.includes("amaravathi")) {
+      slugVariants.add(params.slug.replace(/amaravathi/g, "amaravti"));
+      slugVariants.add(params.slug.replace(/amaravathi/g, "amaravati"));
+    }
+    if (params.slug.includes("amaravati")) {
+      slugVariants.add(params.slug.replace(/amaravati/g, "amaravti"));
+      slugVariants.add(params.slug.replace(/amaravati/g, "amaravathi"));
+    }
+
+    const orCondition = Array.from(slugVariants)
+      .map((s) => `slug.eq.${s}`)
+      .join(",");
 
     const { data, error } = await supabase
       .from("projects")
       .select("*")
-      .or(`slug.eq.${params.slug},slug.eq.${dbSlug},slug.eq.${altSlug}`)
+      .or(orCondition)
       .maybeSingle();
     if (error) {
       console.warn(
@@ -57,9 +68,7 @@ export const Route = createFileRoute("/projects/$slug")({
       project = mapSupabaseToProject(data);
     } else {
       // Fallback to static data only if not in database
-      project = staticProjects.find(
-        (p) => p.slug === params.slug || p.slug === dbSlug || p.slug === altSlug,
-      );
+      project = staticProjects.find((p) => slugVariants.has(p.slug));
     }
 
     if (!project) throw notFound();
@@ -93,7 +102,7 @@ export const Route = createFileRoute("/projects/$slug")({
           content:
             p?.tagline ||
             p?.description ||
-            "Residential development by SLV Group in Vijayawada & Amaravati region.",
+            "Residential development by SLV Group in Vijayawada & Amaravti region.",
         },
         { property: "og:title", content: p ? `${p.name} — SLV Group` : "Project — SLV Group" },
         { property: "og:description", content: p?.tagline || "" },

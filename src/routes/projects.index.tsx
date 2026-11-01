@@ -17,18 +17,18 @@ import { Search, MapPin, RotateCcw, BedDouble, ArrowUpDown } from "lucide-react"
 export const Route = createFileRoute("/projects/")({
   head: () => ({
     meta: [
-      { title: "Residential Projects & Open Plots in Vijayawada & Amaravati — SLV Group" },
+      { title: "Residential Projects & Open Plots in Vijayawada & Amaravti — SLV Group" },
       {
         name: "description",
         content:
-          "Explore ongoing, upcoming, and completed residential gated communities, open plots, and commercial projects across Vijayawada, Guntur, and the Amaravati region by SLV Group.",
+          "Explore ongoing, upcoming, and completed residential gated communities, open plots, and commercial projects across Vijayawada, Guntur, and the Amaravti region by SLV Group.",
       },
       { property: "og:site_name", content: "SLV Group" },
       { property: "og:title", content: "Projects Portfolio — SLV Group" },
       {
         property: "og:description",
         content:
-          "Browse our portfolio of plotted developments, residential communities, and commercial landmarks in Vijayawada and Amaravati.",
+          "Browse our portfolio of plotted developments, residential communities, and commercial landmarks in Vijayawada and Amaravti.",
       },
       { property: "og:url", content: "https://www.slvgroup.co.in/projects" },
       { property: "og:image", content: "https://www.slvgroup.co.in/slv-logo.png" },
@@ -37,7 +37,7 @@ export const Route = createFileRoute("/projects/")({
       {
         name: "twitter:description",
         content:
-          "Browse our portfolio of plotted developments, residential communities, and commercial landmarks in Vijayawada and Amaravati.",
+          "Browse our portfolio of plotted developments, residential communities, and commercial landmarks in Vijayawada and Amaravti.",
       },
       { name: "twitter:image", content: "https://www.slvgroup.co.in/slv-logo.png" },
     ],
@@ -132,7 +132,7 @@ function getLocationFromSearch(searchLocation?: string): LocationFilter {
   const match = locationFilters.find((loc) => loc.toLowerCase() === normalized);
   if (match) return match;
   if (normalized === "amaravathi" || normalized === "amaravati" || normalized === "amaravti")
-    return "Amaravati";
+    return "Amaravti";
   if (normalized === "gunthapalli" || normalized === "guntupalli") return "Guntupalli";
   return "All";
 }
@@ -416,7 +416,7 @@ function ProjectsPage() {
         <div className="mt-8 flex items-center justify-between flex-wrap gap-4">
           <p className="text-sm text-muted-foreground">
             Showing <span className="font-semibold text-foreground">{filtered.length}</span>{" "}
-            residences
+            projects
             {location !== "All" && (
               <span className="ml-1 text-gold font-medium">in {location}</span>
             )}
@@ -462,7 +462,7 @@ function ProjectsPage() {
         </div>
         {filtered.length === 0 && (
           <div className="py-20 text-center">
-            <p className="text-muted-foreground">No residences match these filters yet.</p>
+            <p className="text-muted-foreground">No projects match these filters yet.</p>
             {hasActiveFilters && (
               <button
                 onClick={resetFilters}

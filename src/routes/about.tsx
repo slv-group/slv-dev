@@ -35,7 +35,7 @@ export const Route = createFileRoute("/about")({
       {
         name: "description",
         content:
-          "Since 2007, SLV Group has crafted trusted residential communities, open plots, and commercial landmarks across Vijayawada, Guntur, and the Amaravati region.",
+          "Since 2007, SLV Group has crafted trusted residential communities, open plots, and commercial landmarks across Vijayawada, Guntur, and the Amaravti region.",
       },
       { property: "og:site_name", content: "SLV Group" },
       {
@@ -173,7 +173,7 @@ const journey: {
 //     icon: Star,
 //     year: "2019",
 //     title: "Customer Trust Award",
-//     body: "Voted among the most trusted builders in the Amaravati region by homeowner surveys.",
+//     body: "Voted among the most trusted builders in the Amaravti region by homeowner surveys.",
 //   },
 //   {
 //     icon: Sparkles,
@@ -393,7 +393,7 @@ function AboutPage() {
 
               <p className="mt-7 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg lg:text-xl">
                 From a humble beginning in Bhimavaram to communities across the Vijayawada and
-                Amaravati region, SLV has grown by keeping one promise at the heart of every project
+                Amaravti region, SLV has grown by keeping one promise at the heart of every project
                 — build with trust, deliver with purpose.
               </p>
 
