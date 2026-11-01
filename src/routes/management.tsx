@@ -140,7 +140,7 @@ const leadershipTeam = [
     designation: "Chairman & Managing Director",
     role: "Founder Leadership",
     image: chairmanImage,
-    imagePosition: "object-[center_35%]",
+    imagePosition: "object-center",
     description:
       "The driving force behind SLV Group, Sri Penmetsa Srinivasa Raju began his professional journey in the dairy industry in Bhimavaram before entering the construction industry in 2007. His leadership philosophy centres on customer trust, uncompromising quality, hard work, efficient time management and creating excellent living environments.",
     highlights: [
@@ -223,7 +223,7 @@ function LeadershipProfile({
                 )}
               />
 
-              <div className="group relative overflow-hidden rounded-[2rem] border border-border bg-card shadow-[0_25px_90px_rgba(0,0,0,0.12)] sm:rounded-[2.5rem]">
+              <div className="group relative overflow-hidden rounded-[2rem] border border-border bg-card shadow-[0_25px_90px_rgba(0,0,0,0.12)] sm:rounded-[2.5rem] transform-gpu [backface-visibility:hidden]">
                 <div className="relative aspect-[4/5] w-full overflow-hidden sm:aspect-[3/4]">
                   <img
                     src={member.image}
@@ -232,14 +232,14 @@ function LeadershipProfile({
                     decoding="async"
                     fetchPriority={member.role === "Founder Leadership" ? "high" : "low"}
                     className={cn(
-                      "h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.025]",
+                      "h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.025] transform-gpu [backface-visibility:hidden] [image-rendering:auto]",
                       member.imagePosition,
                     )}
                   />
 
                   <div
                     aria-hidden
-                    className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 via-20% to-transparent"
+                    className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 via-25% to-transparent"
                   />
 
                   <CornerMarks />
