@@ -51,22 +51,19 @@ export const CONTACT_PHONES: readonly ContactPhoneInfo[] = [
 export const SOCIAL_LINKS = {
   facebook: {
     label: "Facebook",
-    // Official Facebook page URL (placeholder until verified official URL is provided)
-    url: (import.meta.env.VITE_FACEBOOK_URL as string) || "https://www.facebook.com/slvgroup",
+    url: (import.meta.env.VITE_FACEBOOK_URL as string) || "#",
     icon: Facebook,
     ariaLabel: "Follow SLV Group on Facebook",
   },
   instagram: {
     label: "Instagram",
-    // Official Instagram page URL (placeholder until verified official URL is provided)
-    url: (import.meta.env.VITE_INSTAGRAM_URL as string) || "https://www.instagram.com/slvgroup",
+    url: (import.meta.env.VITE_INSTAGRAM_URL as string) || "#",
     icon: Instagram,
     ariaLabel: "Follow SLV Group on Instagram",
   },
   linkedin: {
     label: "LinkedIn",
-    url:
-      (import.meta.env.VITE_LINKEDIN_URL as string) || "https://www.linkedin.com/company/slv-group",
+    url: (import.meta.env.VITE_LINKEDIN_URL as string) || "#",
     icon: Linkedin,
     ariaLabel: "Follow SLV Group on LinkedIn",
   },

@@ -43,17 +43,6 @@ const sections: SectionConfig[] = [
         required: true,
       },
       {
-        name: "email",
-        label: "Email",
-        type: "email",
-        required: true,
-      },
-      {
-        name: "registered_address",
-        label: "Current Address",
-        required: true,
-      },
-      {
         name: "city",
         label: "City",
         required: true,
@@ -61,11 +50,6 @@ const sections: SectionConfig[] = [
       {
         name: "state",
         label: "State",
-        required: true,
-      },
-      {
-        name: "pin_code",
-        label: "PIN Code",
         required: true,
       },
     ],
@@ -122,33 +106,6 @@ const sections: SectionConfig[] = [
       {
         name: "expected_price",
         label: "Expected Price (₹)",
-        required: true,
-      },
-      {
-        name: "survey_number",
-        label: "Survey Number / Plot Number",
-        required: true,
-      },
-      {
-        name: "additional_details",
-        label: "Additional Details / Remarks",
-        type: "textarea",
-        required: false,
-      },
-    ],
-  },
-
-  {
-    title: "Document Uploads",
-    description:
-      "Upload your Land Documents, EC (Encumbrance Certificate), Patta / Chitta, Survey Map, Sale Deed, and any other relevant documents. Multiple PDF, JPG, or PNG files are supported.",
-    fields: [
-      {
-        name: "documents",
-        label: "Upload Documents",
-        type: "file",
-        accept: ".pdf,.jpg,.jpeg,.png,image/*",
-        multiple: true,
         required: true,
       },
     ],

@@ -267,93 +267,61 @@ export function ContactPopup() {
     <Dialog open={open} onOpenChange={(value) => !value && closePopup()}>
       <DialogContent
         className="
-          w-[calc(100%-2rem)]
-          max-w-xl
-          overflow-y-auto
+          flex flex-col
+          w-[calc(100vw-24px)]
+          max-w-[calc(100vw-24px)]
+          sm:max-w-xl
+          gap-0
+          p-0
+          overflow-hidden
           rounded-3xl
           border-border/50
           bg-card/95
-          p-5
           shadow-2xl
           backdrop-blur-xl
-          sm:p-8
-          max-h-[90vh]
+          max-h-[calc(100vh-24px)]
+          max-h-[calc(100dvh-24px)]
+          sm:max-h-[min(90vh,780px)]
+          box-border
         "
       >
-        <DialogHeader className="pr-8 text-left">
+        {/* Fixed Header */}
+        <div className="relative shrink-0 border-b border-border/40 px-5 pt-5 pb-4 pr-12 text-left sm:px-8 sm:pt-7 sm:pb-5 sm:pr-14">
           <p className="section-label text-gold">Get in Touch</p>
 
-          <DialogTitle className="mt-2 font-display text-2xl font-bold text-foreground sm:text-3xl">
+          <DialogTitle className="mt-1.5 font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
             Let&apos;s Find Your Home
           </DialogTitle>
 
-          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-1.5 text-xs sm:text-sm leading-relaxed text-muted-foreground break-words">
             Share your details and our relationship team will contact you shortly.
           </p>
-        </DialogHeader>
+        </div>
 
-        <form onSubmit={handleSubmit} className="mt-4 space-y-4">
-          {/* Row 1: Full Name * & Phone Number * with Country Code */}
-          <div className="grid gap-4 sm:grid-cols-2">
-            <input
-              required
-              placeholder="Full Name *"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              className="w-full rounded-xl bg-background px-4 py-3 text-sm text-foreground neu-pressed focus:outline-none focus:ring-2 focus:ring-gold/40"
-            />
+        {/* Scrollable Form Body */}
+        <div className="flex-1 overflow-y-auto overscroll-contain px-5 py-5 sm:px-8 sm:py-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Row 1: Full Name * & Phone Number * with Country Code */}
+            <div className="grid gap-3.5 sm:grid-cols-2 sm:gap-4">
+              <div className="min-w-0">
+                <input
+                  required
+                  placeholder="Full Name *"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="box-border w-full rounded-xl bg-background px-3.5 py-3 text-base text-foreground neu-pressed focus:outline-none focus:ring-2 focus:ring-gold/40 sm:px-4 sm:text-sm"
+                />
+              </div>
 
-            <div className="flex gap-2">
-              <select
-                value={countryCode}
-                onChange={(e) => {
-                  setCountryCode(e.target.value);
-                  if (isWhatsAppSame) setWhatsappCountryCode(e.target.value);
-                }}
-                aria-label="Country Code"
-                className="w-24 shrink-0 rounded-xl bg-background px-2 py-3 text-xs font-medium text-foreground neu-pressed focus:outline-none cursor-pointer"
-              >
-                {COUNTRY_CODES.map((c) => (
-                  <option
-                    key={c.code + c.iso}
-                    value={c.code}
-                    className="bg-background text-foreground"
-                  >
-                    {c.flag} {c.code}
-                  </option>
-                ))}
-              </select>
-
-              <input
-                required
-                type="tel"
-                placeholder="Phone Number *"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                className="flex-1 min-w-0 rounded-xl bg-background px-4 py-3 text-sm text-foreground neu-pressed focus:outline-none focus:ring-2 focus:ring-gold/40"
-              />
-            </div>
-          </div>
-
-          {/* WhatsApp Checkbox: Subtle & Clean */}
-          <div className="space-y-2">
-            <label className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground cursor-pointer select-none">
-              <input
-                type="checkbox"
-                checked={isWhatsAppSame}
-                onChange={(e) => setIsWhatsAppSame(e.target.checked)}
-                className="h-4 w-4 rounded accent-[#d4af37] cursor-pointer"
-              />
-              <span>Is the above number your WhatsApp number?</span>
-            </label>
-
-            {!isWhatsAppSame && (
-              <div className="flex gap-2 animate-fade-down pt-1">
+              <div className="flex min-w-0 gap-2">
                 <select
-                  value={whatsappCountryCode}
-                  onChange={(e) => setWhatsappCountryCode(e.target.value)}
-                  aria-label="WhatsApp Country Code"
-                  className="w-24 shrink-0 rounded-xl bg-background px-2 py-3 text-xs font-medium text-foreground neu-pressed focus:outline-none cursor-pointer"
+                  value={countryCode}
+                  onChange={(e) => {
+                    setCountryCode(e.target.value);
+                    if (isWhatsAppSame) setWhatsappCountryCode(e.target.value);
+                  }}
+                  aria-label="Country Code"
+                  className="w-[84px] shrink-0 rounded-xl bg-background px-2 py-3 text-sm font-medium text-foreground neu-pressed focus:outline-none cursor-pointer sm:w-24 sm:text-xs"
                 >
                   {COUNTRY_CODES.map((c) => (
                     <option
@@ -367,77 +335,129 @@ export function ContactPopup() {
                 </select>
 
                 <input
+                  required
                   type="tel"
-                  placeholder="WhatsApp Number (Optional)"
-                  value={whatsappNumber}
-                  onChange={(e) => setWhatsappNumber(e.target.value)}
-                  className="flex-1 min-w-0 rounded-xl bg-background px-4 py-3 text-sm text-foreground neu-pressed focus:outline-none focus:ring-2 focus:ring-gold/40"
+                  placeholder="Phone Number *"
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  className="min-w-0 flex-1 rounded-xl bg-background px-3.5 py-3 text-base text-foreground neu-pressed focus:outline-none focus:ring-2 focus:ring-gold/40 sm:px-4 sm:text-sm"
                 />
               </div>
-            )}
-          </div>
+            </div>
 
-          {/* Email Address — OPTIONAL */}
-          <input
-            type="email"
-            placeholder="Email Address (Optional)"
-            value={emailAddress}
-            onChange={(e) => setEmailAddress(e.target.value)}
-            className="w-full rounded-xl bg-background px-4 py-3 text-sm text-foreground neu-pressed focus:outline-none focus:ring-2 focus:ring-gold/40"
-          />
+            {/* WhatsApp Checkbox: Subtle & Clean */}
+            <div className="space-y-2 pt-0.5">
+              <label className="flex items-start gap-2.5 text-xs text-muted-foreground hover:text-foreground cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={isWhatsAppSame}
+                  onChange={(e) => setIsWhatsAppSame(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 shrink-0 rounded accent-[#d4af37] cursor-pointer"
+                />
+                <span className="leading-snug break-words">
+                  Is the above number your WhatsApp number?
+                </span>
+              </label>
 
-          {/* I'm interested in... with Projects + General Enquiry + Others */}
-          <select
-            value={selectedProject}
-            onChange={(e) => setSelectedProject(e.target.value)}
-            className="w-full rounded-xl bg-background px-4 py-3 text-sm text-foreground neu-pressed focus:outline-none cursor-pointer"
-          >
-            <option value="">I&apos;m interested in…</option>
+              {!isWhatsAppSame && (
+                <div className="flex min-w-0 gap-2 animate-fade-down pt-1">
+                  <select
+                    value={whatsappCountryCode}
+                    onChange={(e) => setWhatsappCountryCode(e.target.value)}
+                    aria-label="WhatsApp Country Code"
+                    className="w-[84px] shrink-0 rounded-xl bg-background px-2 py-3 text-sm font-medium text-foreground neu-pressed focus:outline-none cursor-pointer sm:w-24 sm:text-xs"
+                  >
+                    {COUNTRY_CODES.map((c) => (
+                      <option
+                        key={c.code + c.iso}
+                        value={c.code}
+                        className="bg-background text-foreground"
+                      >
+                        {c.flag} {c.code}
+                      </option>
+                    ))}
+                  </select>
 
-            {projects.map((project) => (
-              <option key={project.id} value={project.id} className="bg-background text-foreground">
-                {formatProjectOptionLabel(project)}
+                  <input
+                    type="tel"
+                    placeholder="WhatsApp Number (Optional)"
+                    value={whatsappNumber}
+                    onChange={(e) => setWhatsappNumber(e.target.value)}
+                    className="min-w-0 flex-1 rounded-xl bg-background px-3.5 py-3 text-base text-foreground neu-pressed focus:outline-none focus:ring-2 focus:ring-gold/40 sm:px-4 sm:text-sm"
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Email Address — OPTIONAL */}
+            <input
+              type="email"
+              placeholder="Email Address (Optional)"
+              value={emailAddress}
+              onChange={(e) => setEmailAddress(e.target.value)}
+              className="box-border w-full rounded-xl bg-background px-3.5 py-3 text-base text-foreground neu-pressed focus:outline-none focus:ring-2 focus:ring-gold/40 sm:px-4 sm:text-sm"
+            />
+
+            {/* I'm interested in... with Projects + General Enquiry + Others */}
+            <select
+              value={selectedProject}
+              onChange={(e) => setSelectedProject(e.target.value)}
+              className="box-border w-full rounded-xl bg-background px-3.5 py-3 text-base text-foreground neu-pressed focus:outline-none cursor-pointer sm:px-4 sm:text-sm truncate"
+            >
+              <option value="">I&apos;m interested in…</option>
+
+              {projects.map((project) => (
+                <option
+                  key={project.id}
+                  value={project.id}
+                  className="bg-background text-foreground"
+                >
+                  {formatProjectOptionLabel(project)}
+                </option>
+              ))}
+
+              <option value="general" className="bg-background text-foreground">
+                General Enquiry
               </option>
-            ))}
+              <option value="others" className="bg-background text-foreground">
+                Others
+              </option>
+            </select>
 
-            <option value="general" className="bg-background text-foreground">
-              General Enquiry
-            </option>
-            <option value="others" className="bg-background text-foreground">
-              Others
-            </option>
-          </select>
+            {/* Message Textarea */}
+            <textarea
+              rows={3}
+              placeholder="Tell us what you're looking for…"
+              value={messageText}
+              onChange={(e) => setMessageText(e.target.value)}
+              className="box-border w-full resize-none rounded-xl bg-background px-3.5 py-3 text-base text-foreground neu-pressed focus:outline-none focus:ring-2 focus:ring-gold/40 sm:px-4 sm:text-sm"
+            />
 
-          {/* Message Textarea */}
-          <textarea
-            rows={4}
-            placeholder="Tell us what you're looking for…"
-            value={messageText}
-            onChange={(e) => setMessageText(e.target.value)}
-            className="w-full resize-none rounded-xl bg-background px-4 py-3 text-sm text-foreground neu-pressed focus:outline-none focus:ring-2 focus:ring-gold/40"
-          />
+            {/* Submit Buttons */}
+            <div className="space-y-2.5 pt-1 pb-[max(0.25rem,env(safe-area-inset-bottom))]">
+              {/* Submit Enquiry Button */}
+              <button
+                type="submit"
+                disabled={submitting}
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-gold py-3.5 text-sm font-semibold text-gold-foreground transition-transform hover:scale-[1.01] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer shadow-lg"
+              >
+                {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
+                Submit Enquiry
+              </button>
 
-          {/* Submit Enquiry Button */}
-          <button
-            type="submit"
-            disabled={submitting}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-gold py-3.5 text-sm font-semibold text-gold-foreground transition-transform hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
-          >
-            {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
-            Submit Enquiry
-          </button>
-
-          {/* Chat on WhatsApp Button */}
-          <a
-            href={`https://wa.me/919859595939?text=${whatsappDirectMessage}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] py-3.5 text-sm font-semibold text-white transition-transform hover:scale-[1.01] cursor-pointer"
-          >
-            <MessageCircle className="h-4 w-4" />
-            Chat on WhatsApp
-          </a>
-        </form>
+              {/* Chat on WhatsApp Button */}
+              <a
+                href={`https://wa.me/919859595939?text=${whatsappDirectMessage}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] py-3.5 text-sm font-semibold text-white transition-transform hover:scale-[1.01] active:scale-[0.99] cursor-pointer shadow-md"
+              >
+                <MessageCircle className="h-4 w-4" />
+                Chat on WhatsApp
+              </a>
+            </div>
+          </form>
+        </div>
       </DialogContent>
     </Dialog>
   );

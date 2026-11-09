@@ -611,7 +611,7 @@ export type Database = {
           applicant_name: string;
           created_at: string;
           document_paths: Json;
-          email: string;
+          email: string | null;
           form_data: Json;
           id: string;
           notes: string | null;
@@ -625,7 +625,7 @@ export type Database = {
           applicant_name: string;
           created_at?: string;
           document_paths?: Json;
-          email: string;
+          email?: string | null;
           form_data?: Json;
           id?: string;
           notes?: string | null;
@@ -639,7 +639,7 @@ export type Database = {
           applicant_name?: string;
           created_at?: string;
           document_paths?: Json;
-          email?: string;
+          email?: string | null;
           form_data?: Json;
           id?: string;
           notes?: string | null;

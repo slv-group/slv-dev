@@ -217,9 +217,9 @@ function RegistrationMessages() {
     const value = search.toLowerCase();
 
     return (
-      registration.applicant_name.toLowerCase().includes(value) ||
-      registration.email.toLowerCase().includes(value) ||
-      registration.phone.toLowerCase().includes(value) ||
+      (registration.applicant_name || "").toLowerCase().includes(value) ||
+      (registration.email || "").toLowerCase().includes(value) ||
+      (registration.phone || "").toLowerCase().includes(value) ||
       registrationLabels[registration.registration_type]?.toLowerCase().includes(value)
     );
   });
@@ -360,7 +360,7 @@ function RegistrationMessages() {
                   </div>
 
                   <p className="mt-1 truncate text-sm text-muted-foreground">
-                    {registration.email}
+                    {registration.email || "—"}
                   </p>
 
                   <p className="mt-2 text-xs text-muted-foreground">
@@ -412,7 +412,7 @@ function RegistrationMessages() {
                       <div>
                         <p className="text-xs text-muted-foreground">Email</p>
 
-                        <p className="text-sm font-medium">{selected.email}</p>
+                        <p className="text-sm font-medium">{selected.email || "—"}</p>
                       </div>
                     </div>
 

@@ -81,7 +81,7 @@ export async function exportRegistrationsToPDF(registrations: Registration[]) {
      */
     const summaryRows = registrations.map((registration) => [
       registration.applicant_name,
-      registration.email,
+      registration.email || "—",
       registration.phone,
       registrationLabels[registration.registration_type] ?? registration.registration_type,
       statusLabels[registration.status] ?? registration.status,
@@ -145,7 +145,7 @@ export async function exportRegistrationsToPDF(registrations: Registration[]) {
        */
       const contactRows = [
         ["Applicant Name", registration.applicant_name],
-        ["Email", registration.email],
+        ["Email", registration.email || "—"],
         ["Phone", registration.phone],
         ["Submitted", new Date(registration.created_at).toLocaleString()],
         [

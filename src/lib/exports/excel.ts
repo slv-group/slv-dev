@@ -70,7 +70,7 @@ export async function exportRegistrationsToExcel(registrations: Registration[]) 
       const row: Record<string, string | number | boolean> = {
         ID: registration.id,
         "Applicant Name": registration.applicant_name,
-        Email: registration.email,
+        Email: registration.email || "",
         Phone: registration.phone,
         "Registration Type":
           registrationLabels[registration.registration_type] ?? registration.registration_type,

@@ -23,7 +23,11 @@ import { cn } from "@/lib/utils";
 // Storage URLs to the correct runtime src.
 // -----------------------------------------------------------------------------
 import heroImage from "@/assets/about_slv.jpg";
+import csrCollageImage from "@/assets/csr/csr-activities-collage.jpg";
 import annaCanteenImage from "@/assets/csr/anna-canteen-donation.png";
+import hareKrishnaImage from "@/assets/csr/hare-krishna-donation.jpg";
+import workerMealsImage from "@/assets/csr/worker-meals.jpg";
+import cctvPoliceImage from "@/assets/csr/cctv-police-infrastructure.jpg";
 import communityImage from "@/assets/csr/community.jpg";
 import csrPhoto1 from "@/assets/csr/photo_2026-08-23_23-01-15.jpg";
 import csrPhoto2 from "@/assets/csr/photo_2026-08-23_23-01-19.jpg";
@@ -35,8 +39,16 @@ import { supabase } from "@/integrations/supabase/client";
 
 // Map every known DB path variant → its Vite-imported asset
 const imageMap: Record<string, string> = {
+  "/src/assets/csr/csr-activities-collage.jpg": csrCollageImage,
+  "/assets/csr/csr-activities-collage.jpg": csrCollageImage,
   "/src/assets/csr/anna-canteen-donation.png": annaCanteenImage,
   "/assets/csr/anna-canteen-donation.png": annaCanteenImage,
+  "/src/assets/csr/hare-krishna-donation.jpg": hareKrishnaImage,
+  "/assets/csr/hare-krishna-donation.jpg": hareKrishnaImage,
+  "/src/assets/csr/worker-meals.jpg": workerMealsImage,
+  "/assets/csr/worker-meals.jpg": workerMealsImage,
+  "/src/assets/csr/cctv-police-infrastructure.jpg": cctvPoliceImage,
+  "/assets/csr/cctv-police-infrastructure.jpg": cctvPoliceImage,
   "/src/assets/csr/community.jpg": communityImage,
   "/assets/csr/community.jpg": communityImage,
   "/src/assets/csr/photo_2026-08-23_23-01-15.jpg": csrPhoto1,
@@ -694,8 +706,8 @@ function CSRPage() {
 
                 <div className="relative overflow-hidden rounded-[2rem] border border-gold/15 bg-gradient-obsidian shadow-[0_30px_100px_rgba(0,0,0,0.25)] sm:rounded-[2.5rem]">
                   <img
-                    src={heroImage}
-                    alt="SLV community initiative"
+                    src={csrCollageImage}
+                    alt="SLV Group CSR Initiatives — Anna Canteens, Hare Krishna Movement, Site Worker Meals, and CCTV Police Infrastructure"
                     className="aspect-[4/3] w-full object-cover sm:aspect-[5/4] lg:aspect-[4/3]"
                     loading="lazy"
                     decoding="async"

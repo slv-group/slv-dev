@@ -39,25 +39,9 @@ const sections: SectionConfig[] = [
         required: true,
       },
       {
-        name: "designation",
-        label: "Designation",
-        required: true,
-      },
-      {
         name: "mobile_number",
         label: "Mobile Number",
         type: "tel",
-        required: true,
-      },
-      {
-        name: "email",
-        label: "Email",
-        type: "email",
-        required: true,
-      },
-      {
-        name: "registered_address",
-        label: "Registered Office Address",
         required: true,
       },
       {
@@ -68,11 +52,6 @@ const sections: SectionConfig[] = [
       {
         name: "state",
         label: "State",
-        required: true,
-      },
-      {
-        name: "pin_code",
-        label: "PIN Code",
         required: true,
       },
     ],
@@ -86,6 +65,7 @@ const sections: SectionConfig[] = [
         label: "Primary Supply Category",
         type: "select",
         required: true,
+        className: "md:col-span-2",
         options: [
           "Cement & Concrete",
           "Steel & Metal",
@@ -97,42 +77,6 @@ const sections: SectionConfig[] = [
           "Other",
         ],
       },
-      {
-        name: "monthly_supply_capacity",
-        label: "Monthly Supply Capacity",
-        type: "select",
-        required: true,
-        options: ["Below ₹10 Lakhs", "₹10-50 Lakhs", "₹50 Lakhs - ₹2 Crore", "Above ₹2 Crore"],
-      },
-      {
-        name: "geographic_coverage",
-        label: "Geographic Coverage",
-        type: "select",
-        required: true,
-        options: ["City/District Only", "Statewide", "Multi-State (Region)", "Pan-India"],
-      },
-      {
-        name: "brands_products",
-        label: "Brands / Products You Supply",
-        type: "textarea",
-        required: true,
-      },
-    ],
-  },
-
-  {
-    title: "Document Uploads",
-    description:
-      "Upload your GST Certificate, PAN Card, MSME Certificate, Product Catalog (PDF), and Latest Price List (Optional). Multiple PDF, JPG, or PNG files are supported.",
-    fields: [
-      {
-        name: "documents",
-        label: "Upload Documents",
-        type: "file",
-        accept: ".pdf,.jpg,.jpeg,.png,image/*",
-        multiple: true,
-        required: true,
-      },
     ],
   },
 ];
@@ -141,7 +85,7 @@ function VendorSupplierRegistration() {
   return (
     <WorkRegistrationForm
       title="Vendor & Supplier Registration"
-      subtitle="Join SLV Group' trusted network of material suppliers."
+      subtitle="Join SLV Group's trusted network of material suppliers."
       registrationType="vendor_supplier"
       sections={sections}
       submitLabel="Submit Application"

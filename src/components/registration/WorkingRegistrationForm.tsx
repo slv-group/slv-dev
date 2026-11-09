@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
@@ -18,6 +19,7 @@ export type FieldConfig = {
   options?: string[];
   accept?: string;
   multiple?: boolean;
+  className?: string;
 };
 
 export type SectionConfig = {
@@ -289,11 +291,16 @@ export function WorkRegistrationForm({
         registration_type: registrationType,
 
         applicant_name:
-          formData.full_name || formData.company_name || formData.company_firm_name || "",
+          formData.full_name ||
+          formData.company_name ||
+          formData.company_firm_name ||
+          formData.owner_name ||
+          formData.contact_person ||
+          "Applicant",
 
         email: formData.email || "",
 
-        phone: formData.mobile_number || "",
+        phone: formData.mobile_number || formData.phone || "",
 
         form_data: formData,
 
@@ -396,7 +403,7 @@ export function WorkRegistrationForm({
                       <div
                         key={field.name}
                         id={`field-${field.name}`}
-                        className="space-y-2 md:col-span-2"
+                        className={cn("space-y-2 md:col-span-2", field.className)}
                       >
                         <Label htmlFor={field.name}>
                           {field.label}
@@ -421,7 +428,11 @@ export function WorkRegistrationForm({
                    */
                   if (field.type === "select") {
                     return (
-                      <div key={field.name} id={`field-${field.name}`} className="space-y-2">
+                      <div
+                        key={field.name}
+                        id={`field-${field.name}`}
+                        className={cn("space-y-2", field.className)}
+                      >
                         <Label htmlFor={field.name}>
                           {field.label}
 
@@ -461,7 +472,7 @@ export function WorkRegistrationForm({
                       <div
                         key={field.name}
                         id={`field-${field.name}`}
-                        className={`space-y-2 ${isMultiple ? "md:col-span-2" : ""}`}
+                        className={cn("space-y-2", isMultiple && "md:col-span-2", field.className)}
                       >
                         <Label>
                           {field.label}
@@ -573,7 +584,11 @@ export function WorkRegistrationForm({
                    * Normal input
                    */
                   return (
-                    <div key={field.name} id={`field-${field.name}`} className="space-y-2">
+                    <div
+                      key={field.name}
+                      id={`field-${field.name}`}
+                      className={cn("space-y-2", field.className)}
+                    >
                       <Label htmlFor={field.name}>
                         {field.label}
 

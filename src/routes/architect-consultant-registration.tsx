@@ -54,44 +54,6 @@ const sections: SectionConfig[] = [
         type: "tel",
         required: true,
       },
-      {
-        name: "email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-      },
-      {
-        name: "aadhaar",
-        label: "Aadhaar (Optional)",
-      },
-    ],
-  },
-
-  {
-    title: "Professional Information",
-    fields: [
-      {
-        name: "profession",
-        label: "Profession",
-        type: "select",
-        required: true,
-        options: ["Architect", "Civil Engineer", "Interior Designer", "Other"],
-      },
-      {
-        name: "coa_registration",
-        label: "COA Registration No.",
-      },
-      {
-        name: "experience",
-        label: "Experience (Years)",
-        type: "number",
-        required: true,
-      },
-      {
-        name: "specialization",
-        label: "Specialization",
-        required: true,
-      },
     ],
   },
 
@@ -116,22 +78,6 @@ const sections: SectionConfig[] = [
       {
         name: "pin_code",
         label: "PIN Code",
-        required: true,
-      },
-    ],
-  },
-
-  {
-    title: "Document Uploads",
-    description:
-      "Upload your COA certificate, PAN/Aadhaar ID proof, and portfolio (optional). Multiple PDF, JPG, or PNG files are supported.",
-    fields: [
-      {
-        name: "documents",
-        label: "Documents",
-        type: "file",
-        accept: ".pdf,image/*",
-        multiple: true,
         required: true,
       },
     ],
