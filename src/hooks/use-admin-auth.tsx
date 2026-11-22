@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Session, User } from "@supabase/supabase-js";
 import type { Enums } from "@/integrations/supabase/types";
@@ -51,8 +51,14 @@ export function useAdminAuth(): UseAdminAuthReturn {
     isLoading: true,
   });
 
+  // User whose role is already loaded. Token refreshes (about hourly) and tab-focus
+  // events re-send the same session; for those we must NOT show the loading screen,
+  // because that unmounts the admin panel and throws away unsaved form input.
+  const resolvedUserId = useRef<string | null>(null);
+
   const updateStateFromSession = useCallback(async (session: Session | null) => {
     if (!session?.user) {
+      resolvedUserId.current = null;
       setState({
         session: null,
         user: null,
@@ -65,19 +71,16 @@ export function useAdminAuth(): UseAdminAuthReturn {
       return;
     }
 
-    // Synchronously populate session and default staff status so navigation to /admin does not bounce back
-    setState({
-      session,
-      user: session.user,
-      role: null,
-      isAdmin: false,
-      isEditor: false,
-      isStaff: false,
-      isLoading: true,
-    });
+    if (resolvedUserId.current === session.user.id) {
+      // Same user: keep role and UI as they are, just store the fresh session.
+      setState((prev) => ({ ...prev, session, user: session.user }));
+      return;
+    }
 
-    // Async verification of exact role in database
+    setState((prev) => ({ ...prev, session, user: session.user, isLoading: true }));
+
     const role = await fetchUserRole(session.user.id);
+    resolvedUserId.current = session.user.id;
 
     setState({
       session,
@@ -93,20 +96,17 @@ export function useAdminAuth(): UseAdminAuthReturn {
   useEffect(() => {
     let mounted = true;
 
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (mounted) {
-        updateStateFromSession(session);
-      }
-    });
-
-    // Listen for auth changes
+    // onAuthStateChange also fires INITIAL_SESSION on subscribe, so no separate
+    // getSession() call is needed. Supabase warns against awaiting other Supabase
+    // calls inside this callback (it can deadlock the client), so the role lookup
+    // is deferred to the next tick.
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (mounted) {
-        updateStateFromSession(session);
-      }
+      if (!mounted) return;
+      setTimeout(() => {
+        if (mounted) void updateStateFromSession(session);
+      }, 0);
     });
 
     return () => {
@@ -116,6 +116,7 @@ export function useAdminAuth(): UseAdminAuthReturn {
   }, [updateStateFromSession]);
 
   const signOut = useCallback(async () => {
+    resolvedUserId.current = null;
     await supabase.auth.signOut();
     setState({
       session: null,
