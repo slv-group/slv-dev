@@ -60,6 +60,11 @@ const staticEntries = [
   { path: "/privacy", changefreq: "yearly", priority: "0.5" },
   { path: "/terms", changefreq: "yearly", priority: "0.5" },
   { path: "/disclaimer", changefreq: "yearly", priority: "0.5" },
+  // Location landing pages — keep in sync with src/data/locations.ts
+  { path: "/locations/vijayawada", changefreq: "weekly", priority: "0.8" },
+  { path: "/locations/amaravati", changefreq: "weekly", priority: "0.8" },
+  { path: "/locations/gannavaram", changefreq: "weekly", priority: "0.8" },
+  { path: "/locations/bhimavaram", changefreq: "monthly", priority: "0.7" },
 ];
 
 /** Must match canonicalProjectSlug() in src/data/projects.ts */

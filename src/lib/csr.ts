@@ -1,3 +1,4 @@
+import { compressImage } from "@/lib/compress-image";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables, TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
 
@@ -5,7 +6,9 @@ export type CSR = Tables<"csr_activities">;
 export type CSRInsert = TablesInsert<"csr_activities">;
 export type CSRUpdate = TablesUpdate<"csr_activities">;
 
-export async function uploadCSRImage(file: File, year?: number | null): Promise<string> {
+export async function uploadCSRImage(original: File, year?: number | null): Promise<string> {
+  // Resize/re-encode large photos in the browser before upload
+  const file = await compressImage(original);
   const extension = file.name.split(".").pop()?.toLowerCase() || "jpg";
 
   const safeName = file.name

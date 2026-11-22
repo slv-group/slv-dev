@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { responsiveImg } from "@/lib/image";
 import { Link } from "@tanstack/react-router";
 import { Heart, MapPin, Maximize, BedDouble, ArrowRight, Building2, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -47,7 +48,11 @@ export function PropertyCard({ project }: { project: Project }) {
         >
           {hasValidImage ? (
             <img
-              src={project.image}
+              {...responsiveImg(
+                project.image,
+                "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw",
+                828,
+              )}
               alt={project.name}
               loading="lazy"
               width={1024}

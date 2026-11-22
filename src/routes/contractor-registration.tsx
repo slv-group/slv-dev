@@ -11,7 +11,7 @@ export const Route = createFileRoute("/contractor-registration")({
       {
         name: "description",
         content:
-          "Register as an approved civil, electrical, plumbing, or infrastructure contractor with SLV Group.",
+          "Civil, electrical, plumbing or infrastructure contractor? Register with SLV Group to work on residential and commercial projects in Andhra Pradesh.",
       },
       { property: "og:title", content: "Contractor Registration — SLV Group" },
       { property: "og:url", content: "https://www.slvgroup.co.in/contractor-registration" },

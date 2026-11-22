@@ -1,3 +1,4 @@
+import { compressImage } from "@/lib/compress-image";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables, TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
 
@@ -5,7 +6,9 @@ export type Award = Tables<"awards">;
 export type AwardInsert = TablesInsert<"awards">;
 export type AwardUpdate = TablesUpdate<"awards">;
 
-export async function uploadAwardImage(file: File, year?: number | null): Promise<string> {
+export async function uploadAwardImage(original: File, year?: number | null): Promise<string> {
+  // Resize/re-encode large photos in the browser before upload
+  const file = await compressImage(original);
   const extension = file.name.split(".").pop()?.toLowerCase() || "jpg";
 
   const safeName = file.name

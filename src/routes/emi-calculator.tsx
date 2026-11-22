@@ -10,7 +10,7 @@ export const Route = createFileRoute("/emi-calculator")({
       {
         name: "description",
         content:
-          "Plan your home loan with our interactive EMI calculator. Estimate monthly installments, interest payable, and amortization for residential properties and open plots.",
+          "Calculate your home loan EMI, total interest and repayment schedule for apartments, villas and open plots with SLV Group's free calculator.",
       },
       { property: "og:site_name", content: "SLV Group" },
       { property: "og:title", content: "Home Loan EMI Calculator — SLV Group" },

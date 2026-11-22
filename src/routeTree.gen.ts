@@ -45,6 +45,7 @@ import { Route as AdminMessagesRouteImport } from './routes/admin/messages'
 import { Route as AdminProjectsRouteImport } from './routes/admin/projects'
 import { Route as AdminSignupRouteImport } from './routes/admin/signup'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as LocationsLocationRouteImport } from './routes/locations.$location'
 import { Route as ProjectsIndexRouteImport } from './routes/projects.index'
 import { Route as ProjectsSlugRouteImport } from './routes/projects.$slug'
 
@@ -230,6 +231,11 @@ const ApiChatRoute = ApiChatRouteImport.update({
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LocationsLocationRoute = LocationsLocationRouteImport.update({
+  id: '/locations/$location',
+  path: '/locations/$location',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProjectsIndexRoute = ProjectsIndexRouteImport.update({
   id: '/projects/',
   path: '/projects/',
@@ -277,6 +283,7 @@ export interface FileRoutesByFullPath {
   '/admin/projects': typeof AdminProjectsRoute
   '/admin/signup': typeof AdminSignupRoute
   '/api/chat': typeof ApiChatRoute
+  '/locations/$location': typeof LocationsLocationRoute
   '/projects/$slug': typeof ProjectsSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/projects/': typeof ProjectsIndexRoute
@@ -316,6 +323,7 @@ export interface FileRoutesByTo {
   '/admin/projects': typeof AdminProjectsRoute
   '/admin/signup': typeof AdminSignupRoute
   '/api/chat': typeof ApiChatRoute
+  '/locations/$location': typeof LocationsLocationRoute
   '/projects/$slug': typeof ProjectsSlugRoute
   '/admin': typeof AdminIndexRoute
   '/projects': typeof ProjectsIndexRoute
@@ -357,6 +365,7 @@ export interface FileRoutesById {
   '/admin/projects': typeof AdminProjectsRoute
   '/admin/signup': typeof AdminSignupRoute
   '/api/chat': typeof ApiChatRoute
+  '/locations/$location': typeof LocationsLocationRoute
   '/projects/$slug': typeof ProjectsSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/projects/': typeof ProjectsIndexRoute
@@ -399,6 +408,7 @@ export interface FileRouteTypes {
     | '/admin/projects'
     | '/admin/signup'
     | '/api/chat'
+    | '/locations/$location'
     | '/projects/$slug'
     | '/admin/'
     | '/projects/'
@@ -438,6 +448,7 @@ export interface FileRouteTypes {
     | '/admin/projects'
     | '/admin/signup'
     | '/api/chat'
+    | '/locations/$location'
     | '/projects/$slug'
     | '/admin'
     | '/projects'
@@ -478,6 +489,7 @@ export interface FileRouteTypes {
     | '/admin/projects'
     | '/admin/signup'
     | '/api/chat'
+    | '/locations/$location'
     | '/projects/$slug'
     | '/admin/'
     | '/projects/'
@@ -511,6 +523,7 @@ export interface RootRouteChildren {
   VendorsSuppliersRegistrationRoute: typeof VendorsSuppliersRegistrationRoute
   WorkshopRoute: typeof WorkshopRoute
   ApiChatRoute: typeof ApiChatRoute
+  LocationsLocationRoute: typeof LocationsLocationRoute
   ProjectsSlugRoute: typeof ProjectsSlugRoute
   ProjectsIndexRoute: typeof ProjectsIndexRoute
 }
@@ -769,6 +782,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/locations/$location': {
+      id: '/locations/$location'
+      path: '/locations/$location'
+      fullPath: '/locations/$location'
+      preLoaderRoute: typeof LocationsLocationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/projects/': {
       id: '/projects/'
       path: '/projects'
@@ -840,6 +860,7 @@ const rootRouteChildren: RootRouteChildren = {
   VendorsSuppliersRegistrationRoute: VendorsSuppliersRegistrationRoute,
   WorkshopRoute: WorkshopRoute,
   ApiChatRoute: ApiChatRoute,
+  LocationsLocationRoute: LocationsLocationRoute,
   ProjectsSlugRoute: ProjectsSlugRoute,
   ProjectsIndexRoute: ProjectsIndexRoute,
 }

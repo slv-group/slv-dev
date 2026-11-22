@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { responsiveImg } from "@/lib/image";
 import {
   ArrowDown,
   ArrowRight,
@@ -38,7 +39,7 @@ export const Route = createFileRoute("/awards")({
       {
         name: "description",
         content:
-          "Explore the industry awards and professional recognition earned by SLV Group and its leadership.",
+          "Industry awards and recognition earned by SLV Group and its leadership for real estate projects in Vijayawada and across Andhra Pradesh.",
       },
       { property: "og:site_name", content: "SLV Group" },
       {
@@ -143,7 +144,11 @@ function AwardCard({ award, index }: { award: Award; index: number }) {
         {/* Image */}
         <div className="relative aspect-[4/3] overflow-hidden bg-black">
           <img
-            src={award.image_url}
+            {...responsiveImg(
+              award.image_url,
+              "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw",
+              828,
+            )}
             alt={`${award.title} — ${award.recipient}`}
             loading="lazy"
             decoding="async"

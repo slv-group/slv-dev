@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { responsiveImg } from "@/lib/image";
 import {
   ArrowRight,
   Building2,
@@ -258,7 +259,12 @@ function InitiativeDetailModal({
           {/* Hero image */}
           <div className="relative aspect-[21/9] w-full overflow-hidden">
             <img
-              src={initiative.image}
+              {...responsiveImg(
+                initiative.image,
+                "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw",
+                828,
+              )}
+              loading="lazy"
               alt={initiative.title}
               className="h-full w-full object-cover"
             />
@@ -415,7 +421,11 @@ function InitiativeCard({
         {/* Image */}
         <div className="relative aspect-[16/10] overflow-hidden bg-black">
           <img
-            src={initiative.image}
+            {...responsiveImg(
+              initiative.image,
+              "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw",
+              828,
+            )}
             alt={initiative.title}
             loading="lazy"
             decoding="async"
@@ -706,7 +716,7 @@ function CSRPage() {
 
                 <div className="relative overflow-hidden rounded-[2rem] border border-gold/15 bg-gradient-obsidian shadow-[0_30px_100px_rgba(0,0,0,0.25)] sm:rounded-[2.5rem]">
                   <img
-                    src={csrCollageImage}
+                    {...responsiveImg(csrCollageImage, "(min-width: 1024px) 50vw, 100vw", 1200)}
                     alt="SLV Group CSR Initiatives — Anna Canteens, Hare Krishna Movement, Site Worker Meals, and CCTV Police Infrastructure"
                     className="aspect-[4/3] w-full object-cover sm:aspect-[5/4] lg:aspect-[4/3]"
                     loading="lazy"
@@ -824,7 +834,7 @@ function CSRPage() {
                 {/* Image */}
                 <div className="relative min-h-[280px] overflow-hidden sm:min-h-[360px] lg:min-h-[520px]">
                   <img
-                    src={featured.image}
+                    {...responsiveImg(featured.image, "(min-width: 1024px) 50vw, 100vw", 1200)}
                     alt={featured.title}
                     className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 hover:scale-105"
                     loading="lazy"

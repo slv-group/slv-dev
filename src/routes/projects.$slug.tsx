@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { responsiveImg, imgUrl } from "@/lib/image";
 import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 import {
   MapPin,
@@ -104,9 +105,11 @@ export const Route = createFileRoute("/projects/$slug")({
       : "https://www.slvgroup.co.in/projects";
     // Social/search crawlers need an absolute image URL
     const rawImage = p?.image || "/slv-logo.png";
-    const imageUrl = /^https?:\/\//i.test(rawImage)
-      ? rawImage
-      : `https://www.slvgroup.co.in${rawImage.startsWith("/") ? "" : "/"}${rawImage}`;
+    // Share previews (WhatsApp/Facebook) reject multi-MB photos, so use a 1200px optimized copy.
+    const shareImage = imgUrl(rawImage, 1200);
+    const imageUrl = /^https?:\/\//i.test(shareImage)
+      ? shareImage
+      : `https://www.slvgroup.co.in${shareImage.startsWith("/") ? "" : "/"}${shareImage}`;
 
     const place = p ? formatLocationCity(p.location, p.city) : "";
     // "2 & 3 BHK Apartment", "Villa Plots", "Commercial" — avoid "Villa Plots Plots" / "N/A"
@@ -117,8 +120,20 @@ export const Route = createFileRoute("/projects/$slug")({
         : [beds, p.category].filter(Boolean).join(" ")
       : "";
     // e.g. "SLV Amaravati Grand-3 | 3 & 4 BHK Apartment in Gunadala, Vijayawada — SLV Group"
+    // Keep titles under ~60 characters so Google shows them in full:
+    // "SLV Amaravati Grand-3 | 3 & 4 BHK Apartment in Gunadala, Vijayawada" (+ brand only if it fits)
+    const shortPlace = p ? (p.location || p.city || "").split(",")[0].trim() : "";
+    const titleOptions = p
+      ? [
+          `${p.name} | ${[kind, place && `in ${place}`].filter(Boolean).join(" ")} — SLV Group`,
+          `${p.name} | ${[kind, place && `in ${place}`].filter(Boolean).join(" ")}`,
+          `${p.name} | ${[kind, shortPlace && `in ${shortPlace}`].filter(Boolean).join(" ")}`,
+          `${p.name} | ${p.category} in ${shortPlace}`,
+          `${p.name} — SLV Group`,
+        ].map((t) => t.replace(/ \| (?= —|$)/, ""))
+      : [];
     const title = p
-      ? `${p.name}${kind || place ? ` | ${[kind, place && `in ${place}`].filter(Boolean).join(" ")}` : ""} — SLV Group`
+      ? (titleOptions.find((t) => t.length <= 60) ?? titleOptions[titleOptions.length - 1])
       : "Project — SLV Group";
 
     const summary = p
@@ -127,7 +142,7 @@ export const Route = createFileRoute("/projects/$slug")({
           [
             kind,
             p.sqftFrom ? `from ${p.sqftFrom.toLocaleString("en-IN")} sq ft` : "",
-            p.priceFrom ? `starting ${formatPrice(p.priceFrom)}` : "",
+            p.reraNumber && /^P\d/.test(p.reraNumber) ? `RERA ${p.reraNumber}` : "",
           ]
             .filter(Boolean)
             .join(", ")
@@ -182,6 +197,91 @@ export const Route = createFileRoute("/projects/$slug")({
   ),
 });
 
+const SITE = "https://www.slvgroup.co.in";
+
+const absoluteUrl = (src?: string) => {
+  if (!src) return undefined;
+  const u = imgUrl(src, 1200);
+  return /^https?:\/\//i.test(u) ? u : `${SITE}${u.startsWith("/") ? "" : "/"}${u}`;
+};
+
+/** schema.org graph for a project page: the listing, the property itself and breadcrumbs. */
+function projectJsonLd(project: Project) {
+  const url = `${SITE}/projects/${project.slug}`;
+  const residential = ["Apartment", "Villa", "Plots"].includes(project.category);
+  const placeType =
+    project.category === "Apartment"
+      ? "ApartmentComplex"
+      : project.category === "Villa"
+        ? "SingleFamilyResidence"
+        : "Place";
+  const images = [project.image, ...project.gallery]
+    .filter((v, i, a) => !!v && a.indexOf(v) === i)
+    .slice(0, 6)
+    .map((src) => absoluteUrl(src));
+  const address = {
+    "@type": "PostalAddress",
+    streetAddress: project.location || undefined,
+    addressLocality: project.city || "Vijayawada",
+    addressRegion: "Andhra Pradesh",
+    addressCountry: "IN",
+  };
+  const amenities = project.amenities
+    .map((a) => (typeof a === "string" ? a : a?.name))
+    .filter(Boolean)
+    .slice(0, 20)
+    .map((name) => ({ "@type": "LocationFeatureSpecification", name, value: true }));
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "RealEstateListing",
+        "@id": `${url}#listing`,
+        url,
+        name: project.name,
+        description: (project.description || project.tagline || "").slice(0, 500),
+        image: images,
+        ...(project.reraNumber ? { identifier: project.reraNumber } : {}),
+        provider: { "@id": `${SITE}/#organization` },
+        about: { "@id": `${url}#property` },
+      },
+      {
+        "@type": placeType,
+        "@id": `${url}#property`,
+        name: project.name,
+        url,
+        image: images[0],
+        address,
+        ...(residential && project.bedrooms && project.bedrooms !== "N/A"
+          ? { description: `${project.bedrooms} ${project.category}`.trim() }
+          : {}),
+        ...(project.sqftFrom
+          ? {
+              floorSize: {
+                "@type": "QuantitativeValue",
+                minValue: project.sqftFrom,
+                ...(project.sqftTo && project.sqftTo > project.sqftFrom
+                  ? { maxValue: project.sqftTo }
+                  : {}),
+                unitCode: "FTK",
+              },
+            }
+          : {}),
+        ...(amenities.length ? { amenityFeature: amenities } : {}),
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: `${SITE}/` },
+          { "@type": "ListItem", position: 2, name: "Projects", item: `${SITE}/projects` },
+          { "@type": "ListItem", position: 3, name: project.name, item: url },
+        ],
+      },
+    ],
+  };
+}
+
 const tabs = ["Overview", "Amenities & Specs", "Floor Plans"] as const;
 
 function ProjectDetails() {
@@ -231,44 +331,39 @@ function ProjectDetails() {
     <div className="pt-20 sm:pt-24">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "RealEstateListing",
-            name: project.name,
-            description: project.tagline || project.description,
-            url: `https://www.slvgroup.co.in/projects/${project.slug}`,
-            image: project.image || project.gallery[0],
-            category: project.category,
-            address: {
-              "@type": "PostalAddress",
-              addressLocality: project.city || "Vijayawada",
-              addressRegion: "Andhra Pradesh",
-              addressCountry: "IN",
-            },
-            offers: {
-              "@type": "Offer",
-              priceCurrency: "INR",
-              price: project.priceFrom || undefined,
-              availability:
-                project.status === "Completed"
-                  ? "https://schema.org/InStock"
-                  : "https://schema.org/PreOrder",
-            },
-          }),
-        }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(projectJsonLd(project)) }}
       />
       {/* ════════════════════════════════════════════════
           GALLERY — Cinematic Hero + Thumbnail Strip
       ════════════════════════════════════════════════ */}
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-        <Link
-          to="/projects"
-          search={{ status: undefined }}
-          className="inline-flex items-center gap-1.5 py-4 text-sm text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <ChevronLeft className="h-4 w-4" /> Back to Projects
-        </Link>
+        <nav aria-label="Breadcrumb" className="py-4 text-sm text-muted-foreground">
+          <ol className="flex flex-wrap items-center gap-1.5">
+            <li>
+              <Link to="/" className="hover:text-foreground transition-colors">
+                Home
+              </Link>
+            </li>
+            <li aria-hidden className="opacity-50">
+              /
+            </li>
+            <li>
+              <Link
+                to="/projects"
+                search={{ status: undefined }}
+                className="inline-flex items-center gap-1 hover:text-foreground transition-colors"
+              >
+                <ChevronLeft className="h-3.5 w-3.5" /> Projects
+              </Link>
+            </li>
+            <li aria-hidden className="opacity-50">
+              /
+            </li>
+            <li aria-current="page" className="truncate text-foreground/80">
+              {project.name}
+            </li>
+          </ol>
+        </nav>
 
         <div
           className={cn(
@@ -287,7 +382,7 @@ function ProjectDetails() {
               displayGallery.map((g: string, i: number) => (
                 <img
                   key={i}
-                  src={g}
+                  {...responsiveImg(g, "100vw", 1920)}
                   alt={`${project.name} view ${i + 1}`}
                   loading={i === 0 ? "eager" : "lazy"}
                   decoding="async"
@@ -466,7 +561,8 @@ function ProjectDetails() {
                   )}
                 >
                   <img
-                    src={g}
+                    {...responsiveImg(g, "(min-width: 1024px) 25vw, 50vw", 640)}
+                    loading="lazy"
                     alt={`${project.name} ${i + 1}`}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
@@ -529,6 +625,14 @@ function ProjectDetails() {
               <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-gold sm:mt-0" />
               <span>{formatLocationCity(project.location, project.city)}</span>
             </p>
+            {project.reraNumber && (
+              <p className="mt-1.5 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                {/^P\d/.test(project.reraNumber) ? "AP RERA No." : "Approval No."}{" "}
+                <span className="normal-case tracking-normal text-foreground/80">
+                  {project.reraNumber}
+                </span>
+              </p>
+            )}
           </div>
           <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
             {/* <div>
@@ -616,7 +720,10 @@ function ProjectDetails() {
                         key={pr.label}
                         className="flex items-center justify-between rounded-xl bg-background px-4 py-3 neu-sm"
                       >
-                        <span className="text-sm text-muted-foreground">{pr.label}</span>
+                        <span className="text-sm text-muted-foreground">
+                          {pr.label}
+                          <span className="sr-only">: </span>
+                        </span>
                         <span className="font-display text-base font-semibold text-gold-foreground">
                           {pr.distance}
                         </span>
@@ -763,7 +870,12 @@ function ProjectDetails() {
                   className="group relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-card neu sm:aspect-[16/10] sm:rounded-3xl"
                 >
                   <img
-                    src={project.floorPlans[plan].image}
+                    {...responsiveImg(
+                      project.floorPlans[plan].image,
+                      "(min-width: 1024px) 60vw, 100vw",
+                      1920,
+                    )}
+                    loading="lazy"
                     alt={`${project.floorPlans[plan].type} floor plan`}
                     className="h-full w-full object-cover opacity-90 p-2 sm:p-4"
                   />
@@ -808,7 +920,12 @@ function ProjectDetails() {
               >
                 <div className="aspect-[16/10] overflow-hidden bg-black/20">
                   <img
-                    src={p.image}
+                    {...responsiveImg(
+                      p.image,
+                      "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw",
+                      828,
+                    )}
+                    loading="lazy"
                     alt={p.name}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
@@ -850,7 +967,7 @@ function ProjectDetails() {
             <X className="h-5 w-5 sm:h-7 sm:w-7" />
           </button>
           <img
-            src={lightbox}
+            src={imgUrl(lightbox, 1920)}
             alt="Fullscreen"
             onClick={(e) => e.stopPropagation()}
             className="max-h-[85dvh] max-w-full rounded-xl object-contain sm:max-h-[90vh] sm:rounded-2xl"

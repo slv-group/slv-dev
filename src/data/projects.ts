@@ -101,6 +101,7 @@ export interface Project {
   floorPlans: FloorPlan[];
   brochureUrl?: string; // Brochure PDF URL for full-screen view
   imageFit?: "cover" | "contain";
+  reraNumber?: string; // AP RERA registration / layout approval number
 }
 
 export interface FloorPlan {
@@ -331,6 +332,7 @@ export function mapSupabaseToProject(row: Tables<"projects">): Project {
 
   return {
     id: row.id,
+    reraNumber: typeof row.rera_number === "string" && row.rera_number.trim() ? row.rera_number.trim() : undefined,
     slug: canonicalProjectSlug(row.slug),
     name,
     tagline,

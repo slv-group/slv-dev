@@ -8,7 +8,7 @@
 /*
  * SLV Group — Royal Luxury Design System v2
  * Aesthetic: Deep Obsidian + Rich Champagne Gold + Warm Ivory
- * Fonts: Cormorant Garamond (display), Inter (sans)
+ * Fonts: Poppins (display + sans), loaded in src/routes/__root.tsx
  */
 
 @theme inline {

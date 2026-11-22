@@ -1,3 +1,4 @@
+import { compressImage, fileExt } from "@/lib/compress-image";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -105,11 +106,16 @@ function GalleryTab() {
     const itemToReplace = activeReplaceItem;
     setReplacingItemId(itemToReplace.id);
     try {
-      const ext = file.name.split(".").pop();
+      const upload = await compressImage(file);
+      const ext = fileExt(upload);
       const path = `gallery/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
       const { error: uploadError } = await supabase.storage
         .from("project-media")
-        .upload(path, file, { upsert: true });
+        .upload(path, upload, {
+          upsert: true,
+          contentType: upload.type || undefined,
+          cacheControl: "31536000",
+        });
       if (uploadError) throw uploadError;
 
       const { data: urlData } = supabase.storage.from("project-media").getPublicUrl(path);
@@ -138,11 +144,16 @@ function GalleryTab() {
     let successCount = 0;
     for (const file of Array.from(files)) {
       try {
-        const ext = file.name.split(".").pop();
+        const upload = await compressImage(file);
+        const ext = fileExt(upload);
         const path = `gallery/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
         const { error: uploadError } = await supabase.storage
           .from("project-media")
-          .upload(path, file, { upsert: true });
+          .upload(path, upload, {
+            upsert: true,
+            contentType: upload.type || undefined,
+            cacheControl: "31536000",
+          });
         if (uploadError) throw uploadError;
         const { data } = supabase.storage.from("project-media").getPublicUrl(path);
         const { error: dbError } = await supabase.from("gallery").insert({
