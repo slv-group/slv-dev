@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { projects as staticProjects, canonicalProjectSlug } from "@/data/projects";
 import { supabase } from "@/integrations/supabase/client";
+import { LOCATION_PAGES } from "@/data/locations";
 
 const BASE_URL = "https://www.slvgroup.co.in";
 
@@ -39,6 +40,11 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/privacy", changefreq: "yearly", priority: "0.5" },
           { path: "/terms", changefreq: "yearly", priority: "0.5" },
           { path: "/disclaimer", changefreq: "yearly", priority: "0.5" },
+          ...LOCATION_PAGES.map((l) => ({
+            path: `/locations/${l.slug}`,
+            changefreq: "weekly" as const,
+            priority: "0.8",
+          })),
         ];
 
         // Fetch published projects dynamically from Supabase

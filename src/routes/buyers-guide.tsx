@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { faqJsonLd, jsonLd } from "@/lib/seo";
 import { useState } from "react";
 import { ChevronDown, BookOpen, HelpCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -77,7 +78,7 @@ const faqs = [
     category: "Properties",
   },
   {
-    q: "Where are SLV Group' properties located?",
+    q: "Where are SLV Group’s properties located?",
     a: "SLV properties are strategically located in prime areas, ensuring convenience and accessibility to urban amenities.",
     category: "Location",
   },
@@ -87,7 +88,7 @@ const faqs = [
     category: "About SLV",
   },
   {
-    q: "What are the key features of SLV Group' properties?",
+    q: "What are the key features of SLV Group’s properties?",
     a: "SLV properties are equipped with state-of-the-art facilities, ensuring modern comforts and a sophisticated living experience.",
     category: "Properties",
   },
@@ -102,7 +103,7 @@ const faqs = [
     category: "Properties",
   },
   {
-    q: "What are the amenities available in SLV Group' properties?",
+    q: "What are the amenities available in SLV Group’s properties?",
     a: "SLV properties include amenities such as swimming pools, fitness centers, landscaped gardens, and community spaces.",
     category: "Amenities",
   },
@@ -112,7 +113,7 @@ const faqs = [
     category: "Support",
   },
   {
-    q: "Are SLV Group' properties environmentally friendly?",
+    q: "Are SLV Group’s properties environmentally friendly?",
     a: "SLV integrates sustainable practices into its projects, promoting energy efficiency and environmental responsibility.",
     category: "Sustainability",
   },
@@ -148,210 +149,216 @@ function BuyersGuide() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
-    <div className="pt-32 pb-24">
-      <div className="mx-auto max-w-4xl px-6">
-        {/* ── Hero Header ── */}
-        <div className="text-center">
-          <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-card neu text-gold">
-            <BookOpen className="h-7 w-7" />
-          </span>
-          <p className="section-label mt-6 text-gold">Buyer's Guide</p>
-          <h1 className="mt-3 font-display text-4xl font-bold text-foreground sm:text-6xl">
-            Buy With Confidence
-          </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-            A clear, six-step journey from first enquiry to the day you hold your keys.
-          </p>
-        </div>
-
-        {/* ── Six Steps Accordion ── */}
-        <div className="mt-12 space-y-3">
-          {steps.map((s, i) => (
-            <div key={s.q} className="overflow-hidden rounded-2xl bg-card neu-sm">
-              <button
-                id={`step-${i + 1}`}
-                onClick={() => setOpenStep(openStep === i ? -1 : i)}
-                className="flex w-full items-center justify-between px-6 py-5 text-left"
-              >
-                <span className="font-display text-lg font-semibold text-foreground">{s.q}</span>
-                <ChevronDown
-                  className={cn(
-                    "h-5 w-5 text-gold transition-transform duration-300",
-                    openStep === i && "rotate-180",
-                  )}
-                />
-              </button>
-              <div
-                className={cn(
-                  "grid transition-all duration-300",
-                  openStep === i ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
-                )}
-              >
-                <div className="overflow-hidden">
-                  <p className="px-6 pb-6 leading-relaxed text-muted-foreground">{s.a}</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* ── Decorative Gold Divider ── */}
-        <div className="mt-20 mb-16 flex flex-col items-center gap-4">
-          <div className="hairline-gold w-full" />
-          <div className="flex items-center gap-3">
-            <div className="h-px w-16 bg-gradient-to-r from-transparent via-gold/60 to-transparent" />
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-card neu text-gold">
-              <HelpCircle className="h-5 w-5" />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLd(faqJsonLd(steps)) }}
+      />
+      <div className="pt-32 pb-24">
+        <div className="mx-auto max-w-4xl px-6">
+          {/* ── Hero Header ── */}
+          <div className="text-center">
+            <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-card neu text-gold">
+              <BookOpen className="h-7 w-7" />
             </span>
-            <div className="h-px w-16 bg-gradient-to-l from-transparent via-gold/60 to-transparent" />
+            <p className="section-label mt-6 text-gold">Buyer's Guide</p>
+            <h1 className="mt-3 font-display text-4xl font-bold text-foreground sm:text-6xl">
+              Buy With Confidence
+            </h1>
+            <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
+              A clear, six-step journey from first enquiry to the day you hold your keys.
+            </p>
           </div>
-          <div className="hairline-gold w-full" />
-        </div>
 
-        {/* ── FAQ Section Header ── */}
-        <div className="text-center">
-          <p className="section-label text-gold">Frequently Asked Questions</p>
-          <h2 className="mt-3 font-display text-3xl font-bold text-foreground sm:text-5xl">
-            Got Questions?
-          </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-            Find answers about SLV Group' projects, policies, and processes — directly from the
-            source.
-          </p>
-        </div>
-
-        {/* ── FAQ Stats Bar ── */}
-        <div className="mt-10 grid grid-cols-3 divide-x divide-border overflow-hidden rounded-2xl bg-card neu">
-          {[
-            { label: "Questions Answered", value: "15" },
-            { label: "Years of Trust", value: "10+" },
-            { label: "Projects Delivered", value: "20+" },
-          ].map((stat) => (
-            <div key={stat.label} className="flex flex-col items-center py-5 px-4 text-center">
-              <span className="font-display text-2xl font-bold text-gradient-gold">
-                {stat.value}
-              </span>
-              <span className="mt-1 text-xs text-muted-foreground">{stat.label}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* ── FAQ Accordion ── */}
-        <div className="mt-8 space-y-3">
-          {faqs.map((faq, i) => (
-            <div
-              key={faq.q}
-              className={cn(
-                "group overflow-hidden rounded-2xl border transition-all duration-300",
-                openFaq === i
-                  ? "border-gold/40 bg-card shadow-[0_4px_20px_rgba(0,0,0,0.08)]"
-                  : "border-border bg-card neu-sm hover:border-gold/20",
-              )}
-            >
-              <button
-                id={`faq-${i + 1}`}
-                onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                className="flex w-full items-start gap-4 px-6 py-5 text-left"
-              >
-                {/* Number badge */}
-                <span
+          {/* ── Six Steps Accordion ── */}
+          <div className="mt-12 space-y-3">
+            {steps.map((s, i) => (
+              <div key={s.q} className="overflow-hidden rounded-2xl bg-card neu-sm">
+                <button
+                  id={`step-${i + 1}`}
+                  onClick={() => setOpenStep(openStep === i ? -1 : i)}
+                  className="flex w-full items-center justify-between px-6 py-5 text-left"
+                >
+                  <span className="font-display text-lg font-semibold text-foreground">{s.q}</span>
+                  <ChevronDown
+                    className={cn(
+                      "h-5 w-5 text-gold transition-transform duration-300",
+                      openStep === i && "rotate-180",
+                    )}
+                  />
+                </button>
+                <div
                   className={cn(
-                    "mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold transition-colors duration-300",
-                    openFaq === i
-                      ? "bg-gradient-gold text-gold-foreground"
-                      : "bg-muted text-muted-foreground group-hover:bg-gradient-gold group-hover:text-gold-foreground",
+                    "grid transition-all duration-300",
+                    openStep === i ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
                   )}
                 >
-                  {i + 1}
-                </span>
-
-                <div className="flex-1">
-                  <span
-                    className={cn(
-                      "font-display text-base font-semibold leading-snug transition-colors duration-200",
-                      openFaq === i
-                        ? "text-gold"
-                        : "text-foreground group-hover:text-foreground/90",
-                    )}
-                  >
-                    {faq.q}
-                  </span>
-                  {/* Category pill */}
-                  <span className="ml-2 inline-block rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
-                    {faq.category}
-                  </span>
-                </div>
-
-                <ChevronDown
-                  className={cn(
-                    "mt-0.5 h-5 w-5 shrink-0 transition-transform duration-300",
-                    openFaq === i ? "rotate-180 text-gold" : "text-muted-foreground",
-                  )}
-                />
-              </button>
-
-              {/* Answer */}
-              <div
-                className={cn(
-                  "grid transition-all duration-300 ease-in-out",
-                  openFaq === i ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
-                )}
-              >
-                <div className="overflow-hidden">
-                  <div className="flex gap-4 px-6 pb-6">
-                    {/* Left accent line */}
-                    <div className="ml-11 w-0.5 shrink-0 rounded-full bg-gradient-to-b from-gold/60 to-transparent" />
-                    <p className="leading-relaxed text-muted-foreground">{faq.a}</p>
+                  <div className="overflow-hidden">
+                    <p className="px-6 pb-6 leading-relaxed text-muted-foreground">{s.a}</p>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
 
-        {/* ── CTA Footer ── */}
-        <div className="mt-16 overflow-hidden rounded-3xl bg-gradient-royal p-px">
-          <div className="relative flex flex-col items-center gap-4 rounded-3xl bg-card px-8 py-10 text-center sm:flex-row sm:text-left">
-            {/* Background glow */}
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-gold/5 to-transparent rounded-3xl" />
-            <div className="relative flex-1">
-              <p className="section-label text-gold">Still have questions?</p>
-              <h3 className="mt-2 font-display text-2xl font-bold text-foreground">
-                Talk to Our Experts
-              </h3>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Our relationship managers are available to guide you through every step of your home
-                buying journey.
-              </p>
+          {/* ── Decorative Gold Divider ── */}
+          <div className="mt-20 mb-16 flex flex-col items-center gap-4">
+            <div className="hairline-gold w-full" />
+            <div className="flex items-center gap-3">
+              <div className="h-px w-16 bg-gradient-to-r from-transparent via-gold/60 to-transparent" />
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-card neu text-gold">
+                <HelpCircle className="h-5 w-5" />
+              </span>
+              <div className="h-px w-16 bg-gradient-to-l from-transparent via-gold/60 to-transparent" />
             </div>
-            <div className="relative flex shrink-0 flex-col gap-2.5 sm:items-end">
-              <div className="flex flex-col sm:flex-row gap-2">
-                <a
-                  href="tel:+919859595939"
-                  id="cta-call-experts"
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-gold px-4 py-2.5 text-xs sm:text-sm font-semibold text-gold-foreground shadow-md transition-all duration-200 hover:opacity-90 hover:shadow-lg hover:-translate-y-0.5"
+            <div className="hairline-gold w-full" />
+          </div>
+
+          {/* ── FAQ Section Header ── */}
+          <div className="text-center">
+            <p className="section-label text-gold">Frequently Asked Questions</p>
+            <h2 className="mt-3 font-display text-3xl font-bold text-foreground sm:text-5xl">
+              Got Questions?
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
+              Find answers about SLV Group’s projects, policies, and processes — directly from the
+              source.
+            </p>
+          </div>
+
+          {/* ── FAQ Stats Bar ── */}
+          <div className="mt-10 grid grid-cols-3 divide-x divide-border overflow-hidden rounded-2xl bg-card neu">
+            {[
+              { label: "Questions Answered", value: "15" },
+              { label: "Years of Trust", value: "10+" },
+              { label: "Projects Delivered", value: "20+" },
+            ].map((stat) => (
+              <div key={stat.label} className="flex flex-col items-center py-5 px-4 text-center">
+                <span className="font-display text-2xl font-bold text-gradient-gold">
+                  {stat.value}
+                </span>
+                <span className="mt-1 text-xs text-muted-foreground">{stat.label}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* ── FAQ Accordion ── */}
+          <div className="mt-8 space-y-3">
+            {faqs.map((faq, i) => (
+              <div
+                key={faq.q}
+                className={cn(
+                  "group overflow-hidden rounded-2xl border transition-all duration-300",
+                  openFaq === i
+                    ? "border-gold/40 bg-card shadow-[0_4px_20px_rgba(0,0,0,0.08)]"
+                    : "border-border bg-card neu-sm hover:border-gold/20",
+                )}
+              >
+                <button
+                  id={`faq-${i + 1}`}
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                  className="flex w-full items-start gap-4 px-6 py-5 text-left"
                 >
-                  📞 +91 98595 95939
-                </a>
-                <a
-                  href="tel:+919459823444"
-                  id="cta-call-experts-2"
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-gold px-4 py-2.5 text-xs sm:text-sm font-semibold text-gold-foreground shadow-md transition-all duration-200 hover:opacity-90 hover:shadow-lg hover:-translate-y-0.5"
+                  {/* Number badge */}
+                  <span
+                    className={cn(
+                      "mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold transition-colors duration-300",
+                      openFaq === i
+                        ? "bg-gradient-gold text-gold-foreground"
+                        : "bg-muted text-muted-foreground group-hover:bg-gradient-gold group-hover:text-gold-foreground",
+                    )}
+                  >
+                    {i + 1}
+                  </span>
+
+                  <div className="flex-1">
+                    <span
+                      className={cn(
+                        "font-display text-base font-semibold leading-snug transition-colors duration-200",
+                        openFaq === i
+                          ? "text-gold"
+                          : "text-foreground group-hover:text-foreground/90",
+                      )}
+                    >
+                      {faq.q}
+                    </span>
+                    {/* Category pill */}
+                    <span className="ml-2 inline-block rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+                      {faq.category}
+                    </span>
+                  </div>
+
+                  <ChevronDown
+                    className={cn(
+                      "mt-0.5 h-5 w-5 shrink-0 transition-transform duration-300",
+                      openFaq === i ? "rotate-180 text-gold" : "text-muted-foreground",
+                    )}
+                  />
+                </button>
+
+                {/* Answer */}
+                <div
+                  className={cn(
+                    "grid transition-all duration-300 ease-in-out",
+                    openFaq === i ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+                  )}
                 >
-                  📞 +91 94598 23444
+                  <div className="overflow-hidden">
+                    <div className="flex gap-4 px-6 pb-6">
+                      {/* Left accent line */}
+                      <div className="ml-11 w-0.5 shrink-0 rounded-full bg-gradient-to-b from-gold/60 to-transparent" />
+                      <p className="leading-relaxed text-muted-foreground">{faq.a}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* ── CTA Footer ── */}
+          <div className="mt-16 overflow-hidden rounded-3xl bg-gradient-royal p-px">
+            <div className="relative flex flex-col items-center gap-4 rounded-3xl bg-card px-8 py-10 text-center sm:flex-row sm:text-left">
+              {/* Background glow */}
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-gold/5 to-transparent rounded-3xl" />
+              <div className="relative flex-1">
+                <p className="section-label text-gold">Still have questions?</p>
+                <h3 className="mt-2 font-display text-2xl font-bold text-foreground">
+                  Talk to Our Experts
+                </h3>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  Our relationship managers are available to guide you through every step of your
+                  home buying journey.
+                </p>
+              </div>
+              <div className="relative flex shrink-0 flex-col gap-2.5 sm:items-end">
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <a
+                    href="tel:+919859595939"
+                    id="cta-call-experts"
+                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-gold px-4 py-2.5 text-xs sm:text-sm font-semibold text-gold-foreground shadow-md transition-all duration-200 hover:opacity-90 hover:shadow-lg hover:-translate-y-0.5"
+                  >
+                    📞 +91 98595 95939
+                  </a>
+                  <a
+                    href="tel:+919459823444"
+                    id="cta-call-experts-2"
+                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-gold px-4 py-2.5 text-xs sm:text-sm font-semibold text-gold-foreground shadow-md transition-all duration-200 hover:opacity-90 hover:shadow-lg hover:-translate-y-0.5"
+                  >
+                    📞 +91 94598 23444
+                  </a>
+                </div>
+                <a
+                  href="mailto:info@slvgroup.co.in"
+                  id="cta-email-experts"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-gold/30 px-6 py-2.5 text-xs sm:text-sm font-medium text-foreground transition-all duration-200 hover:border-gold/60 hover:bg-gold/5"
+                >
+                  ✉ info@slvgroup.co.in
                 </a>
               </div>
-              <a
-                href="mailto:info@slvgroup.co.in"
-                id="cta-email-experts"
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-gold/30 px-6 py-2.5 text-xs sm:text-sm font-medium text-foreground transition-all duration-200 hover:border-gold/60 hover:bg-gold/5"
-              >
-                ✉ info@slvgroup.co.in
-              </a>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

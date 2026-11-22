@@ -19,6 +19,8 @@ import { Footer } from "@/components/layout/Footer";
 import { ComparisonBar } from "@/components/ComparisonBar";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { Toaster } from "@/components/ui/sonner";
+import { IMAGE_FALLBACK_SCRIPT } from "@/lib/image";
+import { SITE_JSON_LD, jsonLd } from "@/lib/seo";
 
 const AIAssistant = lazy(() =>
   import("@/components/AIAssistant").then((module) => ({
@@ -191,8 +193,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
+        // Only Poppins is used by the site (see --font-sans / --font-display in styles.css).
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,400;1,600&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700&family=Inter:wght@300;400;500;600;700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700&display=swap",
       },
       {
         rel: "stylesheet",
@@ -211,6 +214,13 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        {/* Falls back to the original image if Vercel's image optimizer is unavailable */}
+        <script dangerouslySetInnerHTML={{ __html: IMAGE_FALLBACK_SCRIPT }} />
+        {/* Business + website details for search engines (every page) */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: jsonLd(SITE_JSON_LD) }}
+        />
       </head>
       <body>
         {children}

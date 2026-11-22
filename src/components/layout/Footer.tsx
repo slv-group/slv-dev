@@ -3,6 +3,7 @@ import { MapPin, Phone, Mail, MessageCircle, ArrowUpRight, Crown } from "lucide-
 import slvLogo from "@/assets/SLV_Group_Logo.png";
 
 import { SOCIAL_LINKS, hasSocialUrl, type SocialLinkInfo } from "@/lib/social";
+import { LOCATION_PAGES } from "@/data/locations";
 
 const socialLinks: SocialLinkInfo[] = [
   SOCIAL_LINKS.facebook,
@@ -158,6 +159,25 @@ export function Footer() {
                   className="group inline-flex items-center gap-1.5 text-sm text-white/55 transition-all duration-300 hover:text-gold"
                 >
                   <span>{l.label}</span>
+                  <ArrowUpRight className="h-3.5 w-3.5 opacity-0 transition-all duration-300 group-hover:opacity-100" />
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <h4 className="section-label mt-10 text-gold tracking-[0.28em]">Locations</h4>
+          <div
+            className="mt-2 h-px w-8 opacity-40"
+            style={{ background: "var(--gradient-gold)" }}
+          />
+          <ul className="mt-4 space-y-3.5">
+            {LOCATION_PAGES.map((l) => (
+              <li key={l.slug}>
+                <Link
+                  to="/locations/$location"
+                  params={{ location: l.slug }}
+                  className="group inline-flex items-center gap-1.5 text-sm text-white/55 transition-all duration-300 hover:text-gold"
+                >
+                  <span>Projects in {l.name}</span>
                   <ArrowUpRight className="h-3.5 w-3.5 opacity-0 transition-all duration-300 group-hover:opacity-100" />
                 </Link>
               </li>

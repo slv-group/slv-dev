@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { responsiveImg, imgUrl } from "@/lib/image";
 import { useEffect, useState } from "react";
 import {
   ArrowRight,
@@ -22,7 +23,7 @@ import { PropertyCard } from "@/components/PropertyCard";
 import { Reveal } from "@/components/Reveal";
 import { testimonials, mapSupabaseToProject } from "@/data/projects";
 import { supabase } from "@/integrations/supabase/client";
-import { SOCIAL_LINKS, SOCIAL_PROFILE_URLS, hasSocialUrl } from "@/lib/social";
+import { SOCIAL_LINKS, hasSocialUrl } from "@/lib/social";
 import { formatLocationCity } from "@/lib/country-codes";
 import aboutImage from "@/assets/homepage1.jpg";
 import { cn } from "@/lib/utils";
@@ -237,34 +238,6 @@ function Index() {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "RealEstateAgent",
-            name: "SLV Group",
-            url: "https://www.slvgroup.co.in",
-            logo: "https://www.slvgroup.co.in/slv-logo.png",
-            description:
-              "Premier real estate developer in Andhra Pradesh, delivering residential gated communities, open plots, and commercial landmarks across Vijayawada, Guntur, and Amaravati.",
-            telephone: ["+91-98595-95939", "+91-94598-23444"],
-            email: "info@slvgroup.co.in",
-            foundingDate: "2007",
-            areaServed: ["Vijayawada", "Guntur", "Amaravati", "Andhra Pradesh"],
-            ...(SOCIAL_PROFILE_URLS.length > 0 ? { sameAs: SOCIAL_PROFILE_URLS } : {}),
-            address: {
-              "@type": "PostalAddress",
-              streetAddress:
-                "Ground Floor, SLV Tummala Complex, Opp. SLV PNB Commercial, Gunadala, Inner Ring Road",
-              addressLocality: "Vijayawada",
-              addressRegion: "Andhra Pradesh",
-              postalCode: "520004",
-              addressCountry: "IN",
-            },
-          }),
-        }}
-      />
       <HeroSection />
 
       {/* ── Accolades marquee strip ── */}
@@ -376,7 +349,7 @@ function Index() {
             {/* Medium refined image frame */}
             <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl shadow-2xl transition-all duration-500 hover:shadow-[0_20px_50px_-12px_rgba(212,175,55,0.25)] border border-border/50">
               <img
-                src={aboutImage}
+                {...responsiveImg(aboutImage, "(min-width: 1024px) 50vw, 100vw", 1200)}
                 alt="SLV Group — Building Legacies Since 2007"
                 loading="lazy"
                 decoding="async"
@@ -739,7 +712,11 @@ function Index() {
                   >
                     <div className="relative aspect-[4/3] w-full overflow-hidden bg-black/40">
                       <img
-                        src={photo.url}
+                        {...responsiveImg(
+                          photo.url,
+                          "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw",
+                          828,
+                        )}
                         alt={`${photo.projectName} - ${photo.title}`}
                         loading="lazy"
                         className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
@@ -799,7 +776,7 @@ function Index() {
                 <X className="h-5 w-5" />
               </button>
               <img
-                src={activePhoto}
+                src={imgUrl(activePhoto, 1920)}
                 alt="Project Photo Fullscreen"
                 onClick={(e) => e.stopPropagation()}
                 className="max-h-[85vh] max-w-full rounded-xl object-contain shadow-2xl"

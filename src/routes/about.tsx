@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { responsiveImg } from "@/lib/image";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 import {
@@ -563,7 +564,7 @@ function AboutPage() {
               {/* Main media */}
               <div className="relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-gradient-obsidian shadow-[0_30px_100px_rgba(0,0,0,0.2)] sm:rounded-[2.25rem]">
                 <img
-                  src={heroImage}
+                  {...responsiveImg(heroImage, "(min-width: 1024px) 50vw, 100vw", 1200)}
                   alt="An SLV residential landmark at twilight"
                   className="
               w-full
@@ -988,7 +989,11 @@ function AboutPage() {
                     {/* Image */}
                     <div className="group relative overflow-hidden rounded-[1.5rem] bg-card shadow-[var(--glass-shadow)] sm:rounded-[2rem]">
                       <img
-                        src={j.img}
+                        {...responsiveImg(
+                          j.img,
+                          "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw",
+                          828,
+                        )}
                         alt={j.title}
                         loading="lazy"
                         decoding="async"
@@ -1047,7 +1052,11 @@ function AboutPage() {
                       )}
                     >
                       <img
-                        src={j.img}
+                        {...responsiveImg(
+                          j.img,
+                          "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw",
+                          828,
+                        )}
                         alt={j.title}
                         className="aspect-[16/10] w-full object-cover transition-transform duration-700 group-hover:scale-105"
                         loading="lazy"

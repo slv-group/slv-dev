@@ -133,6 +133,30 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://www.slvgroup.co.in/locations/vijayawada</loc>
+    <lastmod>2026-11-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.slvgroup.co.in/locations/amaravati</loc>
+    <lastmod>2026-11-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.slvgroup.co.in/locations/gannavaram</loc>
+    <lastmod>2026-11-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.slvgroup.co.in/locations/bhimavaram</loc>
+    <lastmod>2026-11-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://www.slvgroup.co.in/projects/slv-tower</loc>
     <lastmod>2026-11-22</lastmod>
     <changefreq>weekly</changefreq>

@@ -1,6 +1,25 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
+  "images": {
+    "sizes": [384, 640, 828, 1200, 1920],
+    "qualities": [75],
+    "formats": ["image/webp"],
+    "minimumCacheTTL": 2678400,
+    "remotePatterns": [
+      {
+        "protocol": "https",
+        "hostname": "zjvnxolsmfkurrwissru.supabase.co",
+        "pathname": "^/storage/v1/object/public/.*$"
+      }
+    ],
+    "localPatterns": [
+      {
+        "pathname": "^/assets/.*$",
+        "search": ""
+      }
+    ]
+  },
   "redirects": [
     {
       "source": "/projects/slv-greenhorizon-2",
@@ -49,6 +68,33 @@
     }
   ],
   "headers": [
+    {
+      "source": "/assets/(.*)\\.(jpg|jpeg|png|webp|avif|svg|gif|mp4|webm|pdf)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, s-maxage=2592000, stale-while-revalidate=2592000"
+        }
+      ]
+    },
+    {
+      "source": "/assets/(.*)-([A-Za-z0-9_-]{8})\\.(js|mjs|css|jpg|jpeg|png|webp|avif|svg|gif|mp4|webm|pdf|woff|woff2)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/(slv-logo\\.png|favicon\\.ico|llms\\.txt)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, s-maxage=604800"
+        }
+      ]
+    },
     {
       "source": "/sitemap.xml",
       "headers": [

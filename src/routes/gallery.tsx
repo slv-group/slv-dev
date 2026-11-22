@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { responsiveImg, imgUrl } from "@/lib/image";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -179,7 +180,11 @@ function GalleryPage() {
                   className="group relative aspect-[4/3] cursor-pointer overflow-hidden rounded-2xl border border-border/80 bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-gold/50 hover:shadow-xl"
                 >
                   <img
-                    src={img.url}
+                    {...responsiveImg(
+                      img.url,
+                      "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw",
+                      828,
+                    )}
                     alt={img.title}
                     loading="lazy"
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
@@ -244,7 +249,7 @@ function GalleryPage() {
             onClick={(e) => e.stopPropagation()}
           >
             <img
-              src={filteredImages[activeImageIndex].url}
+              src={imgUrl(filteredImages[activeImageIndex].url, 1920)}
               alt={filteredImages[activeImageIndex].title}
               className="max-h-[80vh] w-auto max-w-full rounded-xl object-contain shadow-2xl"
             />

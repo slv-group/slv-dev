@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { responsiveImg } from "@/lib/image";
 import {
   ArrowDown,
   ArrowRight,
@@ -226,7 +227,7 @@ function LeadershipProfile({
               <div className="group relative overflow-hidden rounded-[2rem] border border-border bg-card shadow-[0_25px_90px_rgba(0,0,0,0.12)] sm:rounded-[2.5rem] transform-gpu [backface-visibility:hidden]">
                 <div className="relative aspect-[4/5] w-full overflow-hidden sm:aspect-[3/4]">
                   <img
-                    src={member.image}
+                    {...responsiveImg(member.image, "(min-width: 1024px) 33vw, 100vw", 828)}
                     alt={member.name}
                     loading={member.role === "Founder Leadership" ? "eager" : "lazy"}
                     decoding="async"
@@ -420,7 +421,7 @@ function ManagementPage() {
 
                 <div className="group relative overflow-hidden rounded-[2rem] border border-gold/15 bg-gradient-obsidian shadow-[0_35px_120px_rgba(0,0,0,0.28)] sm:rounded-[2.5rem]">
                   <img
-                    src={heroImage}
+                    {...responsiveImg(heroImage, "(min-width: 1024px) 50vw, 100vw", 1200)}
                     alt="SLV Group"
                     loading="lazy"
                     decoding="async"
@@ -627,7 +628,7 @@ function ManagementPage() {
             <Reveal>
               <div className="relative overflow-hidden rounded-[2rem] border border-border bg-card shadow-[0_25px_90px_rgba(0,0,0,0.10)]">
                 <img
-                  src={visionImage}
+                  {...responsiveImg(visionImage, "(min-width: 1024px) 50vw, 100vw", 1200)}
                   alt="SLV development"
                   loading="lazy"
                   decoding="async"

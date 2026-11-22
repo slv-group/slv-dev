@@ -1,3 +1,4 @@
+import { compressImage, fileExt } from "@/lib/compress-image";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -211,10 +212,18 @@ function exportProjectsCSV(projects: Project[]) {
 }
 
 // ── Upload helper ──
-async function uploadToStorage(bucket: string, folder: string, file: File): Promise<string> {
-  const ext = file.name.split(".").pop();
+async function uploadToStorage(bucket: string, folder: string, original: File): Promise<string> {
+  // Photos are resized/re-encoded in the browser first (20 MB camera files → a few hundred KB)
+  const file = await compressImage(original);
+  const ext = fileExt(file);
   const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-  const { error } = await supabase.storage.from(bucket).upload(path, file, { upsert: true });
+  const { error } = await supabase.storage
+    .from(bucket)
+    .upload(path, file, {
+      upsert: true,
+      contentType: file.type || undefined,
+      cacheControl: "31536000",
+    });
   if (error) throw error;
   const { data } = supabase.storage.from(bucket).getPublicUrl(path);
   return data.publicUrl;
