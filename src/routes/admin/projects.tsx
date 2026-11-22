@@ -217,13 +217,11 @@ async function uploadToStorage(bucket: string, folder: string, original: File): 
   const file = await compressImage(original);
   const ext = fileExt(file);
   const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-  const { error } = await supabase.storage
-    .from(bucket)
-    .upload(path, file, {
-      upsert: true,
-      contentType: file.type || undefined,
-      cacheControl: "31536000",
-    });
+  const { error } = await supabase.storage.from(bucket).upload(path, file, {
+    upsert: true,
+    contentType: file.type || undefined,
+    cacheControl: "31536000",
+  });
   if (error) throw error;
   const { data } = supabase.storage.from(bucket).getPublicUrl(path);
   return data.publicUrl;

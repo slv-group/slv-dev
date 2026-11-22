@@ -18,7 +18,7 @@ function AdminLayout() {
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
-  const isAuthPage = pathname === "/admin/login" || pathname === "/admin/signup";
+  const isAuthPage = /^\/admin\/(login|signup)\/?$/.test(pathname);
 
   // Derive page title from pathname
   const pageTitles: Record<string, { title: string; subtitle: string }> = {
@@ -31,8 +31,12 @@ function AdminLayout() {
       subtitle: "Review work registration applications",
     },
     "/admin/media": { title: "Media Library", subtitle: "Images, videos & brochures" },
+    "/admin/awards": { title: "Awards", subtitle: "Manage awards & recognition" },
+    "/admin/csr": { title: "CSR Activities", subtitle: "Manage CSR initiatives" },
   };
-  const pageInfo = pageTitles[pathname] ?? { title: "Admin", subtitle: "" };
+  // Tolerate a trailing slash (e.g. /admin/projects/)
+  const normalizedPath = pathname.length > 1 ? pathname.replace(/\/+$/, "") || "/admin" : pathname;
+  const pageInfo = pageTitles[normalizedPath] ?? { title: "Admin", subtitle: "" };
 
   // Redirect to login if not authenticated (only for non-auth pages)
   useEffect(() => {
