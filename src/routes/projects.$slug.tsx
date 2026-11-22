@@ -73,6 +73,16 @@ export const Route = createFileRoute("/projects/$slug")({
 
     if (!project) throw notFound();
 
+    // Old / misspelled URLs (e.g. /projects/slv-amaravathi-grand-3) → permanent redirect
+    // to the single canonical URL so search engines consolidate ranking on one address.
+    if (project.slug && params.slug !== project.slug) {
+      throw redirect({
+        to: "/projects/$slug",
+        params: { slug: project.slug },
+        statusCode: 301,
+      });
+    }
+
     // Get recommended projects: query published DB projects first, fallback to static
     const { data: moreData } = await supabase.from("projects").select("*").eq("is_published", true);
 
@@ -92,25 +102,60 @@ export const Route = createFileRoute("/projects/$slug")({
     const projectUrl = p
       ? `https://www.slvgroup.co.in/projects/${p.slug}`
       : "https://www.slvgroup.co.in/projects";
-    const imageUrl = p?.image || "https://www.slvgroup.co.in/slv-logo.png";
+    // Social/search crawlers need an absolute image URL
+    const rawImage = p?.image || "/slv-logo.png";
+    const imageUrl = /^https?:\/\//i.test(rawImage)
+      ? rawImage
+      : `https://www.slvgroup.co.in${rawImage.startsWith("/") ? "" : "/"}${rawImage}`;
+
+    const place = p ? formatLocationCity(p.location, p.city) : "";
+    // "2 & 3 BHK Apartment", "Villa Plots", "Commercial" — avoid "Villa Plots Plots" / "N/A"
+    const beds = p?.bedrooms && p.bedrooms !== "N/A" ? p.bedrooms : "";
+    const kind = p
+      ? beds.toLowerCase().includes((p.category || "").toLowerCase())
+        ? beds
+        : [beds, p.category].filter(Boolean).join(" ")
+      : "";
+    // e.g. "SLV Amaravati Grand-3 | 3 & 4 BHK Apartment in Gunadala, Vijayawada — SLV Group"
+    const title = p
+      ? `${p.name}${kind || place ? ` | ${[kind, place && `in ${place}`].filter(Boolean).join(" ")}` : ""} — SLV Group`
+      : "Project — SLV Group";
+
+    const summary = p
+      ? [
+          `${p.name} by SLV Group${place ? ` in ${place}` : ""}.`,
+          [
+            kind,
+            p.sqftFrom ? `from ${p.sqftFrom.toLocaleString("en-IN")} sq ft` : "",
+            p.priceFrom ? `starting ${formatPrice(p.priceFrom)}` : "",
+          ]
+            .filter(Boolean)
+            .join(", ")
+            .replace(/^(.+)$/, "$1."),
+          p.status ? `${p.status} project.` : "",
+          p.tagline || "",
+        ]
+          .filter(Boolean)
+          .join(" ")
+          .replace(/\s+/g, " ")
+      : "Residential development by SLV Group in Vijayawada & Amaravati region.";
+    // Keep descriptions within ~160 characters so Google doesn't truncate mid-word
+    const description =
+      summary.length > 160 ? `${summary.slice(0, 157).replace(/\s+\S*$/, "")}…` : summary;
 
     return {
       meta: [
-        { title: p ? `${p.name} — SLV Group` : "Project — SLV Group" },
-        {
-          name: "description",
-          content:
-            p?.tagline ||
-            p?.description ||
-            "Residential development by SLV Group in Vijayawada & Amaravati region.",
-        },
-        { property: "og:title", content: p ? `${p.name} — SLV Group` : "Project — SLV Group" },
-        { property: "og:description", content: p?.tagline || "" },
+        { title },
+        { name: "description", content: description },
+        { property: "og:type", content: "website" },
+        { property: "og:site_name", content: "SLV Group" },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
         { property: "og:image", content: imageUrl },
         { property: "og:url", content: projectUrl },
         { name: "twitter:card", content: "summary_large_image" },
-        { name: "twitter:title", content: p ? `${p.name} — SLV Group` : "Project — SLV Group" },
-        { name: "twitter:description", content: p?.tagline || "" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: description },
         { name: "twitter:image", content: imageUrl },
       ],
       links: [

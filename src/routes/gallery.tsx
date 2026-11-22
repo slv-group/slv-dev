@@ -12,6 +12,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { standardizeAmaravati } from "@/data/projects";
 
 export const Route = createFileRoute("/gallery")({
   head: () => ({
@@ -85,8 +86,13 @@ function GalleryPage() {
   const allImages: GalleryImage[] = dbGallery.map((g) => ({
     id: g.id,
     title:
-      (g.title || "").replace(/\.(jpg|jpeg|png|webp)$/i, "").replace(/^[A-Z]\s*\.\s*/, "") ||
-      "Gallery Image",
+      standardizeAmaravati(
+        (g.title || "")
+          .replace(/\.(jpg|jpeg|png|webp)$/i, "")
+          .replace(/^[A-Z]\s*\.\s*/, "")
+          .replace(/\s*,\s*,+\s*/g, ", ")
+          .trim(),
+      ) || "Gallery Image",
     url: g.image_url,
     category: g.category || "Architecture",
   }));

@@ -19,7 +19,10 @@ export const Route = createFileRoute("/compare")({
         content:
           "Compare luxury residences side by side across price, area, amenities, and launch.",
       },
+      // Personal comparison tool with no unique content: keep it out of search results.
+      { name: "robots", content: "noindex, follow" },
     ],
+    links: [{ rel: "canonical", href: "https://www.slvgroup.co.in/compare" }],
   }),
   loader: async () => {
     const { data } = await supabase

@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { projects as staticProjects } from "@/data/projects";
+import { projects as staticProjects, canonicalProjectSlug } from "@/data/projects";
 import { supabase } from "@/integrations/supabase/client";
 
 const BASE_URL = "https://www.slvgroup.co.in";
@@ -42,33 +42,33 @@ export const Route = createFileRoute("/sitemap.xml")({
         ];
 
         // Fetch published projects dynamically from Supabase
-        let projectSlugs: string[] = [];
+        const lastmodBySlug = new Map<string, string | undefined>();
         try {
           const { data: dbProjects } = await supabase
             .from("projects")
             .select("slug, updated_at")
             .eq("is_published", true);
 
-          if (dbProjects && dbProjects.length > 0) {
-            projectSlugs = dbProjects.map((p) =>
-              p.slug === "slv-greenhorizon-2" ? "slv-green-horizon-2" : p.slug,
-            );
+          for (const p of dbProjects ?? []) {
+            const slug = canonicalProjectSlug(p.slug);
+            if (slug && !lastmodBySlug.has(slug)) {
+              lastmodBySlug.set(slug, p.updated_at ? String(p.updated_at).slice(0, 10) : undefined);
+            }
           }
         } catch {
           // Fall back to static projects array
         }
 
-        if (projectSlugs.length === 0) {
-          projectSlugs = staticProjects.map((p) => p.slug);
+        if (lastmodBySlug.size === 0) {
+          for (const p of staticProjects)
+            lastmodBySlug.set(canonicalProjectSlug(p.slug), undefined);
         }
 
-        // Deduplicate slugs
-        const uniqueProjectSlugs = Array.from(new Set(projectSlugs));
-
-        const projectEntries: SitemapEntry[] = uniqueProjectSlugs.map((slug) => ({
+        const projectEntries: SitemapEntry[] = Array.from(lastmodBySlug, ([slug, lastmod]) => ({
           path: `/projects/${slug}`,
           changefreq: "weekly",
           priority: "0.8",
+          lastmod,
         }));
 
         const allEntries = [...staticEntries, ...projectEntries];

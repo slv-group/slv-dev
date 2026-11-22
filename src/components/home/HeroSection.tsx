@@ -72,6 +72,12 @@ export function HeroSection() {
       </div>
 
       <div className="relative z-10 mx-auto w-full max-w-6xl px-6 pt-28 pb-4 text-center text-white md:translate-y-24 lg:translate-y-28">
+        {/* Page's main heading for search engines and screen readers. The hero is
+            video-led by design, so the heading is visually hidden. */}
+        <h1 className="sr-only">
+          SLV Group — Premium Apartments, Gated Communities &amp; Open Plots in Vijayawada, Guntur
+          and Amaravati Since 2007
+        </h1>
         <Link
           to="/projects"
           search={{ status: "ongoing" }}

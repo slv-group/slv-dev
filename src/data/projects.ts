@@ -11,7 +11,7 @@ import prideFloorE from "@/assets/projects/slv-amaravati-pride/pride-floor-e.jpg
 import prideFloorF from "@/assets/projects/slv-amaravati-pride/pride-floor-f.jpg";
 import prideFloorG from "@/assets/projects/slv-amaravati-pride/pride-floor-g.jpg";
 import prideLayout from "@/assets/projects/slv-amaravati-pride/pride-layout.jpg";
-import prideBrochure from "@/assets/projects/slv-amaravati-pride/Slv-Amaravathi-Pride.pdf";
+import prideBrochure from "@/assets/projects/slv-amaravati-pride/SLV-Amaravati-Pride.pdf";
 
 import gmAerial from "@/assets/projects/slv-green-meadows/gm-aerial.jpg";
 import gmBaBlock from "@/assets/projects/slv-green-meadows/gm-ba-block.jpg";
@@ -31,15 +31,15 @@ import glLocationHighlights from "@/assets/projects/slv-green-lands/gl-Location-
 import glInfra from "@/assets/projects/slv-green-lands/gl-SLV-Infra-01.png";
 import glWestFacing from "@/assets/projects/slv-green-lands/gl-west-Faceing-1536x1424.webp";
 
-import ag2Aerial from "@/assets/projects/amaravathi-grand-2/ag2-aerial.jpg";
-import ag2BaBlock from "@/assets/projects/amaravathi-grand-2/ag2-ba-block.jpg";
-import ag2CBlock from "@/assets/projects/amaravathi-grand-2/ag2-c-block.jpg";
-import ag2Clubhouse from "@/assets/projects/amaravathi-grand-2/ag2-clubhouse.jpg";
-import ag2FloorA from "@/assets/projects/amaravathi-grand-2/ag2-floor-a.jpg";
-import ag2FloorB from "@/assets/projects/amaravathi-grand-2/ag2-floor-b.jpg";
-import ag2FloorC from "@/assets/projects/amaravathi-grand-2/ag2-floor-c.jpg";
-import ag2SitePlan from "@/assets/projects/amaravathi-grand-2/ag2-site-plan.jpg";
-import amaravathiGrandBrochure from "@/assets/projects/amaravathi-grand-2/SLV-Amaravathi-Grand-2.pdf";
+import ag2Aerial from "@/assets/projects/amaravati-grand-2/ag2-aerial.jpg";
+import ag2BaBlock from "@/assets/projects/amaravati-grand-2/ag2-ba-block.jpg";
+import ag2CBlock from "@/assets/projects/amaravati-grand-2/ag2-c-block.jpg";
+import ag2Clubhouse from "@/assets/projects/amaravati-grand-2/ag2-clubhouse.jpg";
+import ag2FloorA from "@/assets/projects/amaravati-grand-2/ag2-floor-a.jpg";
+import ag2FloorB from "@/assets/projects/amaravati-grand-2/ag2-floor-b.jpg";
+import ag2FloorC from "@/assets/projects/amaravati-grand-2/ag2-floor-c.jpg";
+import ag2SitePlan from "@/assets/projects/amaravati-grand-2/ag2-site-plan.jpg";
+import amaravatiGrandBrochure from "@/assets/projects/amaravati-grand-2/SLV-Amaravati-Grand-2.pdf";
 
 import anjaniElevation1 from "@/assets/projects/slv-anjani-heights/anjani-elevation-1.jpg";
 import anjaniElevation2 from "@/assets/projects/slv-anjani-heights/anjani-elevation-2.jpg";
@@ -62,13 +62,13 @@ import ssbgFloorEast from "@/assets/projects/slv-ssbg-enclave/ssbg-floor-east.jp
 import ssbgFloorWest from "@/assets/projects/slv-ssbg-enclave/ssbg-floor-west.jpg";
 import ssbgBrochure from "@/assets/projects/slv-ssbg-enclave/SLV-SSBG-Enclave-Brochure.pdf";
 
-import ag3main from "@/assets/projects/amaravathi-grand-3/ag3-main.webp";
-import ag3view2 from "@/assets/projects/amaravathi-grand-3/ag3-2.webp";
-import ag3view3 from "@/assets/projects/amaravathi-grand-3/ag3-3.webp";
-import ag3plan3bhk from "@/assets/projects/amaravathi-grand-3/ag3-3bhk.jpg";
-import ag3plan4bhk1 from "@/assets/projects/amaravathi-grand-3/ag3-4bhk-1.jpg";
-import ag3plan4bhk2 from "@/assets/projects/amaravathi-grand-3/ag3-4bhk-2.jpg";
-import amaravathiGrand3Brochure from "@/assets/projects/amaravathi-grand-3/slv-amaravathi-grand-3-brochure.pdf";
+import ag3main from "@/assets/projects/amaravati-grand-3/ag3-main.webp";
+import ag3view2 from "@/assets/projects/amaravati-grand-3/ag3-2.webp";
+import ag3view3 from "@/assets/projects/amaravati-grand-3/ag3-3.webp";
+import ag3plan3bhk from "@/assets/projects/amaravati-grand-3/ag3-3bhk.jpg";
+import ag3plan4bhk1 from "@/assets/projects/amaravati-grand-3/ag3-4bhk-1.jpg";
+import ag3plan4bhk2 from "@/assets/projects/amaravati-grand-3/ag3-4bhk-2.jpg";
+import amaravatiGrand3Brochure from "@/assets/projects/amaravati-grand-3/slv-amaravati-grand-3-brochure.pdf";
 
 export type ProjectStatus = "Ongoing" | "Completed" | "Upcoming";
 export type ProjectCategory = "Villa" | "Apartment" | "Plots" | "Commercial" | "Educational";
@@ -159,6 +159,17 @@ export function standardizeAmaravati(str: string): string {
   });
 }
 export const standardizeAmaravti = standardizeAmaravati;
+
+/**
+ * Public URL slug for a project. Database rows may still hold legacy slugs
+ * (e.g. "slv-amaravathi-grand-3", "slv-greenhorizon-2"); every link, canonical
+ * tag and sitemap entry uses the standardized form. Old URLs 301-redirect here.
+ */
+export function canonicalProjectSlug(slug: string | null | undefined): string {
+  if (!slug) return "";
+  const s = standardizeAmaravati(slug.toLowerCase().trim());
+  return s === "slv-greenhorizon-2" ? "slv-green-horizon-2" : s;
+}
 
 /** Normalize specifications from DB — adds icon_url support */
 export function normalizeSpecs(raw: unknown): SpecificationItem[] {
@@ -305,6 +316,8 @@ export function mapSupabaseToProject(row: Tables<"projects">): Project {
   } else {
     location = standardizeAmaravati(location);
   }
+  // Remove stray leading/trailing commas or doubled commas from database text
+  location = location.replace(/^[\s,]+|[\s,]+$/g, "").replace(/\s*,\s*,+\s*/g, ", ");
 
   const name = standardizeAmaravati(row.name || "");
   const tagline = standardizeAmaravati(row.tagline || "");
@@ -318,7 +331,7 @@ export function mapSupabaseToProject(row: Tables<"projects">): Project {
 
   return {
     id: row.id,
-    slug: row.slug === "slv-greenhorizon-2" ? "slv-green-horizon-2" : row.slug,
+    slug: canonicalProjectSlug(row.slug),
     name,
     tagline,
     category: (row.category as ProjectCategory) || "Apartment",
@@ -1224,7 +1237,7 @@ export const projects: Project[] = [
   // ── 16 ──────────────────────────────────────────────
   {
     id: "16",
-    slug: "slv-amaravathi-grand-1",
+    slug: "slv-amaravati-grand-1",
     name: "SLV Amaravati Grand-1",
     tagline: "Landmark high-rise living with curated amenities",
     category: "Apartment",
@@ -1548,7 +1561,7 @@ export const projects: Project[] = [
   // ── 21 ──────────────────────────────────────────────
   {
     id: "21",
-    slug: "slv-amaravathi-grand-2",
+    slug: "slv-amaravati-grand-2",
     name: "SLV Amaravati Grand II",
     tagline: "An Abode of Opulence",
     category: "Apartment",
@@ -1610,7 +1623,7 @@ export const projects: Project[] = [
       { type: "Block C Floor Plan (Typical)", sqft: 3320, image: ag2FloorC },
       { type: "Site Plan Layout", sqft: 440000, image: ag2SitePlan },
     ],
-    brochureUrl: amaravathiGrandBrochure,
+    brochureUrl: amaravatiGrandBrochure,
   },
   // ── 22 ──────────────────────────────────────────────
   {
@@ -1661,7 +1674,7 @@ export const projects: Project[] = [
   // ── 23 ──────────────────────────────────────────────
   {
     id: "23",
-    slug: "slv-amaravathi-grand-3",
+    slug: "slv-amaravati-grand-3",
     name: "SLV Amaravati Grand-3",
     tagline: "An abode of Opulence",
     category: "Apartment",
@@ -1715,7 +1728,7 @@ export const projects: Project[] = [
       { type: "3 BHK", sqft: 2325, image: ag3plan3bhk },
       { type: "4 BHK", sqft: 3250, image: ag3plan4bhk2 },
     ],
-    brochureUrl: amaravathiGrand3Brochure,
+    brochureUrl: amaravatiGrand3Brochure,
   },
   // ── 24 ──────────────────────────────────────────────
   {

@@ -18,7 +18,7 @@ export interface CatalogItem {
 export const slvCatalog: CatalogItem[] = [
   {
     name: "SLV Amaravati Pride",
-    slug: "slv-amaravathi-pride",
+    slug: "slv-amaravati-pride",
     category: "Apartment",
     status: "Ongoing",
     location: "Kesarapalli, Gannavaram",
@@ -28,7 +28,7 @@ export const slvCatalog: CatalogItem[] = [
   },
   {
     name: "SLV Amaravati Grand III",
-    slug: "slv-amaravathi-grand-iii",
+    slug: "slv-amaravati-grand-3",
     category: "Apartment",
     status: "Ongoing",
     location: "Inner Ring Road, Gunadala",
@@ -38,7 +38,7 @@ export const slvCatalog: CatalogItem[] = [
   },
   {
     name: "SLV Amaravati Grand II",
-    slug: "slv-amaravathi-grand-ii",
+    slug: "slv-amaravati-grand-2",
     category: "Apartment",
     status: "Ongoing",
     location: "Gunadala",
@@ -48,7 +48,7 @@ export const slvCatalog: CatalogItem[] = [
   },
   {
     name: "SLV Amaravati Grand I",
-    slug: "slv-amaravathi-grand-i",
+    slug: "slv-amaravati-grand-1",
     category: "Apartment",
     status: "Completed",
     location: "Gunadala",
@@ -78,7 +78,7 @@ export const slvCatalog: CatalogItem[] = [
   },
   {
     name: "SLV Siva Sai Bhadra Gowri Enclave",
-    slug: "slv-siva-sai-bhadra-gowri-enclave",
+    slug: "slv-ssbg-enclave",
     category: "Villa",
     status: "Completed",
     location: "Penamaluru",
@@ -138,7 +138,7 @@ export const slvCatalog: CatalogItem[] = [
   },
   {
     name: "SLV PNB Commercial-1 & Green Grandeur",
-    slug: "slv-pnb-commercial-green-grandeur",
+    slug: "slv-pnb-commercial-1-2",
     category: "Commercial",
     status: "Completed",
     location: "Vijayawada",
@@ -162,7 +162,7 @@ Your job: understand what the buyer wants (budget, location, configuration, apar
 
 RULES:
 - Only recommend projects from the catalog below. Never invent projects, prices, or amenities.
-- When recommending a project, format it as a markdown link using its Link path, e.g. [SLV Amaravati Pride](/projects/slv-amaravathi-pride).
+- When recommending a project, format it as a markdown link using its Link path, e.g. [SLV Amaravati Pride](/projects/slv-amaravati-pride).
 - Keep answers tight and scannable: a one-line intro, then a short bullet list of 1–3 matches, each with why it fits (config, location, starting price).
 - Prices are "starting from" figures in Indian rupees; be clear these are indicative and to contact the team for current pricing.
 - For loan/EMI questions, point users to the EMI calculator at /emi-calculator.

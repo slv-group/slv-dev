@@ -6,6 +6,46 @@
       "source": "/projects/slv-greenhorizon-2",
       "destination": "/projects/slv-green-horizon-2",
       "permanent": true
+    },
+    {
+      "source": "/projects/slv-amaravathi-grand-1",
+      "destination": "/projects/slv-amaravati-grand-1",
+      "permanent": true
+    },
+    {
+      "source": "/projects/slv-amaravathi-grand-2",
+      "destination": "/projects/slv-amaravati-grand-2",
+      "permanent": true
+    },
+    {
+      "source": "/projects/slv-amaravathi-grand-3",
+      "destination": "/projects/slv-amaravati-grand-3",
+      "permanent": true
+    },
+    {
+      "source": "/projects/slv-amaravathi-pride",
+      "destination": "/projects/slv-amaravati-pride",
+      "permanent": true
+    },
+    {
+      "source": "/projects/slv-amaravti-grand-1",
+      "destination": "/projects/slv-amaravati-grand-1",
+      "permanent": true
+    },
+    {
+      "source": "/projects/slv-amaravti-grand-2",
+      "destination": "/projects/slv-amaravati-grand-2",
+      "permanent": true
+    },
+    {
+      "source": "/projects/slv-amaravti-grand-3",
+      "destination": "/projects/slv-amaravati-grand-3",
+      "permanent": true
+    },
+    {
+      "source": "/projects/slv-amaravti-pride",
+      "destination": "/projects/slv-amaravati-pride",
+      "permanent": true
     }
   ],
   "headers": [

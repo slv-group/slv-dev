@@ -26,8 +26,11 @@ export const Route = createFileRoute("/launch")({
         content:
           "01 NOV 2026 — Celebrating 20 Years of Excellence. Explore SLV Group's landmark residential gated communities and plotted developments.",
       },
-      { property: "og:image", content: "/slv-logo.png" },
+      { property: "og:image", content: "https://www.slvgroup.co.in/slv-logo.png" },
+      // One-off launch animation page: keep it out of search results.
+      { name: "robots", content: "noindex, follow" },
     ],
+    links: [{ rel: "canonical", href: "https://www.slvgroup.co.in/launch" }],
   }),
   component: LaunchPage,
 });

@@ -57,7 +57,9 @@ export const SOCIAL_LINKS = {
   },
   instagram: {
     label: "Instagram",
-    url: (import.meta.env.VITE_INSTAGRAM_URL as string) || "#",
+    url:
+      (import.meta.env.VITE_INSTAGRAM_URL as string) ||
+      "https://www.instagram.com/slvgroup_official/",
     icon: Instagram,
     ariaLabel: "Follow SLV Group on Instagram",
   },
@@ -93,6 +95,20 @@ export const SOCIAL_LINKS = {
     icon: Mail,
   },
 };
+
+/** True when a social profile URL has been configured (not a "#" placeholder). */
+export function hasSocialUrl(link: { url: string }): boolean {
+  return !!link.url && link.url !== "#";
+}
+
+/** Configured public social profile URLs, for structured data `sameAs`. */
+export const SOCIAL_PROFILE_URLS: string[] = [
+  SOCIAL_LINKS.facebook,
+  SOCIAL_LINKS.instagram,
+  SOCIAL_LINKS.linkedin,
+]
+  .filter(hasSocialUrl)
+  .map((l) => l.url);
 
 export const OFFICE_ADDRESS = {
   name: "SLV Group Office",
