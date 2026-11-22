@@ -2,13 +2,13 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { MapPin, Phone, Mail, MessageCircle, ArrowUpRight, Crown } from "lucide-react";
 import slvLogo from "@/assets/SLV_Group_Logo.png";
 
-import { SOCIAL_LINKS, type SocialLinkInfo } from "@/lib/social";
+import { SOCIAL_LINKS, hasSocialUrl, type SocialLinkInfo } from "@/lib/social";
 
 const socialLinks: SocialLinkInfo[] = [
   SOCIAL_LINKS.facebook,
   SOCIAL_LINKS.instagram,
   SOCIAL_LINKS.linkedin,
-];
+].filter(hasSocialUrl); // hide profiles that aren't configured instead of linking to "#"
 
 const ourStory = [
   { label: "About Us", to: "/about" },

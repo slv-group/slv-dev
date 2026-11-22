@@ -22,7 +22,7 @@ import { PropertyCard } from "@/components/PropertyCard";
 import { Reveal } from "@/components/Reveal";
 import { testimonials, mapSupabaseToProject } from "@/data/projects";
 import { supabase } from "@/integrations/supabase/client";
-import { SOCIAL_LINKS } from "@/lib/social";
+import { SOCIAL_LINKS, SOCIAL_PROFILE_URLS, hasSocialUrl } from "@/lib/social";
 import { formatLocationCity } from "@/lib/country-codes";
 import aboutImage from "@/assets/homepage1.jpg";
 import { cn } from "@/lib/utils";
@@ -250,6 +250,9 @@ function Index() {
               "Premier real estate developer in Andhra Pradesh, delivering residential gated communities, open plots, and commercial landmarks across Vijayawada, Guntur, and Amaravati.",
             telephone: ["+91-98595-95939", "+91-94598-23444"],
             email: "info@slvgroup.co.in",
+            foundingDate: "2007",
+            areaServed: ["Vijayawada", "Guntur", "Amaravati", "Andhra Pradesh"],
+            ...(SOCIAL_PROFILE_URLS.length > 0 ? { sameAs: SOCIAL_PROFILE_URLS } : {}),
             address: {
               "@type": "PostalAddress",
               streetAddress:
@@ -937,22 +940,24 @@ function Index() {
               Follow SLV Group on Official Social Channels:
             </span>
             <div className="flex items-center gap-3">
-              {[SOCIAL_LINKS.facebook, SOCIAL_LINKS.instagram].map((social) => {
-                const Icon = social.icon;
-                return (
-                  <a
-                    key={social.label}
-                    href={social.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-1.5 text-xs font-semibold text-white transition-all duration-300 hover:border-gold hover:bg-gold/20 hover:text-gold"
-                    aria-label={social.ariaLabel}
-                  >
-                    <Icon className="h-3.5 w-3.5" />
-                    <span>{social.label}</span>
-                  </a>
-                );
-              })}
+              {[SOCIAL_LINKS.facebook, SOCIAL_LINKS.instagram]
+                .filter(hasSocialUrl)
+                .map((social) => {
+                  const Icon = social.icon;
+                  return (
+                    <a
+                      key={social.label}
+                      href={social.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-1.5 text-xs font-semibold text-white transition-all duration-300 hover:border-gold hover:bg-gold/20 hover:text-gold"
+                      aria-label={social.ariaLabel}
+                    >
+                      <Icon className="h-3.5 w-3.5" />
+                      <span>{social.label}</span>
+                    </a>
+                  );
+                })}
             </div>
           </div>
         </Reveal>

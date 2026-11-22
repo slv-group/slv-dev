@@ -153,8 +153,11 @@ export function validateOptionalEmail(email: string): { isValid: boolean; error?
  * "Bhimavaram" + "Bhimavaram" => "Bhimavaram"
  */
 export function formatLocationCity(location?: string | null, city?: string | null): string {
-  const loc = (location || "").trim();
-  const c = (city || "").trim();
+  // Trim stray separators (e.g. "Mangalagiri," from the database) so we never render ",,".
+  const clean = (v?: string | null) =>
+    (v || "").replace(/^[\s,]+|[\s,]+$/g, "").replace(/\s*,\s*,+\s*/g, ", ");
+  const loc = clean(location);
+  const c = clean(city);
 
   if (!loc && !c) return "";
   if (!c) return loc;

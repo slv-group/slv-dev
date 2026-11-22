@@ -38,7 +38,7 @@ const FALLBACK_PROJECTS: ProjectOption[] = [
     category: "Apartment",
   },
   {
-    id: "slv-amaravathi-grand-3",
+    id: "slv-amaravati-grand-3",
     name: "SLV Amaravati Grand-3",
     bedrooms: "3 & 4 BHK",
     category: "Apartment",

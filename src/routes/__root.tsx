@@ -159,7 +159,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://www.slvgroup.co.in" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@slvgroup" },
       { name: "twitter:title", content: "SLV Group — Premium Real Estate Developers" },
       {
         name: "twitter:description",
@@ -175,11 +174,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content: "https://www.slvgroup.co.in/slv-logo.png",
       },
     ],
+    // NOTE: No canonical here. Each page sets its own canonical in its route `head`.
+    // A root-level canonical is rendered on every page in addition to the page's own,
+    // which tells search engines that every page is a duplicate of the homepage.
     links: [
-      {
-        rel: "canonical",
-        href: "https://www.slvgroup.co.in",
-      },
       {
         rel: "icon",
         type: "image/png",
