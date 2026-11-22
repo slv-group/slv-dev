@@ -31,7 +31,7 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "SLV Group — Premium Homes & Plotted Layouts in Vijayawada & Amaravati" },
+      { title: "SLV Group | Apartments & Plots in Vijayawada, Amaravati" },
       {
         name: "description",
         content:

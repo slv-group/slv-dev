@@ -17,11 +17,11 @@ import { Search, MapPin, RotateCcw, BedDouble, ArrowUpDown } from "lucide-react"
 export const Route = createFileRoute("/projects/")({
   head: () => ({
     meta: [
-      { title: "Residential Projects & Open Plots in Vijayawada & Amaravati — SLV Group" },
+      { title: "Projects in Vijayawada & Amaravati — SLV Group" },
       {
         name: "description",
         content:
-          "Explore ongoing, upcoming, and completed residential gated communities, open plots, and commercial projects across Vijayawada, Guntur, and the Amaravati region by SLV Group.",
+          "Ongoing and completed SLV Group apartments, villas, open plots and commercial projects across Vijayawada, Gannavaram and the Amaravati region.",
       },
       { property: "og:site_name", content: "SLV Group" },
       { property: "og:title", content: "Projects Portfolio — SLV Group" },

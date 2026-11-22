@@ -8,7 +8,7 @@ export const Route = createFileRoute("/privacy")({
       {
         name: "description",
         content:
-          "SLV Group Privacy Policy. Learn how we collect, use, protect, and handle your personal data in compliance with India's Digital Personal Data Protection Act, 2023.",
+          "How SLV Group collects, uses and protects your personal data, in line with India's Digital Personal Data Protection Act, 2023.",
       },
       { property: "og:title", content: "Privacy Policy — SLV Group" },
       {

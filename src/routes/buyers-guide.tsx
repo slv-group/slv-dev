@@ -11,7 +11,7 @@ export const Route = createFileRoute("/buyers-guide")({
       {
         name: "description",
         content:
-          "A comprehensive guide to buying property in Andhra Pradesh — covering RERA verification, home loan financing, registration, legal due diligence, and property handover.",
+          "Step-by-step guide to buying property in Andhra Pradesh: RERA checks, home loans, booking, registration, stamp duty and handover.",
       },
       { property: "og:site_name", content: "SLV Group" },
       { property: "og:title", content: "Home Buyer's Guide — SLV Group" },

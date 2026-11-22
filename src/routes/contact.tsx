@@ -26,7 +26,7 @@ export const Route = createFileRoute("/contact")({
       {
         name: "description",
         content:
-          "Get in touch with SLV Group. Book a site visit, call +91 98595 95939 or +91 94598 23444, or visit our office at Ground Floor, SLV Tummala Complex, Gunadala, Inner Ring Road, Vijayawada, NTR District, Andhra Pradesh – 520004.",
+          "Call SLV Group on +91 98595 95939, book a site visit, or visit our office at SLV Tummala Complex, Gunadala, Inner Ring Road, Vijayawada.",
       },
       { property: "og:site_name", content: "SLV Group" },
       { property: "og:title", content: "Contact SLV Group" },

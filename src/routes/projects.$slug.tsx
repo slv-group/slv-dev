@@ -120,8 +120,20 @@ export const Route = createFileRoute("/projects/$slug")({
         : [beds, p.category].filter(Boolean).join(" ")
       : "";
     // e.g. "SLV Amaravati Grand-3 | 3 & 4 BHK Apartment in Gunadala, Vijayawada — SLV Group"
+    // Keep titles under ~60 characters so Google shows them in full:
+    // "SLV Amaravati Grand-3 | 3 & 4 BHK Apartment in Gunadala, Vijayawada" (+ brand only if it fits)
+    const shortPlace = p ? (p.location || p.city || "").split(",")[0].trim() : "";
+    const titleOptions = p
+      ? [
+          `${p.name} | ${[kind, place && `in ${place}`].filter(Boolean).join(" ")} — SLV Group`,
+          `${p.name} | ${[kind, place && `in ${place}`].filter(Boolean).join(" ")}`,
+          `${p.name} | ${[kind, shortPlace && `in ${shortPlace}`].filter(Boolean).join(" ")}`,
+          `${p.name} | ${p.category} in ${shortPlace}`,
+          `${p.name} — SLV Group`,
+        ].map((t) => t.replace(/ \| (?= —|$)/, ""))
+      : [];
     const title = p
-      ? `${p.name}${kind || place ? ` | ${[kind, place && `in ${place}`].filter(Boolean).join(" ")}` : ""} — SLV Group`
+      ? (titleOptions.find((t) => t.length <= 60) ?? titleOptions[titleOptions.length - 1])
       : "Project — SLV Group";
 
     const summary = p

@@ -39,7 +39,7 @@ export const Route = createFileRoute("/awards")({
       {
         name: "description",
         content:
-          "Explore the industry awards and professional recognition earned by SLV Group and its leadership.",
+          "Industry awards and recognition earned by SLV Group and its leadership for real estate projects in Vijayawada and across Andhra Pradesh.",
       },
       { property: "og:site_name", content: "SLV Group" },
       {

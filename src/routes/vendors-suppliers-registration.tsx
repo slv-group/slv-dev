@@ -11,7 +11,7 @@ export const Route = createFileRoute("/vendors-suppliers-registration")({
       {
         name: "description",
         content:
-          "Register as an approved vendor or material supplier for construction projects with SLV Group.",
+          "Supply building materials or services? Register as an approved SLV Group vendor for our construction projects in Vijayawada and Andhra Pradesh.",
       },
       { property: "og:title", content: "Vendors & Suppliers Registration — SLV Group" },
       { property: "og:url", content: "https://www.slvgroup.co.in/vendors-suppliers-registration" },
